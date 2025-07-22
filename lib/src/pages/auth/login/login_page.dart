@@ -23,6 +23,7 @@ class LoginPage extends HookConsumerWidget {
           context: context,
           builder: (_) => const Center(child: CircularProgressIndicator()),
         );
+        return;
       } else if (state.hasError) {
         // show error message
         ScaffoldMessenger.of(

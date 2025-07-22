@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/firebase_options.dart';
 import 'package:hustle_link/initialiaze.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:sizer/sizer.dart';
 
 Future<void> main() async {
   // ensure widgets binding are intialized
@@ -24,11 +25,14 @@ class MyApp extends HookConsumerWidget {
     // watch router
     final router = ref.watch(appRouteProvider);
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    // watch theme
+    final theme = ref.watch(themeProvider);
+
+    return Sizer(
+      builder: (context, orientation, screenType) => MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: theme.light(),
       ),
     );
   }
