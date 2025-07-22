@@ -46,3 +46,7 @@ app.*.map.json
 
 # firebase files
 .firebase.json
+
+# Android/Flutter specific
+/android/**/google-services.json
+/ios/**/GoogleService-Info.plist
