@@ -28,27 +28,39 @@ class GoRouterRefreshStream extends ChangeNotifier {
 final appRouteProvider = Provider<GoRouter>((ref) {
   // watch the auth provider to get the auth state
   final auth = ref.watch(firebaseAuthServiceProvider);
+  // allow navigation to register page
+  final allowNavToRegister = ref.watch(allowNavToRegisterProvider);
   return GoRouter(
     refreshListenable: GoRouterRefreshStream(auth.authStateChanges),
     redirect: (context, state) {
-      final loggedIn = auth.currentUser != null;
+      debugPrint('Redirecting: ${state.path}');
+      // Check if the user is logged in
+      final loggedIn = auth.currentUser?.uid != null;
       final isLoginPage = state.path == AppRoutes.login;
       final isRegisterPage = state.path == AppRoutes.register;
 
+      // debug print statements for allowNavToRegister
+      debugPrint('Allow navigation to register: $allowNavToRegister');
+
       // If the user is logged in, redirect to home
-      if (loggedIn) {
-        if (isLoginPage || isRegisterPage) {
-          return AppRoutes.home;
-        }
-        return null; // Stay on the current page
+      if (loggedIn && (isLoginPage || isRegisterPage)) {
+        // If logged in, don't allow access to login/register
+        return AppRoutes.home;
       }
-
-      // If the user is not logged in, redirect to login
-      if (!loggedIn && !isLoginPage && !isRegisterPage) {
+      if (!loggedIn &&
+          !(isLoginPage || isRegisterPage) &&
+          !allowNavToRegister) {
+        // If not logged in and not on login/register, redirect to login
         return AppRoutes.login;
+      } else if (!loggedIn && isRegisterPage && !allowNavToRegister) {
+        // If not logged in and on register page, redirect to login
+        return AppRoutes.login;
+      } else if (!loggedIn && !isRegisterPage && allowNavToRegister) {
+        // If not logged in and not register page, allow navigation
+        return AppRoutes.register;
       }
-
-      return null; // No redirection needed
+      // Otherwise, allow navigation
+      return null;
     },
     routes: [
       GoRoute(
@@ -92,3 +104,24 @@ class AppRoutes {
 
   // add more routes as needed
 }
+
+class AllowNavToRegisterNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    // Initially allow navigation to register page
+    return false;
+  }
+
+  void allowNavigation() {
+    state = true;
+  }
+
+  void disallowNavigation() {
+    state = false;
+  }
+}
+
+final allowNavToRegisterProvider =
+    NotifierProvider<AllowNavToRegisterNotifier, bool>(
+      AllowNavToRegisterNotifier.new,
+    );

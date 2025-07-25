@@ -10,6 +10,17 @@ class HomePage extends HookConsumerWidget {
     final user = ref.watch(firebaseAuthServiceProvider).currentUser;
     // auth controller to handle sign out
     final authController = ref.read(authControllerProvider.notifier);
+
+    // dummy data for home page
+    final dummyCards = List.generate(
+      10,
+      (index) => Card(
+        child: ListTile(
+          title: Text('Card $index'),
+          subtitle: Text('This is a dummy card for home page'),
+        ),
+      ),
+    );
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
       body: SingleChildScrollView(
@@ -22,6 +33,9 @@ class HomePage extends HookConsumerWidget {
                 style: TextStyle(fontSize: 24),
               ),
             ),
+            dummyCards.isNotEmpty
+                ? Column(children: dummyCards)
+                : const Text('No cards available'),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
