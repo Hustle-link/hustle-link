@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
@@ -27,6 +28,54 @@ class WelcomePage extends HookConsumerWidget {
       });
       return () => pageController.dispose();
     }, [pageController]);
+
+    // next button string
+    String? nextButtonText() {
+      switch (currentPage.value) {
+        case 0:
+          return AppStringsWelcome.welcomeScreen1.buttonText;
+        case 1:
+          return AppStringsWelcome.welcomeScreen2.buttonText;
+        case 2:
+          return AppStringsWelcome.welcomeScreen3.buttonText;
+        case 3:
+          return AppStringsWelcome.welcomeScreen4.buttonText;
+        default:
+          return 'Welcome';
+      }
+    }
+
+    // icon color
+    Color iconColor() {
+      switch (currentPage.value) {
+        case 0:
+          return Colors.white;
+        case 1:
+          return Theme.of(context).colorScheme.onSecondary;
+        case 2:
+          return Theme.of(context).colorScheme.onTertiary;
+        case 3:
+          return Theme.of(context).colorScheme.onSecondaryContainer;
+        default:
+          return Colors.white;
+      }
+    }
+
+    // button color
+    Color buttonColor() {
+      switch (currentPage.value) {
+        case 0:
+          return Colors.white;
+        case 1:
+          return Theme.of(context).colorScheme.onSecondary;
+        case 2:
+          return Theme.of(context).colorScheme.onTertiary;
+        case 3:
+          return Theme.of(context).colorScheme.onSecondaryContainer;
+        default:
+          return Colors.white;
+      }
+    }
 
     return Scaffold(
       body: Stack(
@@ -191,6 +240,7 @@ class WelcomePage extends HookConsumerWidget {
               ),
             ],
           ),
+          // Page indicator
           Positioned(
             bottom: 20,
             left: 0,
@@ -200,6 +250,54 @@ class WelcomePage extends HookConsumerWidget {
                 pageCount: 4,
                 currentPage: currentPage.value,
               ),
+            ),
+          ),
+          // add buttons
+          Positioned(
+            bottom: 20,
+            right: 20,
+            left: 20,
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                // Skip button
+                TextButton.icon(
+                  onPressed: () {
+                    pageController.jumpToPage(3); // Jump to last page
+                  },
+                  icon: Icon(Icons.arrow_forward, color: iconColor()),
+                  iconAlignment: IconAlignment.end,
+                  label: Text(
+                    // Skip button text from a switch case
+                    'Skip',
+                    style: TextStyle(color: buttonColor()),
+                  ),
+                ),
+                Spacer(),
+                // Next button
+                TextButton(
+                  onPressed: () {
+                    if (currentPage.value < 3) {
+                      pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    } else {
+                      // set first time open app to false
+                      ref
+                          .read(welcomePageSharedPreferencesProvider.notifier)
+                          .setFirstTimeOpenApp(false);
+                      // Navigate to the next screen, e.g., login or register
+                      context.pushNamed(AppRoutes.loginRoute);
+                    }
+                  },
+                  child: Text(
+                    nextButtonText() ?? 'Next',
+                    style: TextStyle(color: buttonColor()),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

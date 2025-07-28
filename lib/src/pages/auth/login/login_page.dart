@@ -17,27 +17,11 @@ class LoginPage extends HookConsumerWidget {
 
     // use auth controller
     final authController = ref.read(authControllerProvider.notifier);
+    final authControllerMutation = ref.watch(authControllerProvider);
 
     // focus nodes
     final emailFocusNode = useFocusNode();
     final passwordFocusNode = useFocusNode();
-
-    // listen to controller state
-    ref.listen<AsyncValue>(authControllerProvider, (previous, state) {
-      if (state.isLoading && !state.hasError) {
-        // show loading indicator
-        showDialog(
-          context: context,
-          builder: (_) => const Center(child: CircularProgressIndicator()),
-        );
-        return;
-      } else if (state.hasError) {
-        // show error message
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${state.error}')));
-      }
-    });
 
     return Scaffold(
       // automatically implyleading padding if navigating from another page
@@ -179,6 +163,16 @@ class LoginPage extends HookConsumerWidget {
                     ),
                   ),
                 ],
+              ),
+              // mutation status
+              authControllerMutation.map(
+                idle: () => const SizedBox.shrink(),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Text(
+                  'Error: $error',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+                data: (_) => const SizedBox.shrink(),
               ),
             ],
           ),

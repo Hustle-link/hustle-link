@@ -18,6 +18,7 @@ class RegisterPage extends HookConsumerWidget {
 
     // use auth controller
     final authController = ref.read(authControllerProvider.notifier);
+    final authControllerMutation = ref.watch(authControllerProvider);
 
     // error texts
     final emailErrorText = useState<String?>(null);
@@ -29,26 +30,6 @@ class RegisterPage extends HookConsumerWidget {
     final passwordFocusNode = useFocusNode();
     final confirmPasswordFocusNode = useFocusNode();
 
-    // listen to controller state
-    ref.listen<AsyncValue>(authControllerProvider, (previous, state) {
-      if (state.isLoading && !state.hasError && !state.hasValue) {
-        // show snack bar with loading indicator
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Registering...')));
-        return;
-      } else if (state.hasError) {
-        // show error message
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${state.error}')));
-      } else if (state.hasValue) {
-        // close the loading indicator
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        // navigate to home page on successful registration
-        context.goNamed(AppRoutes.homeRoute);
-      }
-    });
     return Scaffold(
       appBar: AppBar(
         // title: const Text('Register'),
@@ -208,7 +189,20 @@ class RegisterPage extends HookConsumerWidget {
                         passwordController.clear();
                         confirmPasswordController.clear();
                       },
-                child: const Text(AppStringsAuth.registerButton),
+                child: authControllerMutation.map(
+                  idle: () {
+                    return const Text(AppStringsAuth.registerButton);
+                  },
+                  loading: () {
+                    return const CircularProgressIndicator();
+                  },
+                  error: (error, _) {
+                    return Text('Error: $error');
+                  },
+                  data: (data) {
+                    return const Text(AppStringsAuth.registerButton);
+                  },
+                ),
               ),
               SizedBox(height: 20),
 

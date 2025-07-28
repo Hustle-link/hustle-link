@@ -55,6 +55,7 @@ dependencies:
   liquid_swipe: ^3.1.0
   shared_preferences: ^2.5.3
   riverpod_community_mutation: ^1.1.1
+  
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,7 @@ dev_dependencies:
   freezed: 3.1.0
   build_runner: ^2.4.0
   riverpod_generator: ^2.6.5
+  flutter_native_splash: ^2.4.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -116,3 +118,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  color: "#00000f"
+  image: assets/images/brand/hustle_link_logo.jpg
+  # android:enableFullscreen: true
+  ios: true
+  web: false
+  android_gravity: center
+  ios_content_mode: center
+
+  # android 12
+  android_12:
+    image: assets/images/brand/hustle_link_logo.jpg
+    color: "#00000f"
