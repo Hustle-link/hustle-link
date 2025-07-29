@@ -7,24 +7,39 @@ import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-part 'app_router.g.dart';
+// part 'app_router.g.dart';
 
 // gorouter refresh stream
 class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
-    // Initialize the stream
-    notifyListeners();
-    subscription = stream.asBroadcastStream().listen((_) {
+  GoRouterRefreshStream(
+    Stream<dynamic> authStream,
+    ValueNotifier<dynamic>? welcomeNotifier,
+  ) {
+    // Listen to auth state changes
+    authSubscription = authStream.asBroadcastStream().listen((_) {
       notifyListeners();
     });
+
+    // Listen to welcome page shared preferences changes via ValueNotifier
+    if (welcomeNotifier != null) {
+      _welcomeNotifier = welcomeNotifier;
+      _welcomeNotifier!.addListener(_welcomeListener);
+    }
   }
 
-  late StreamSubscription<dynamic> subscription;
+  late StreamSubscription<dynamic> authSubscription;
+  ValueNotifier<dynamic>? _welcomeNotifier;
 
-  // Add methods to update the stream
+  void _welcomeListener() {
+    notifyListeners();
+  }
+
   @override
   void dispose() {
-    subscription.cancel();
+    authSubscription.cancel();
+    if (_welcomeNotifier != null) {
+      _welcomeNotifier!.removeListener(_welcomeListener);
+    }
     super.dispose();
   }
 }
@@ -32,27 +47,27 @@ class GoRouterRefreshStream extends ChangeNotifier {
 final appRouteProvider = Provider<GoRouter>((ref) {
   // watch the auth provider to get the auth state
   final auth = ref.watch(firebaseAuthServiceProvider);
+  // welcome page shared preferences
+  final firstTimeOpenApp = ref.watch(welcomePageSharedPreferencesProvider);
 
   // watch the shared preferences provider to get the first time open app state
   final sharedPrefs = ref.watch(welcomePageSharedPreferencesProvider);
 
   // allow navigation to register page
   final allowNavToRegister = ref.watch(allowNavToRegisterProvider);
+
+  // else show the main app
   return GoRouter(
-    refreshListenable: GoRouterRefreshStream(auth.authStateChanges),
+    refreshListenable: GoRouterRefreshStream(
+      auth.authStateChanges,
+      ValueNotifier(sharedPrefs.firstTimeOpenApp),
+    ),
     redirect: (context, state) async {
-      // get the shared preferences instance
-      final firstTimeOpenApp = sharedPrefs.asData?.value;
-
-      // If the app is opened for the first time, redirect to welcome page
-      if (firstTimeOpenApp == true && state.path != AppRoutes.login) {
-        // If first time opening the app, redirect to welcome page
-        return '/welcome';
-      }
-
-      // debug print for shared preferences
-      debugPrint('Shared Preferences: $firstTimeOpenApp');
+      // listen to first time open app state
+      final firstTimeOpenApp = sharedPrefs;
+      // debug print statements for auth state changes
       //todo: remove debug print statements in production
+      debugPrint('First time open app: ${firstTimeOpenApp.firstTimeOpenApp}');
       debugPrint('Auth state changed: ${auth.currentUser?.uid}');
       debugPrint('Redirecting: ${state.path}');
       // Check if the user is logged in
@@ -62,6 +77,12 @@ final appRouteProvider = Provider<GoRouter>((ref) {
 
       // debug print statements for allowNavToRegister
       debugPrint('Allow navigation to register: $allowNavToRegister');
+
+      // If first time opening the app, redirect to welcome page
+      if (firstTimeOpenApp.firstTimeOpenApp == true &&
+          state.path != AppRoutes.welcome) {
+        return AppRoutes.welcome;
+      }
 
       // If the user is logged in, redirect to home
       if (loggedIn && (isLoginPage || isRegisterPage)) {
@@ -126,12 +147,18 @@ class AppRoutes {
   static const String home = '/';
   // welcome page
   static const String welcome = '/welcome';
+  // error initial page
+  static const String errorInitial = '/error_initial';
+  // initial loading page
+  static const String initialLoading = '/initial_loading';
 
   // route names
   static const String loginRoute = 'login';
   static const String registerRoute = 'register';
   static const String homeRoute = 'home';
   static const String welcomeRoute = 'welcome';
+  static const String errorInitialRoute = 'error_initial';
+  static const String initialLoadingRoute = 'initial_loading';
 
   // add more routes as needed
 }
@@ -166,24 +193,55 @@ final sharedPrefsFutureProvider = FutureProvider<SharedPreferencesWithCache>((
   );
 });
 
-@riverpod
-class WelcomePageSharedPreferences extends _$WelcomePageSharedPreferences {
-  @override
-  Future<bool> build() async {
-    // Return the shared preferences instance
-    final firstTimeOpenApp = await getFirstTimeOpenApp();
-    //todo: remove debug print statements in production
-    debugPrint('First time open app: $firstTimeOpenApp');
-    return firstTimeOpenApp;
+class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
+  bool? _firstTimeOpenApp;
+  final Ref ref;
+
+  WelcomePageSharedPreferencesNotifier(this.ref) {
+    _init();
+  }
+
+  bool? get firstTimeOpenApp => _firstTimeOpenApp;
+
+  Future<void> _init() async {
+    _firstTimeOpenApp = await getFirstTimeOpenApp();
+    notifyListeners();
   }
 
   Future<void> setFirstTimeOpenApp(bool value) async {
-    final prefs = await ref.watch(sharedPrefsFutureProvider.future);
+    final prefs = await ref.read(sharedPrefsFutureProvider.future);
     await prefs.setBool('first_time_open_app', value);
+    _firstTimeOpenApp = value;
+    notifyListeners();
   }
 
   Future<bool> getFirstTimeOpenApp() async {
-    final prefs = await ref.watch(sharedPrefsFutureProvider.future);
+    final prefs = await ref.read(sharedPrefsFutureProvider.future);
     return prefs.getBool('first_time_open_app') ?? true;
   }
 }
+
+final welcomePageSharedPreferencesProvider =
+    ChangeNotifierProvider<WelcomePageSharedPreferencesNotifier>(
+      (ref) => WelcomePageSharedPreferencesNotifier(ref),
+    );
+
+// listener for first time open app state
+// @riverpod
+// Raw<ValueNotifier<bool>> welcomePageSharedPreferences(
+//   Ref ref,
+// ) {
+//   // listen to the shared preferences provider
+//   final sharedPrefs = ref.watch(welcomePageSharedPreferencesProvider.future);
+
+//   // intial value
+//   final initialValue = ValueNotifier(sharedPrefs.asStream());
+
+//   ref.onDispose(initialValue.dispose);
+
+//   // listen to changes in the shared preferences
+//   initialValue.addListener(ref.notifyListeners);
+
+//   // return initial value notifier
+//   return initialValue;
+// }

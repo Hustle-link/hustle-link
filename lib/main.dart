@@ -29,11 +29,14 @@ class MyApp extends HookConsumerWidget {
     final theme = ref.watch(themeProvider);
 
     return Sizer(
-      builder: (context, orientation, screenType) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routerConfig: router,
-        theme: theme.light(),
-      ),
+      builder: (context, orientation, screenType) {
+        // listen to first time open app state
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+          theme: theme.light(),
+        );
+      },
     );
   }
 }

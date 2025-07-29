@@ -44,6 +44,15 @@ class LoginPage extends HookConsumerWidget {
               SizedBox(height: 10.h),
               // image
               SvgPicture.asset('assets/images/auth/register.svg', height: 20.h),
+              //todo:remove this
+              TextButton(
+                onPressed: () async {
+                  await ref
+                      .read(welcomePageSharedPreferencesProvider.notifier)
+                      .setFirstTimeOpenApp(true);
+                },
+                child: Text('Debug: Welcome Page'),
+              ),
               SizedBox(height: 5.h),
               // title and input fields
               Text(
@@ -167,11 +176,27 @@ class LoginPage extends HookConsumerWidget {
               // mutation status
               authControllerMutation.map(
                 idle: () => const SizedBox.shrink(),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Text(
-                  'Error: $error',
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
+                loading: () {
+                  // show dialog while loading
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  );
+                },
+                error: (error, _) {
+                  // show snackbar on error
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error.toString()),
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                      ),
+                    );
+                  });
+                  return const SizedBox.shrink();
+                },
+
                 data: (_) => const SizedBox.shrink(),
               ),
             ],
