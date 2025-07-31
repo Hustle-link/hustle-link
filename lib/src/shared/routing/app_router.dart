@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
@@ -62,6 +63,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       auth.authStateChanges,
       ValueNotifier(sharedPrefs.firstTimeOpenApp),
     ),
+    observers: [FlutterSmartDialog.observer],
     redirect: (context, state) async {
       // listen to first time open app state
       final firstTimeOpenApp = sharedPrefs;

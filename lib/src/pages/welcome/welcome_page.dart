@@ -92,25 +92,39 @@ class WelcomePage extends HookConsumerWidget {
                   children: [
                     SizedBox(height: 30.h),
                     // image
-                    Image.asset(
-                      'assets/images/brand/hustle_link_logo.jpg',
-                      height: 30.h,
-                      width: 30.h,
-                    ),
-                    Text(
-                      AppStringsWelcome.welcomeScreen1.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
+                    AnimatedSlideWidget(
+                      child: Image.asset(
+                        'assets/images/brand/hustle_link_logo.jpg',
+                        height: 30.h,
+                        width: 30.h,
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      textAlign: TextAlign.center,
-                      AppStringsWelcome.welcomeScreen1.subtitle,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    // title and subtitle
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 200),
+                      slideBeginOffset: Offset(0, 0.5),
+                      slideDelay: Duration(milliseconds: 100),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen1.title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 300),
+                      slideBeginOffset: Offset(0, 0.7),
+                      slideDelay: Duration(milliseconds: 200),
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        AppStringsWelcome.welcomeScreen1.subtitle,
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                     Spacer(flex: 8),
                   ],
@@ -126,27 +140,39 @@ class WelcomePage extends HookConsumerWidget {
                   children: [
                     SizedBox(height: 10.h),
                     // image
-                    SvgPicture.asset(
-                      'assets/images/welcome/career_progress.svg',
-                      height: 30.h,
-                      width: 30.h,
-                    ),
-                    SizedBox(height: 20),
-                    // title and subtitle
-                    Text(
-                      AppStringsWelcome.welcomeScreen2.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
+                    AnimatedSlideWidget(
+                      child: SvgPicture.asset(
+                        'assets/images/welcome/career_progress.svg',
+                        height: 30.h,
+                        width: 30.h,
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      AppStringsWelcome.welcomeScreen2.subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    // title and subtitle
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 200),
+                      slideBeginOffset: Offset(0, 0.5),
+                      slideDelay: Duration(milliseconds: 100),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen2.title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 300),
+                      slideBeginOffset: Offset(0, 0.7),
+                      slideDelay: Duration(milliseconds: 200),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen2.subtitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   ],
                 ),
@@ -161,27 +187,41 @@ class WelcomePage extends HookConsumerWidget {
                   children: [
                     SizedBox(height: 5.h),
                     // image
-                    SvgPicture.asset(
-                      'assets/images/welcome/coding_job.svg',
-                      height: 30.h,
-                      width: 30.h,
+                    AnimatedSlideWidget(
+                      child: SvgPicture.asset(
+                        'assets/images/welcome/coding_job.svg',
+                        height: 30.h,
+                        width: 30.h,
+                      ),
                     ),
-                    Text(
-                      AppStringsWelcome.welcomeScreen3.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onTertiary,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
+                    SizedBox(height: 5.h),
+                    // title and subtitle
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 200),
+                      slideBeginOffset: Offset(0, 0.5),
+                      slideDelay: Duration(milliseconds: 100),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen3.title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onTertiary,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      AppStringsWelcome.welcomeScreen3.subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onTertiary,
-                        fontSize: 16,
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 300),
+                      slideBeginOffset: Offset(0, 0.7),
+                      slideDelay: Duration(milliseconds: 200),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen3.subtitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onTertiary,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],
@@ -197,42 +237,45 @@ class WelcomePage extends HookConsumerWidget {
                   children: [
                     SizedBox(height: 10.h),
                     // image
-                    SvgPicture.asset(
-                          'assets/images/welcome/job_hunting.svg',
-                          height: 30.h,
-                          width: 30.h,
-                        )
-                        .animate()
-                        .slideY(
-                          begin: 2,
-                          duration: 500.ms,
-                          delay: 200.ms,
-                          curve: Curves.easeInOut,
-                        )
-                        .fadeIn(duration: 300.ms), // animate the image to
-                    // slide from the bottom,
+                    AnimatedSlideWidget(
+                      child: SvgPicture.asset(
+                        'assets/images/welcome/job_hunting.svg',
+                        height: 30.h,
+                        width: 30.h,
+                      ),
+                    ),
                     SizedBox(height: 5.h),
                     // title and subtitle
-                    Text(
-                      AppStringsWelcome.welcomeScreen4.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 200),
+                      slideBeginOffset: Offset(0, 0.5),
+                      slideDelay: Duration(milliseconds: 100),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen4.title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSecondaryContainer,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      AppStringsWelcome.welcomeScreen4.subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
-                        fontSize: 16,
+                    AnimatedSlideWidget(
+                      fadeDelay: Duration(milliseconds: 300),
+                      slideBeginOffset: Offset(0, 0.7),
+                      slideDelay: Duration(milliseconds: 200),
+                      child: Text(
+                        AppStringsWelcome.welcomeScreen4.subtitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSecondaryContainer,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],

@@ -141,6 +141,7 @@ class RegisterPage extends HookConsumerWidget {
               TextField(
                 controller: confirmPasswordController,
                 keyboardType: TextInputType.visiblePassword,
+                focusNode: confirmPasswordFocusNode,
                 decoration: const InputDecoration(
                   labelText: AppStringsAuth.confirmPasswordLabel,
                 ),

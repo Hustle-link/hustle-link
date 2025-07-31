@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/firebase_options.dart';
 import 'package:hustle_link/initialiaze.dart';
@@ -35,6 +36,11 @@ class MyApp extends HookConsumerWidget {
           debugShowCheckedModeBanner: false,
           routerConfig: router,
           theme: theme.light(),
+          builder: FlutterSmartDialog.init(
+            builder: (context, child) {
+              return child!;
+            },
+          ),
         );
       },
     );

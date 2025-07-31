@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -23,25 +24,33 @@ class LoginPage extends HookConsumerWidget {
     final emailFocusNode = useFocusNode();
     final passwordFocusNode = useFocusNode();
 
+    // error texts
+    final emailErrorText = useState<String?>(null);
+    final passwordErrorText = useState<String?>(null);
+
     return Scaffold(
       // automatically implyleading padding if navigating from another page
       resizeToAvoidBottomInset: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         // title: Text(AppStringsAuth.loginTitle),
         automaticallyImplyLeading: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(
           left: 4.w,
           right: 4.w,
-          top: 2.h,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16, // <-- Add this
+          // top: 2.h,
+          // bottom: MediaQuery.of(context).viewInsets.bottom + 16, // <-- Add this
         ),
         child: Form(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 10.h),
+              SizedBox(height: 5.h),
               // image
               SvgPicture.asset('assets/images/auth/register.svg', height: 20.h),
               //todo:remove this
@@ -76,11 +85,37 @@ class LoginPage extends HookConsumerWidget {
                 controller: emailController,
                 focusNode: emailFocusNode,
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.emailLabel,
                   border: OutlineInputBorder(),
-                  hintText: 'Enter your email',
+                  errorText: emailErrorText.value,
                 ),
+                onTapOutside: (event) {
+                  // validate email
+                  if (emailFocusNode.hasFocus) {
+                    // validate email format
+                    final emailError = emailValidator(emailController.text);
+                    if (emailError != null) {
+                      emailErrorText.value = emailError;
+                    } else {
+                      emailErrorText.value = null; // clear error if valid
+                    }
+                  }
+                  // unfocus the text field
+                  emailFocusNode.unfocus();
+                },
+                onChanged: (value) {
+                  if (emailFocusNode.hasFocus) {
+                    // validate email format
+                    final emailError = emailValidator(value);
+                    if (emailError != null) {
+                      emailErrorText.value = emailError;
+                    } else {
+                      emailErrorText.value = null; // clear error if valid
+                    }
+                  }
+                },
               ),
               SizedBox(height: 3.h),
               TextField(
@@ -178,26 +213,26 @@ class LoginPage extends HookConsumerWidget {
                 idle: () => const SizedBox.shrink(),
                 loading: () {
                   // show dialog while loading
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  SmartDialog.showLoading(
+                    msg: AppStringsAuth.loadingMessage,
+                    // backgroundColor: Colors.transparent,
+                    maskColor: Colors.black54,
                   );
+
+                  return const SizedBox.shrink();
                 },
                 error: (error, _) {
                   // show snackbar on error
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(error.toString()),
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                  });
+                  SmartDialog.showToast(error.toString());
                   return const SizedBox.shrink();
                 },
 
-                data: (_) => const SizedBox.shrink(),
+                data: (_) {
+                  SmartDialog.dismiss();
+                  context.goNamed(AppRoutes.homeRoute);
+                  //)
+                  return SizedBox.shrink();
+                },
               ),
             ],
           ),

@@ -1,3 +1,5 @@
+import 'package:extended_image/extended_image.dart';
+import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
@@ -22,35 +24,43 @@ class HomePage extends HookConsumerWidget {
       ),
     );
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Center(
-              child: Text(
-                'Welcome, ${user?.email} ',
-                style: TextStyle(fontSize: 24),
+      body: CustomScrollView(
+        slivers: [
+          ExtendedSliverAppbar(
+            // title: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+            toolBarColor: Theme.of(context).colorScheme.secondaryContainer,
+            leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+          ),
+          SliverToBoxAdapter(
+            child: Text('Find the best hustle links for you!'),
+          ),
+          ExtendedSliverFillViewport(
+            delegate: SliverChildListDelegate([
+              // Center(
+              //   child: Text(
+              //     'Welcome, ${user?.email} ',
+              //     style: TextStyle(fontSize: 24),
+              //   ),
+              // ),
+              dummyCards.isNotEmpty
+                  ? Column(children: dummyCards)
+                  : const Text('No cards available'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  // call signOut method from auth controller
+                  await authController.signOut();
+                },
+                child: const Text('Log Out'),
               ),
-            ),
-            dummyCards.isNotEmpty
-                ? Column(children: dummyCards)
-                : const Text('No cards available'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                // call signOut method from auth controller
-                await authController.signOut();
-              },
-              child: const Text('Log Out'),
-            ),
-            const SizedBox(height: 20),
-            // links to login and register pages
-            ElevatedButton(onPressed: () {}, child: const Text('Login')),
-            const SizedBox(height: 10),
-            ElevatedButton(onPressed: () {}, child: const Text('Register')),
-          ],
-        ),
+              const SizedBox(height: 20),
+              // links to login and register pages
+              ElevatedButton(onPressed: () {}, child: const Text('Login')),
+              const SizedBox(height: 10),
+              ElevatedButton(onPressed: () {}, child: const Text('Register')),
+            ]),
+          ),
+        ],
       ),
     );
   }

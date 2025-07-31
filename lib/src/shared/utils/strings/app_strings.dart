@@ -38,6 +38,12 @@ class AppStringsAuth {
   static const String userNotFound = 'No user found with this email.';
   static const String noAccount = 'Don\'t have an account?';
   static const String createNewAccount = 'Create a new account';
+
+  // login loading message
+  static const String loadingMessage = 'Logging in, please wait...';
+  // registration loading message
+  static const String registrationLoadingMessage =
+      'Registering, please wait...';
 }
 
 // app strings for the welcome screen
