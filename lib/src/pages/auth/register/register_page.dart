@@ -179,13 +179,23 @@ class RegisterPage extends HookConsumerWidget {
                         confirmPasswordController.text.isEmpty
                     ? null
                     : () async {
-                        // call register method from auth controller
-                        await authController.register(
-                          emailController.text.trim(),
-                          passwordController.text.trim(),
-                        );
+                        try {
+                          // call register legacy method from auth controller (without role)
+                          await authController.registerLegacy(
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                          );
 
-                        // clear the text fields after registration
+                          // Navigate to role selection page on successful registration
+                          if (context.mounted) {
+                            context.go(AppRoutes.roleSelection);
+                          }
+                        } catch (e) {
+                          // Error handling is done by the auth controller
+                          debugPrint('Registration failed: $e');
+                        }
+
+                        // clear the text fields after registration attempt
                         emailController.clear();
                         passwordController.clear();
                         confirmPasswordController.clear();

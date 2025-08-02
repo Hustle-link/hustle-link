@@ -28,6 +28,42 @@ class LoginPage extends HookConsumerWidget {
     final emailErrorText = useState<String?>(null);
     final passwordErrorText = useState<String?>(null);
 
+    // Handle auth state changes
+    useEffect(() {
+      void handleAuthState() {
+        authControllerMutation.map(
+          idle: () => null,
+          loading: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.showLoading(
+                msg: AppStringsAuth.loadingMessage,
+                maskColor: Colors.black54,
+              );
+            });
+            return null;
+          },
+          error: (error, _) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.dismiss();
+              debugPrint('Login error on login page: ${error.toString()}');
+              SmartDialog.showToast(error.toString());
+            });
+            return null;
+          },
+          data: (_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.dismiss();
+              context.goNamed(AppRoutes.homeRoute);
+            });
+            return null;
+          },
+        );
+      }
+
+      handleAuthState();
+      return null;
+    }, [authControllerMutation]);
+
     return Scaffold(
       // automatically implyleading padding if navigating from another page
       resizeToAvoidBottomInset: true,
@@ -105,16 +141,16 @@ class LoginPage extends HookConsumerWidget {
                   // unfocus the text field
                   emailFocusNode.unfocus();
                 },
-                onChanged: (value) {
-                  if (emailFocusNode.hasFocus) {
-                    // validate email format
-                    final emailError = emailValidator(value);
-                    if (emailError != null) {
-                      emailErrorText.value = emailError;
-                    } else {
-                      emailErrorText.value = null; // clear error if valid
-                    }
+                onEditingComplete: () {
+                  // validate email when user finishes editing
+                  final emailError = emailValidator(emailController.text);
+                  if (emailError != null) {
+                    emailErrorText.value = emailError;
+                  } else {
+                    emailErrorText.value = null; // clear error if valid
                   }
+                  // move to password field
+                  passwordFocusNode.requestFocus();
                 },
               ),
               SizedBox(height: 3.h),
@@ -125,8 +161,36 @@ class LoginPage extends HookConsumerWidget {
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.passwordLabel,
                   border: OutlineInputBorder(),
+                  errorText: passwordErrorText.value,
                 ),
                 obscureText: true,
+                onTapOutside: (event) {
+                  // validate password
+                  if (passwordFocusNode.hasFocus) {
+                    final passwordError = loginPasswordValidator(
+                      passwordController.text,
+                    );
+                    if (passwordError != null) {
+                      passwordErrorText.value = passwordError;
+                    } else {
+                      passwordErrorText.value = null;
+                    }
+                  }
+                  passwordFocusNode.unfocus();
+                },
+                onEditingComplete: () {
+                  // validate password when user finishes editing
+                  final passwordError = loginPasswordValidator(
+                    passwordController.text,
+                  );
+                  if (passwordError != null) {
+                    passwordErrorText.value = passwordError;
+                  } else {
+                    passwordErrorText.value = null;
+                  }
+                  // unfocus when done
+                  passwordFocusNode.unfocus();
+                },
               ),
               SizedBox(height: 0.2.h),
               // forgot password link
@@ -135,11 +199,7 @@ class LoginPage extends HookConsumerWidget {
                 child: TextButton(
                   onPressed: () {
                     // navigate to forgot password page
-                    context.pushNamed(
-                      // AppRoutes.resetPassword,
-                      //TODO: Implement reset password page
-                      'reset-password',
-                    );
+                    context.pushNamed(AppRoutes.resetPasswordRoute);
                   },
                   child: Text(
                     AppStringsAuth.forgotPassword,
@@ -151,13 +211,38 @@ class LoginPage extends HookConsumerWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () async {
-                  // call signIn method from auth controller
-                  await authController.signIn(
-                    emailController.text,
-                    passwordController.text,
-                  );
-                },
+                onPressed: authControllerMutation.isLoading
+                    ? null
+                    : () async {
+                        // Clear any existing error messages
+                        emailErrorText.value = null;
+                        passwordErrorText.value = null;
+
+                        // Validate email
+                        final emailError = emailValidator(emailController.text);
+                        if (emailError != null) {
+                          emailErrorText.value = emailError;
+                          return;
+                        }
+
+                        // Validate password
+                        final passwordError = loginPasswordValidator(
+                          passwordController.text,
+                        );
+                        if (passwordError != null) {
+                          passwordErrorText.value = passwordError;
+                          return;
+                        }
+
+                        // Dismiss keyboard
+                        FocusScope.of(context).unfocus();
+
+                        // call signIn method from auth controller
+                        await authController.signIn(
+                          emailController.text.trim(),
+                          passwordController.text,
+                        );
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(
                     context,
@@ -182,7 +267,7 @@ class LoginPage extends HookConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    AppStringsAuth.alreadyHaveAccount,
+                    AppStringsAuth.noAccount,
                     style: TextStyle(fontSize: 15.sp),
                   ),
                   SizedBox(width: 1.w),
@@ -207,32 +292,6 @@ class LoginPage extends HookConsumerWidget {
                     ),
                   ),
                 ],
-              ),
-              // mutation status
-              authControllerMutation.map(
-                idle: () => const SizedBox.shrink(),
-                loading: () {
-                  // show dialog while loading
-                  SmartDialog.showLoading(
-                    msg: AppStringsAuth.loadingMessage,
-                    // backgroundColor: Colors.transparent,
-                    maskColor: Colors.black54,
-                  );
-
-                  return const SizedBox.shrink();
-                },
-                error: (error, _) {
-                  // show snackbar on error
-                  SmartDialog.showToast(error.toString());
-                  return const SizedBox.shrink();
-                },
-
-                data: (_) {
-                  SmartDialog.dismiss();
-                  context.goNamed(AppRoutes.homeRoute);
-                  //)
-                  return SizedBox.shrink();
-                },
               ),
             ],
           ),

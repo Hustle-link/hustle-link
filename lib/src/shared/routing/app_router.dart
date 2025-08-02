@@ -5,6 +5,16 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/pages/auth/role_selection/role_selection_page_new.dart';
+import 'package:hustle_link/src/pages/auth/password_reset/password_reset_page.dart';
+import 'package:hustle_link/src/pages/hustler/dashboard/hustler_dashboard_page.dart';
+import 'package:hustle_link/src/pages/hustler/profile/hustler_profile_page.dart';
+import 'package:hustle_link/src/pages/hustler/applications/hustler_applications_page.dart';
+import 'package:hustle_link/src/pages/hustler/job_details/job_details_page.dart';
+import 'package:hustle_link/src/pages/employer/dashboard/employer_dashboard_page.dart';
+import 'package:hustle_link/src/pages/employer/profile/employer_profile_page.dart';
+import 'package:hustle_link/src/pages/employer/job_management/job_management_page.dart';
+import 'package:hustle_link/src/pages/employer/post_job/post_job_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,9 +59,6 @@ final appRouteProvider = Provider<GoRouter>((ref) {
   // watch the auth provider to get the auth state
   final auth = ref.watch(firebaseAuthServiceProvider);
   // welcome page shared preferences
-  final firstTimeOpenApp = ref.watch(welcomePageSharedPreferencesProvider);
-
-  // watch the shared preferences provider to get the first time open app state
   final sharedPrefs = ref.watch(welcomePageSharedPreferencesProvider);
 
   // allow navigation to register page
@@ -76,6 +83,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       final loggedIn = auth.currentUser?.uid != null;
       final isLoginPage = state.path == AppRoutes.login;
       final isRegisterPage = state.path == AppRoutes.register;
+      final isResetPasswordPage = state.path == AppRoutes.resetPassword;
 
       // debug print statements for allowNavToRegister
       debugPrint('Allow navigation to register: $allowNavToRegister');
@@ -87,14 +95,14 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       }
 
       // If the user is logged in, redirect to home
-      if (loggedIn && (isLoginPage || isRegisterPage)) {
-        // If logged in, don't allow access to login/register
+      if (loggedIn && (isLoginPage || isRegisterPage || isResetPasswordPage)) {
+        // If logged in, don't allow access to login/register/reset-password
         return AppRoutes.home;
       }
       if (!loggedIn &&
-          !(isLoginPage || isRegisterPage) &&
+          !(isLoginPage || isRegisterPage || isResetPasswordPage) &&
           !allowNavToRegister) {
-        // If not logged in and not on login/register, redirect to login
+        // If not logged in and not on login/register/reset-password, redirect to login
         return AppRoutes.login;
       } else if (!loggedIn && isRegisterPage && !allowNavToRegister) {
         // If not logged in and on register page, redirect to login
@@ -129,11 +137,106 @@ final appRouteProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: AppRoutes.resetPassword,
+        name: AppRoutes.resetPasswordRoute,
+        builder: (context, state) {
+          return const PasswordResetPage();
+        },
+      ),
+      GoRoute(
         path: AppRoutes.home,
         name: AppRoutes.homeRoute,
-        builder: (context, state) {
-          return const HomePage();
+        redirect: (context, state) async {
+          final currentUser = auth.currentUser;
+          if (currentUser == null) return AppRoutes.login;
+
+          // Get user role from Firestore
+          try {
+            final userService = ref.read(firestoreUserServiceProvider);
+            final userProfile = await userService.getUserProfile(
+              currentUser.uid,
+            );
+
+            if (userProfile == null) return AppRoutes.roleSelection;
+
+            // Redirect based on role
+            if (userProfile.role == UserRole.hustler.value) {
+              return AppRoutes.hustlerDashboard;
+            } else if (userProfile.role == UserRole.employer.value) {
+              return AppRoutes.employerDashboard;
+            }
+
+            return AppRoutes.roleSelection; // Fallback
+          } catch (e) {
+            return AppRoutes.login;
+          }
         },
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+      ),
+
+      // Role selection page
+      GoRoute(
+        path: AppRoutes.roleSelection,
+        name: AppRoutes.roleSelectionRoute,
+        builder: (context, state) => const RoleSelectionPageNew(),
+      ),
+
+      // Hustler routes
+      ShellRoute(
+        builder: (context, state, child) => HustlerShell(child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutes.hustlerDashboard,
+            name: AppRoutes.hustlerDashboardRoute,
+            builder: (context, state) => const HustlerDashboardPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.hustlerProfile,
+            name: AppRoutes.hustlerProfileRoute,
+            builder: (context, state) => const HustlerProfilePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.hustlerApplications,
+            name: AppRoutes.hustlerApplicationsRoute,
+            builder: (context, state) => const HustlerApplicationsPage(),
+          ),
+          GoRoute(
+            path: '${AppRoutes.jobDetails}/:jobId',
+            name: AppRoutes.jobDetailsRoute,
+            builder: (context, state) {
+              final jobId = state.pathParameters['jobId']!;
+              return JobDetailsPage(jobId: jobId);
+            },
+          ),
+        ],
+      ),
+
+      // Employer routes
+      ShellRoute(
+        builder: (context, state, child) => EmployerShell(child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutes.employerDashboard,
+            name: AppRoutes.employerDashboardRoute,
+            builder: (context, state) => const EmployerDashboardPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.employerProfile,
+            name: AppRoutes.employerProfileRoute,
+            builder: (context, state) => const EmployerProfilePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.employerJobs,
+            name: AppRoutes.employerJobsRoute,
+            builder: (context, state) => const JobManagementPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.employerPostJob,
+            name: AppRoutes.employerPostJobRoute,
+            builder: (context, state) => const PostJobPage(),
+          ),
+        ],
       ),
     ],
   );
@@ -145,6 +248,7 @@ class AppRoutes {
   // auth routes
   static const String login = '/login';
   static const String register = '/register';
+  static const String resetPassword = '/reset-password';
   // home page
   static const String home = '/';
   // welcome page
@@ -154,13 +258,44 @@ class AppRoutes {
   // initial loading page
   static const String initialLoading = '/initial_loading';
 
+  // role selection
+  static const String roleSelection = '/role-selection';
+
+  // hustler routes
+  static const String hustlerDashboard = '/hustler/dashboard';
+  static const String hustlerProfile = '/hustler/profile';
+  static const String hustlerApplications = '/hustler/applications';
+  static const String jobDetails = '/hustler/job';
+
+  // employer routes
+  static const String employerDashboard = '/employer/dashboard';
+  static const String employerProfile = '/employer/profile';
+  static const String employerJobs = '/employer/jobs';
+  static const String employerPostJob = '/employer/post-job';
+
   // route names
   static const String loginRoute = 'login';
   static const String registerRoute = 'register';
+  static const String resetPasswordRoute = 'reset_password';
   static const String homeRoute = 'home';
   static const String welcomeRoute = 'welcome';
   static const String errorInitialRoute = 'error_initial';
   static const String initialLoadingRoute = 'initial_loading';
+
+  // role selection
+  static const String roleSelectionRoute = 'role_selection';
+
+  // hustler route names
+  static const String hustlerDashboardRoute = 'hustler_dashboard';
+  static const String hustlerProfileRoute = 'hustler_profile';
+  static const String hustlerApplicationsRoute = 'hustler_applications';
+  static const String jobDetailsRoute = 'job_details';
+
+  // employer route names
+  static const String employerDashboardRoute = 'employer_dashboard';
+  static const String employerProfileRoute = 'employer_profile';
+  static const String employerJobsRoute = 'employer_jobs';
+  static const String employerPostJobRoute = 'employer_post_job';
 
   // add more routes as needed
 }
@@ -227,6 +362,114 @@ final welcomePageSharedPreferencesProvider =
     ChangeNotifierProvider<WelcomePageSharedPreferencesNotifier>(
       (ref) => WelcomePageSharedPreferencesNotifier(ref),
     );
+
+/// Shell widget for hustler navigation
+class HustlerShell extends ConsumerWidget {
+  final Widget child;
+
+  const HustlerShell({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _getCurrentIndex(context),
+        onTap: (index) => _onTap(context, index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Applications',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+
+  int _getCurrentIndex(BuildContext context) {
+    final location = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration.uri.path;
+    if (location.startsWith('/hustler/applications')) return 1;
+    if (location.startsWith('/hustler/profile')) return 2;
+    return 0; // Dashboard
+  }
+
+  void _onTap(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        context.go(AppRoutes.hustlerDashboard);
+        break;
+      case 1:
+        context.go(AppRoutes.hustlerApplications);
+        break;
+      case 2:
+        context.go(AppRoutes.hustlerProfile);
+        break;
+    }
+  }
+}
+
+/// Shell widget for employer navigation
+class EmployerShell extends ConsumerWidget {
+  final Widget child;
+
+  const EmployerShell({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _getCurrentIndex(context),
+        onTap: (index) => _onTap(context, index),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Jobs'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'Post Job',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+
+  int _getCurrentIndex(BuildContext context) {
+    final location = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration.uri.path;
+    if (location.startsWith('/employer/jobs')) return 1;
+    if (location.startsWith('/employer/post-job')) return 2;
+    if (location.startsWith('/employer/profile')) return 3;
+    return 0; // Dashboard
+  }
+
+  void _onTap(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        context.go(AppRoutes.employerDashboard);
+        break;
+      case 1:
+        context.go(AppRoutes.employerJobs);
+        break;
+      case 2:
+        context.go(AppRoutes.employerPostJob);
+        break;
+      case 3:
+        context.go(AppRoutes.employerProfile);
+        break;
+    }
+  }
+}
 
 // listener for first time open app state
 // @riverpod

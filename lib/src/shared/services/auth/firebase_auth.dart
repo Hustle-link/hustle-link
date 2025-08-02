@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'firebase_auth.g.dart';
@@ -25,8 +23,8 @@ class FirebaseAuthService {
       );
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      debugPrint('Sign out failed: $e');
-      throw Exception('Sign out failed: $e');
+      debugPrint('Registration failed: $e');
+      throw Exception('Registration failed: $e');
     } on Exception catch (e) {
       debugPrint('Registration failed: $e');
       throw Exception('Registration failed: $e');
@@ -45,8 +43,8 @@ class FirebaseAuthService {
       );
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      debugPrint('Sign out failed: $e');
-      throw Exception('Sign out failed: $e');
+      debugPrint('Sign in failed: $e');
+      throw Exception('Sign in failed: $e');
     } on Exception catch (e) {
       debugPrint('Sign in failed: $e');
       throw Exception('Sign in failed: $e');
@@ -63,6 +61,20 @@ class FirebaseAuthService {
     } on Exception catch (e) {
       debugPrint('Sign out failed: $e');
       throw Exception('Sign out failed: $e');
+    }
+  }
+
+  /// Send a password reset email
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+      await instance.sendPasswordResetEmail(email: email);
+      debugPrint('Password reset email sent to: $email');
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Password reset failed: $e');
+      throw Exception('Password reset failed: $e');
+    } on Exception catch (e) {
+      debugPrint('Password reset failed: $e');
+      throw Exception('Password reset failed: $e');
     }
   }
 
