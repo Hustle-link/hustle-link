@@ -61,7 +61,7 @@ class RegisterPage extends HookConsumerWidget {
                 AppStringsAuth.registerSubtitle,
                 style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 2.h),
+              SizedBox(height: 4.h),
               // input fields
               TextField(
                 controller: emailController,
@@ -95,10 +95,11 @@ class RegisterPage extends HookConsumerWidget {
                 },
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.emailLabel,
+                  border: OutlineInputBorder(),
                   errorText: emailErrorText.value, // will be set dynamically
                 ),
               ),
-              SizedBox(height: 1.h),
+              SizedBox(height: 3.h),
               TextField(
                 controller: passwordController,
                 keyboardType: TextInputType.visiblePassword,
@@ -116,6 +117,19 @@ class RegisterPage extends HookConsumerWidget {
                     } else {
                       passwordErrorText.value = null; // clear error if valid
                     }
+
+                    // Also validate confirm password if it has content
+                    if (confirmPasswordController.text.isNotEmpty) {
+                      final confirmError = confirmPasswordValidator(
+                        confirmPasswordController.text,
+                        passwordController.text,
+                      );
+                      if (confirmError != null) {
+                        confirmPasswordErrorText.value = confirmError;
+                      } else {
+                        confirmPasswordErrorText.value = null;
+                      }
+                    }
                   }
                   // unfocus the text field
                   passwordFocusNode.unfocus();
@@ -129,56 +143,123 @@ class RegisterPage extends HookConsumerWidget {
                     } else {
                       passwordErrorText.value = null; // clear error if valid
                     }
+
+                    // Also validate confirm password if it has content
+                    if (confirmPasswordController.text.isNotEmpty) {
+                      final confirmError = confirmPasswordValidator(
+                        confirmPasswordController.text,
+                        value,
+                      );
+                      if (confirmError != null) {
+                        confirmPasswordErrorText.value = confirmError;
+                      } else {
+                        confirmPasswordErrorText.value = null;
+                      }
+                    }
                   }
                 },
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.passwordLabel,
+                  border: OutlineInputBorder(),
                   errorText: passwordErrorText.value, // will be set dynamically
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 1.h),
+              SizedBox(height: 3.h),
               TextField(
                 controller: confirmPasswordController,
                 keyboardType: TextInputType.visiblePassword,
                 focusNode: confirmPasswordFocusNode,
-                decoration: const InputDecoration(
+                textInputAction: TextInputAction.done,
+                // validation for confirm password
+                onTapOutside: (event) {
+                  if (confirmPasswordFocusNode.hasFocus) {
+                    // validate confirm password
+                    final confirmError = confirmPasswordValidator(
+                      confirmPasswordController.text,
+                      passwordController.text,
+                    );
+                    if (confirmError != null) {
+                      confirmPasswordErrorText.value = confirmError;
+                    } else {
+                      confirmPasswordErrorText.value =
+                          null; // clear error if valid
+                    }
+                  }
+                  // unfocus the text field
+                  confirmPasswordFocusNode.unfocus();
+                },
+                onChanged: (value) {
+                  if (confirmPasswordFocusNode.hasFocus) {
+                    // validate confirm password
+                    final confirmError = confirmPasswordValidator(
+                      value,
+                      passwordController.text,
+                    );
+                    if (confirmError != null) {
+                      confirmPasswordErrorText.value = confirmError;
+                    } else {
+                      confirmPasswordErrorText.value =
+                          null; // clear error if valid
+                    }
+                  }
+                },
+                decoration: InputDecoration(
                   labelText: AppStringsAuth.confirmPasswordLabel,
+                  border: OutlineInputBorder(),
+                  errorText:
+                      confirmPasswordErrorText.value, // will be set dynamically
                 ),
                 obscureText: true,
               ),
               SizedBox(height: 3.h),
-              // show error message if passwords do not match
-              // show only if the form is not empty
-              if (confirmPasswordController.text.isNotEmpty &&
-                  passwordController.text.isNotEmpty &&
-                  confirmPasswordValidator(
-                        confirmPasswordController.text.trim(),
-                        passwordController.text.trim(),
-                      ) !=
-                      null)
-                Text(
-                  AppStringsAuth.passwordsDoNotMatch,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              // if (confirmPasswordValidator(
-              //       passwordController.text.trim(),
-              //       confirmPasswordController.text.trim(),
-              //     ) !=
-              //     null)
-              //   Text(
-              //     AppStringsAuth.passwordsDoNotMatch,
-              //     style: TextStyle(color: Theme.of(context).colorScheme.error),
-              //   ),
               // register button
-              // make button to be disabled if email or password is empty
+              // make button to be disabled if email or password is empty or has validation errors
               ElevatedButton(
                 onPressed:
                     emailController.text.isEmpty ||
                         passwordController.text.isEmpty ||
-                        confirmPasswordController.text.isEmpty
+                        confirmPasswordController.text.isEmpty ||
+                        emailErrorText.value != null ||
+                        passwordErrorText.value != null ||
+                        confirmPasswordErrorText.value != null ||
+                        authControllerMutation.isLoading
                     ? null
                     : () async {
+                        // Clear any existing error messages
+                        emailErrorText.value = null;
+                        passwordErrorText.value = null;
+                        confirmPasswordErrorText.value = null;
+
+                        // Validate all fields before submission
+                        final emailError = emailValidator(
+                          emailController.text.trim(),
+                        );
+                        final passwordError = passwordValidator(
+                          passwordController.text,
+                        );
+                        final confirmError = confirmPasswordValidator(
+                          confirmPasswordController.text,
+                          passwordController.text,
+                        );
+
+                        // Check for validation errors
+                        if (emailError != null) {
+                          emailErrorText.value = emailError;
+                          return;
+                        }
+                        if (passwordError != null) {
+                          passwordErrorText.value = passwordError;
+                          return;
+                        }
+                        if (confirmError != null) {
+                          confirmPasswordErrorText.value = confirmError;
+                          return;
+                        }
+
+                        // Dismiss keyboard
+                        FocusScope.of(context).unfocus();
+
                         try {
                           // call register legacy method from auth controller (without role)
                           await authController.registerLegacy(
@@ -190,43 +271,89 @@ class RegisterPage extends HookConsumerWidget {
                           if (context.mounted) {
                             context.go(AppRoutes.roleSelection);
                           }
+
+                          // clear the text fields only after successful registration
+                          emailController.clear();
+                          passwordController.clear();
+                          confirmPasswordController.clear();
                         } catch (e) {
                           // Error handling is done by the auth controller
                           debugPrint('Registration failed: $e');
                         }
-
-                        // clear the text fields after registration attempt
-                        emailController.clear();
-                        passwordController.clear();
-                        confirmPasswordController.clear();
                       },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
+                  side: BorderSide.none,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                ),
                 child: authControllerMutation.map(
                   idle: () {
-                    return const Text(AppStringsAuth.registerButton);
+                    return Text(
+                      AppStringsAuth.registerButton,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    );
                   },
                   loading: () {
                     return const CircularProgressIndicator();
                   },
                   error: (error, _) {
-                    return Text('Error: $error');
+                    return Text(
+                      'Error: ${error.toString()}',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    );
                   },
                   data: (data) {
-                    return const Text(AppStringsAuth.registerButton);
+                    return Text(
+                      AppStringsAuth.registerButton,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    );
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 2.h),
 
-              TextButton(
-                onPressed: () {
-                  // set allow navigation to login page
-                  ref
-                      .read(allowNavToRegisterProvider.notifier)
-                      .disallowNavigation();
-                  // navigate to login page
-                  context.goNamed(AppRoutes.loginRoute);
-                },
-                child: const Text('Already have an account? Login'),
+              // Login link styled consistently with login page
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppStringsAuth.alreadyHaveAccount,
+                    style: TextStyle(fontSize: 15.sp),
+                  ),
+                  SizedBox(width: 1.w),
+                  TextButton(
+                    onPressed: () {
+                      // set allow navigation to login page
+                      ref
+                          .read(allowNavToRegisterProvider.notifier)
+                          .disallowNavigation();
+                      // navigate to login page
+                      context.goNamed(AppRoutes.loginRoute);
+                    },
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
