@@ -6,20 +6,33 @@ part of 'hustler.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_Hustler _$HustlerFromJson(Map<String, dynamic> json) => _Hustler(
-  uid: json['uid'] as String,
-  email: json['email'] as String,
-  name: json['name'] as String,
-  skills: (json['skills'] as List<dynamic>).map((e) => e as String).toList(),
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  bio: json['bio'] as String?,
-  experience: json['experience'] as String?,
-  location: json['location'] as String?,
-  phoneNumber: json['phoneNumber'] as String?,
-  photoUrl: json['photoUrl'] as String?,
-  rating: (json['rating'] as num?)?.toDouble(),
-  completedJobs: (json['completedJobs'] as num?)?.toInt(),
-);
+_Hustler _$HustlerFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('_Hustler', json, ($checkedConvert) {
+      final val = _Hustler(
+        uid: $checkedConvert('uid', (v) => v as String),
+        email: $checkedConvert('email', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        skills: $checkedConvert(
+          'skills',
+          (v) => (v as List<dynamic>).map((e) => e as String).toList(),
+        ),
+        createdAt: $checkedConvert(
+          'createdAt',
+          (v) => DateTime.parse(v as String),
+        ),
+        bio: $checkedConvert('bio', (v) => v as String?),
+        experience: $checkedConvert('experience', (v) => v as String?),
+        location: $checkedConvert('location', (v) => v as String?),
+        phoneNumber: $checkedConvert('phoneNumber', (v) => v as String?),
+        photoUrl: $checkedConvert('photoUrl', (v) => v as String?),
+        rating: $checkedConvert('rating', (v) => (v as num?)?.toDouble()),
+        completedJobs: $checkedConvert(
+          'completedJobs',
+          (v) => (v as num?)?.toInt(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$HustlerToJson(_Hustler instance) => <String, dynamic>{
   'uid': instance.uid,

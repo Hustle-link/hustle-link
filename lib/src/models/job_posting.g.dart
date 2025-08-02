@@ -6,25 +6,38 @@ part of 'job_posting.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_JobPosting _$JobPostingFromJson(Map<String, dynamic> json) => _JobPosting(
-  id: json['id'] as String,
-  employerUid: json['employerUid'] as String,
-  title: json['title'] as String,
-  description: json['description'] as String,
-  skillsRequired: (json['skillsRequired'] as List<dynamic>)
-      .map((e) => e as String)
-      .toList(),
-  compensation: (json['compensation'] as num).toDouble(),
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  status: $enumDecode(_$JobStatusEnumMap, json['status']),
-  location: json['location'] as String?,
-  employerName: json['employerName'] as String?,
-  employerCompany: json['employerCompany'] as String?,
-  deadline: json['deadline'] == null
-      ? null
-      : DateTime.parse(json['deadline'] as String),
-  applicationsCount: (json['applicationsCount'] as num?)?.toInt(),
-);
+_JobPosting _$JobPostingFromJson(
+  Map<String, dynamic> json,
+) => $checkedCreate('_JobPosting', json, ($checkedConvert) {
+  final val = _JobPosting(
+    id: $checkedConvert('id', (v) => v as String),
+    employerUid: $checkedConvert('employerUid', (v) => v as String),
+    title: $checkedConvert('title', (v) => v as String),
+    description: $checkedConvert('description', (v) => v as String),
+    skillsRequired: $checkedConvert(
+      'skillsRequired',
+      (v) => (v as List<dynamic>).map((e) => e as String).toList(),
+    ),
+    compensation: $checkedConvert('compensation', (v) => (v as num).toDouble()),
+    createdAt: $checkedConvert('createdAt', (v) => DateTime.parse(v as String)),
+    status: $checkedConvert(
+      'status',
+      (v) => $enumDecode(_$JobStatusEnumMap, v),
+    ),
+    location: $checkedConvert('location', (v) => v as String?),
+    employerName: $checkedConvert('employerName', (v) => v as String?),
+    employerCompany: $checkedConvert('employerCompany', (v) => v as String?),
+    deadline: $checkedConvert(
+      'deadline',
+      (v) => v == null ? null : DateTime.parse(v as String),
+    ),
+    applicationsCount: $checkedConvert(
+      'applicationsCount',
+      (v) => (v as num?)?.toInt(),
+    ),
+  );
+  return val;
+});
 
 Map<String, dynamic> _$JobPostingToJson(_JobPosting instance) =>
     <String, dynamic>{

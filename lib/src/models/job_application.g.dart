@@ -7,20 +7,30 @@ part of 'job_application.dart';
 // **************************************************************************
 
 _JobApplication _$JobApplicationFromJson(Map<String, dynamic> json) =>
-    _JobApplication(
-      id: json['id'] as String,
-      jobId: json['jobId'] as String,
-      hustlerUid: json['hustlerUid'] as String,
-      employerUid: json['employerUid'] as String,
-      appliedAt: DateTime.parse(json['appliedAt'] as String),
-      status: $enumDecode(_$ApplicationStatusEnumMap, json['status']),
-      coverLetter: json['coverLetter'] as String?,
-      hustlerName: json['hustlerName'] as String?,
-      jobTitle: json['jobTitle'] as String?,
-      reviewedAt: json['reviewedAt'] == null
-          ? null
-          : DateTime.parse(json['reviewedAt'] as String),
-    );
+    $checkedCreate('_JobApplication', json, ($checkedConvert) {
+      final val = _JobApplication(
+        id: $checkedConvert('id', (v) => v as String),
+        jobId: $checkedConvert('jobId', (v) => v as String),
+        hustlerUid: $checkedConvert('hustlerUid', (v) => v as String),
+        employerUid: $checkedConvert('employerUid', (v) => v as String),
+        appliedAt: $checkedConvert(
+          'appliedAt',
+          (v) => DateTime.parse(v as String),
+        ),
+        status: $checkedConvert(
+          'status',
+          (v) => $enumDecode(_$ApplicationStatusEnumMap, v),
+        ),
+        coverLetter: $checkedConvert('coverLetter', (v) => v as String?),
+        hustlerName: $checkedConvert('hustlerName', (v) => v as String?),
+        jobTitle: $checkedConvert('jobTitle', (v) => v as String?),
+        reviewedAt: $checkedConvert(
+          'reviewedAt',
+          (v) => v == null ? null : DateTime.parse(v as String),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$JobApplicationToJson(_JobApplication instance) =>
     <String, dynamic>{

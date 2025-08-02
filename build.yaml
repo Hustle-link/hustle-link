@@ -1,0 +1,48 @@
+# Build configuration for Hustle Link Flutter project
+# This configuration optimizes code generation for Firebase integration and models
+
+targets:
+  $default:
+    builders:
+      # JSON Serializable Configuration for Firebase optimization
+      json_serializable:
+        options:
+          # Explicitly generate toJson methods for Firebase compatibility
+          explicit_to_json: true
+          # Include null values in JSON for Firebase document consistency
+          include_if_null: true
+          # Better error messages during development
+          checked: true
+          # Consistent field naming for Firebase documents
+          field_rename: none
+          # Generate factories for better performance
+          create_factory: true
+
+      # Freezed Configuration for model optimization
+      freezed:
+        options:
+          # Generate copyWith methods with better type safety
+          copy_with: true
+          # Generate equality operators
+          equal: true
+          # Generate toString methods for debugging
+          to_string: true
+          # Generate map/when methods for pattern matching
+          map: true
+          # Make generated classes implement Serializable interface
+          make_collection_unmodifiable: true
+
+# Global build configuration for consistent Firebase integration
+global_options:
+  json_serializable:
+    options:
+      # Global setting for explicit toJson generation
+      explicit_to_json: true
+      # Always include null fields for Firebase document consistency
+      include_if_null: true
+      # Better error messages during development
+      checked: true
+      # Consistent field naming for Firebase documents
+      field_rename: none
+      # Generate factories for better performance
+      create_factory: true
