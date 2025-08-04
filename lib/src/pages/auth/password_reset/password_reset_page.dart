@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
@@ -13,11 +14,57 @@ class PasswordResetPage extends HookConsumerWidget {
     final pageController = usePageController();
     final emailController = useTextEditingController();
     final emailErrorText = useState<String?>(null);
-    final isLoading = useState(false);
+    final authErrorText = useState<String?>(null);
     final isSent = useState(false);
 
     final authController = ref.read(authControllerProvider.notifier);
-    void sendReset() async {
+    final authControllerMutation = ref.watch(authControllerProvider);
+
+    // Handle auth state changes for password reset
+    useEffect(() {
+      void handleAuthState() {
+        authControllerMutation.map(
+          idle: () => null,
+          loading: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.showLoading(
+                msg: 'Sending password reset email...',
+                maskColor: Colors.black54,
+              );
+            });
+            return null;
+          },
+          error: (error, _) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.dismiss();
+              debugPrint('Password reset error: ${error.toString()}');
+              // Clean up the error message by removing "Exception: " prefix
+              final cleanError = error.toString().replaceAll('Exception: ', '');
+              authErrorText.value = cleanError;
+            });
+            return null;
+          },
+          data: (_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.dismiss();
+              authErrorText.value = null; // Clear any errors
+              isSent.value = true;
+              pageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+              SmartDialog.showToast('Password reset email sent successfully!');
+            });
+            return null;
+          },
+        );
+      }
+
+      handleAuthState();
+      return null;
+    }, [authControllerMutation]);
+
+    Future<void> sendReset() async {
       final email = emailController.text.trim();
       final error = emailValidator(email);
       if (error != null) {
@@ -25,22 +72,10 @@ class PasswordResetPage extends HookConsumerWidget {
         return;
       }
       emailErrorText.value = null;
-      isLoading.value = true;
-      try {
-        await authController.resetPassword(email);
-        isSent.value = true;
-        pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password reset email sent!')),
-        );
-      } catch (e) {
-        emailErrorText.value = e.toString();
-      } finally {
-        isLoading.value = false;
-      }
+      authErrorText.value = null; // Clear any auth errors
+
+      FocusScope.of(context).unfocus();
+      await authController.resetPassword(email);
     }
 
     return Scaffold(
@@ -86,11 +121,17 @@ class PasswordResetPage extends HookConsumerWidget {
                     ),
                   ),
                   SizedBox(height: 3.h),
+                  // Show auth error container if there's an error
+                  if (authErrorText.value != null)
+                    ErrorContainer(
+                      errorMessage: authErrorText.value!,
+                      onDismiss: () => authErrorText.value = null,
+                    ),
                   ElevatedButton(
-                    onPressed: isLoading.value ? null : sendReset,
-                    child: isLoading.value
-                        ? const CircularProgressIndicator.adaptive()
-                        : Text(AppStringsAuth.resetPasswordButton),
+                    onPressed: authControllerMutation.isLoading
+                        ? null
+                        : sendReset,
+                    child: Text(AppStringsAuth.resetPasswordButton),
                   ),
                 ],
               ),

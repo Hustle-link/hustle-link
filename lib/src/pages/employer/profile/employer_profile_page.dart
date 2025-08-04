@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
@@ -11,26 +12,41 @@ class EmployerProfilePage extends HookConsumerWidget {
     final employerProfile = ref.watch(currentEmployerProfileProvider);
     final authController = ref.read(authControllerProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await authController.signOut();
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: employerProfile.when(
-        data: (profile) {
-          if (profile == null) {
-            return const Center(child: Text('Profile not found'));
-          }
+    return employerProfile.when(
+      data: (profile) {
+        if (profile == null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Profile'),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+            ),
+            body: const Center(child: Text('Profile not found')),
+          );
+        }
 
-          return SingleChildScrollView(
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Profile'),
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.pushNamed(
+                    AppRoutes.employerEditProfileRoute,
+                    extra: profile.toJson(),
+                  );
+                },
+                icon: const Icon(Icons.edit),
+              ),
+              IconButton(
+                onPressed: () async {
+                  await authController.signOut();
+                },
+                icon: const Icon(Icons.logout),
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
             padding: EdgeInsets.all(4.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,11 +218,22 @@ class EmployerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 6.h),
               ],
             ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) =>
-            Center(child: Text('Error loading profile: $error')),
+          ),
+        );
+      },
+      loading: () => Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile'),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile'),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+        ),
+        body: Center(child: Text('Error loading profile: $error')),
       ),
     );
   }

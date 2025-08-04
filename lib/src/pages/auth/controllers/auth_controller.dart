@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -42,8 +41,12 @@ class AuthController extends _$AuthController with Mutation {
         }
       },
       onError: (error) {
-        // Handle error if needed
+        // Handle error with user-friendly message
         debugPrint('Registration error: $error');
+        final userFriendlyError = AuthErrorHandler.getRegistrationErrorMessage(
+          error,
+        );
+        throw Exception(userFriendlyError);
       },
       onSuccess: (data) {
         // Handle success if needed
@@ -67,8 +70,12 @@ class AuthController extends _$AuthController with Mutation {
         );
       },
       onError: (error) {
-        // Handle error if needed
+        // Handle error with user-friendly message
         debugPrint('Registration error: $error');
+        final userFriendlyError = AuthErrorHandler.getRegistrationErrorMessage(
+          error,
+        );
+        throw Exception(userFriendlyError);
       },
       onSuccess: (data) {
         // Handle success if needed
@@ -84,23 +91,20 @@ class AuthController extends _$AuthController with Mutation {
   Future<void> signIn(String email, String password) async {
     final firebaseAuthService = ref.watch(firebaseAuthServiceProvider);
 
-    await mutateAsync(
-      () async {
+    try {
+      await mutateAsync(() async {
         await firebaseAuthService.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
-      },
-      // onError: (error) {
-      //   // Handle error if needed
-      //   debugPrint('Sign in error: $error');
-      //   throw Exception('Sign in failed: $error');
-      // },
-      // onSuccess: (data) {
-      //   // Handle success if needed
-      //   debugPrint('Sign in successful');
-      // },
-    );
+      });
+      debugPrint('Sign in successful');
+    } catch (error) {
+      // Handle error with user-friendly message
+      debugPrint('Sign in error: $error');
+      final userFriendlyError = AuthErrorHandler.getLoginErrorMessage(error);
+      throw Exception(userFriendlyError);
+    }
   }
 
   /// Sign out the current user
@@ -132,6 +136,10 @@ class AuthController extends _$AuthController with Mutation {
       },
       onError: (error) {
         debugPrint('Password reset error: $error');
+        final userFriendlyError = AuthErrorHandler.getPasswordResetErrorMessage(
+          error,
+        );
+        throw Exception(userFriendlyError);
       },
       onSuccess: (data) {
         debugPrint('Password reset email sent');
@@ -164,6 +172,10 @@ class AuthController extends _$AuthController with Mutation {
       },
       onError: (error) {
         debugPrint('Profile creation error: $error');
+        final userFriendlyError = AuthErrorHandler.getFirebaseAuthErrorMessage(
+          error,
+        );
+        throw Exception(userFriendlyError);
       },
       onSuccess: (data) {
         debugPrint('Profile creation successful');

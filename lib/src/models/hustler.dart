@@ -19,6 +19,7 @@ abstract class Hustler with _$Hustler {
     String? photoUrl,
     double? rating,
     int? completedJobs,
+    @Default([]) List<String> certifications, // URLs to certification files
   }) = _Hustler;
 
   factory Hustler.fromJson(Map<String, dynamic> json) =>

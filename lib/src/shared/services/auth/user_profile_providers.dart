@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -35,12 +36,23 @@ Future<Hustler?> currentHustlerProfile(Ref ref) async {
   final userService = ref.watch(firestoreUserServiceProvider);
 
   final currentUser = authService.currentUser;
-  if (currentUser == null) return null;
+  debugPrint('Current user: ${currentUser?.uid}');
+
+  if (currentUser == null) {
+    debugPrint('No authenticated user found');
+    return null;
+  }
 
   // Check if user is a hustler first
   final userRole = await ref.watch(currentUserRoleProvider.future);
-  if (userRole != UserRole.hustler) return null;
+  debugPrint('User role: $userRole');
 
+  if (userRole != UserRole.hustler) {
+    debugPrint('User is not a hustler, role: $userRole');
+    return null;
+  }
+
+  debugPrint('Fetching hustler profile for user: ${currentUser.uid}');
   return await userService.getHustlerProfile(currentUser.uid);
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,11 +25,59 @@ class RegisterPage extends HookConsumerWidget {
     final emailErrorText = useState<String?>(null);
     final passwordErrorText = useState<String?>(null);
     final confirmPasswordErrorText = useState<String?>(null);
+    final authErrorText = useState<String?>(null);
 
     // focus nodes
     final emailFocusNode = useFocusNode();
     final passwordFocusNode = useFocusNode();
     final confirmPasswordFocusNode = useFocusNode();
+
+    // Handle auth state changes for registration
+    useEffect(() {
+      void handleAuthState() {
+        authControllerMutation.map(
+          idle: () => null,
+          loading: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.showLoading(
+                msg: AppStringsAuth.registrationLoadingMessage,
+                maskColor: Colors.black54,
+              );
+            });
+            return null;
+          },
+          error: (error, _) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.dismiss();
+              debugPrint(
+                'Registration error on register page: ${error.toString()}',
+              );
+              // Clean up the error message by removing "Exception: " prefix
+              final cleanError = error.toString().replaceAll('Exception: ', '');
+              authErrorText.value = cleanError;
+            });
+            return null;
+          },
+          data: (_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              SmartDialog.dismiss();
+              authErrorText.value = null; // Clear any errors
+              // Navigate to role selection page on successful registration
+              context.go(AppRoutes.roleSelection);
+
+              // clear the text fields only after successful registration
+              emailController.clear();
+              passwordController.clear();
+              confirmPasswordController.clear();
+            });
+            return null;
+          },
+        );
+      }
+
+      handleAuthState();
+      return null;
+    }, [authControllerMutation]);
 
     return Scaffold(
       appBar: AppBar(
@@ -213,6 +262,12 @@ class RegisterPage extends HookConsumerWidget {
                 obscureText: true,
               ),
               SizedBox(height: 3.h),
+              // Show auth error container if there's an error
+              if (authErrorText.value != null)
+                ErrorContainer(
+                  errorMessage: authErrorText.value!,
+                  onDismiss: () => authErrorText.value = null,
+                ),
               // register button
               // make button to be disabled if email or password is empty or has validation errors
               ElevatedButton(
@@ -230,6 +285,7 @@ class RegisterPage extends HookConsumerWidget {
                         emailErrorText.value = null;
                         passwordErrorText.value = null;
                         confirmPasswordErrorText.value = null;
+                        authErrorText.value = null;
 
                         // Validate all fields before submission
                         final emailError = emailValidator(
@@ -260,26 +316,11 @@ class RegisterPage extends HookConsumerWidget {
                         // Dismiss keyboard
                         FocusScope.of(context).unfocus();
 
-                        try {
-                          // call register legacy method from auth controller (without role)
-                          await authController.registerLegacy(
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                          );
-
-                          // Navigate to role selection page on successful registration
-                          if (context.mounted) {
-                            context.go(AppRoutes.roleSelection);
-                          }
-
-                          // clear the text fields only after successful registration
-                          emailController.clear();
-                          passwordController.clear();
-                          confirmPasswordController.clear();
-                        } catch (e) {
-                          // Error handling is done by the auth controller
-                          debugPrint('Registration failed: $e');
-                        }
+                        // call register legacy method from auth controller (without role)
+                        await authController.registerLegacy(
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                        );
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(
@@ -291,37 +332,12 @@ class RegisterPage extends HookConsumerWidget {
                   ),
                   padding: EdgeInsets.symmetric(vertical: 2.h),
                 ),
-                child: authControllerMutation.map(
-                  idle: () {
-                    return Text(
-                      AppStringsAuth.registerButton,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
-                    );
-                  },
-                  loading: () {
-                    return const CircularProgressIndicator();
-                  },
-                  error: (error, _) {
-                    return Text(
-                      'Error: ${error.toString()}',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
-                    );
-                  },
-                  data: (data) {
-                    return Text(
-                      AppStringsAuth.registerButton,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
-                    );
-                  },
+                child: Text(
+                  AppStringsAuth.registerButton,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                 ),
               ),
               SizedBox(height: 2.h),

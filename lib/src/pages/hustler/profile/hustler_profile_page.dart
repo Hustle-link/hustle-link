@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
@@ -18,6 +19,21 @@ class HustlerProfilePage extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
+              final profile = await ref.read(
+                currentHustlerProfileProvider.future,
+              );
+              if (profile != null && context.mounted) {
+                context.pushNamed(
+                  AppRoutes.hustlerEditProfileRoute,
+                  extra: profile.toJson(),
+                );
+              }
+            },
+            icon: const Icon(Icons.edit),
+            tooltip: 'Edit Profile',
+          ),
+          IconButton(
+            onPressed: () async {
               await authController.signOut();
             },
             icon: const Icon(Icons.logout),
@@ -35,6 +51,11 @@ class HustlerProfilePage extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Profile Completion Indicator
+                _ProfileCompletionCard(profile: profile),
+
+                SizedBox(height: 4.h),
+
                 // Profile Header
                 Container(
                   width: double.infinity,
@@ -95,6 +116,54 @@ class HustlerProfilePage extends HookConsumerWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
+                      ] else ...[
+                        SizedBox(height: 0.5.h),
+                        InkWell(
+                          onTap: () {
+                            context.pushNamed(
+                              AppRoutes.hustlerEditProfileRoute,
+                              extra: profile.toJson(),
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 4.w,
+                              vertical: 1.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  size: 16.sp,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                SizedBox(width: 1.w),
+                                Text(
+                                  'Add bio',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ],
                   ),
@@ -110,18 +179,36 @@ class HustlerProfilePage extends HookConsumerWidget {
                       icon: Icons.email_outlined,
                       label: 'Email',
                       value: profile.email,
+                      isEditable: false, // Email usually shouldn't be editable
                     ),
                     if (profile.phoneNumber != null)
                       _InfoRow(
                         icon: Icons.phone_outlined,
                         label: 'Phone',
                         value: profile.phoneNumber!,
+                        isEditable: true,
                       ),
                     if (profile.location != null)
                       _InfoRow(
                         icon: Icons.location_on_outlined,
                         label: 'Location',
                         value: profile.location!,
+                        isEditable: true,
+                      ),
+                    if (profile.phoneNumber == null || profile.location == null)
+                      _AddInfoPrompt(
+                        onTap: () async {
+                          context.pushNamed(
+                            AppRoutes.hustlerEditProfileRoute,
+                            extra: profile.toJson(),
+                          );
+                        },
+                        message:
+                            'Add ${profile.phoneNumber == null && profile.location == null
+                                ? 'phone number and location'
+                                : profile.phoneNumber == null
+                                ? 'phone number'
+                                : 'location'}',
                       ),
                   ],
                 ),
@@ -129,10 +216,10 @@ class HustlerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Skills
-                if (profile.skills.isNotEmpty) ...[
-                  _InfoSection(
-                    title: 'Skills',
-                    children: [
+                _InfoSection(
+                  title: 'Skills',
+                  children: [
+                    if (profile.skills.isNotEmpty) ...[
                       Wrap(
                         spacing: 2.w,
                         runSpacing: 1.h,
@@ -166,10 +253,21 @@ class HustlerProfilePage extends HookConsumerWidget {
                           );
                         }).toList(),
                       ),
+                    ] else ...[
+                      _AddInfoPrompt(
+                        onTap: () {
+                          context.pushNamed(
+                            AppRoutes.hustlerEditProfileRoute,
+                            extra: profile.toJson(),
+                          );
+                        },
+                        message: 'Add your skills to find relevant jobs',
+                      ),
                     ],
-                  ),
-                  SizedBox(height: 4.h),
-                ],
+                  ],
+                ),
+
+                SizedBox(height: 4.h),
 
                 // Statistics
                 _InfoSection(
@@ -204,10 +302,10 @@ class HustlerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Experience
-                if (profile.experience != null) ...[
-                  _InfoSection(
-                    title: 'Experience',
-                    children: [
+                _InfoSection(
+                  title: 'Experience',
+                  children: [
+                    if (profile.experience != null) ...[
                       Text(
                         profile.experience!,
                         style: TextStyle(
@@ -216,10 +314,21 @@ class HustlerProfilePage extends HookConsumerWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
+                    ] else ...[
+                      _AddInfoPrompt(
+                        onTap: () {
+                          context.pushNamed(
+                            AppRoutes.hustlerEditProfileRoute,
+                            extra: profile.toJson(),
+                          );
+                        },
+                        message: 'Add your work experience and achievements',
+                      ),
                     ],
-                  ),
-                  SizedBox(height: 4.h),
-                ],
+                  ],
+                ),
+
+                SizedBox(height: 4.h),
 
                 // Account Information
                 _InfoSection(
@@ -247,6 +356,24 @@ class HustlerProfilePage extends HookConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) =>
             Center(child: Text('Error loading profile: $error')),
+      ),
+      floatingActionButton: hustlerProfile.when(
+        data: (profile) {
+          if (profile == null) return null;
+
+          return FloatingActionButton(
+            onPressed: () {
+              context.pushNamed(
+                AppRoutes.hustlerEditProfileRoute,
+                extra: profile.toJson(),
+              );
+            },
+            tooltip: 'Edit Profile',
+            child: const Icon(Icons.edit),
+          );
+        },
+        loading: () => null,
+        error: (error, stack) => null,
       ),
     );
   }
@@ -282,11 +409,13 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
+  final bool isEditable;
 
   const _InfoRow({
     required this.icon,
     required this.label,
     required this.value,
+    this.isEditable = false,
   });
 
   @override
@@ -301,14 +430,28 @@ class _InfoRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    if (isEditable) ...[
+                      SizedBox(width: 1.w),
+                      Icon(
+                        Icons.edit,
+                        size: 12.sp,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.6),
+                      ),
+                    ],
+                  ],
                 ),
                 Text(
                   value,
@@ -367,6 +510,223 @@ class _StatCard extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
             textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddInfoPrompt extends StatelessWidget {
+  final VoidCallback onTap;
+  final String message;
+
+  const _AddInfoPrompt({required this.onTap, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 2.h),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.all(3.w),
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              style: BorderStyle.solid,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.add_circle_outline,
+                size: 20.sp,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              SizedBox(width: 3.w),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileCompletionCard extends StatelessWidget {
+  final Hustler profile;
+
+  const _ProfileCompletionCard({required this.profile});
+
+  double _calculateCompletionPercentage() {
+    int totalFields = 6; // name, bio, phone, location, skills, experience
+    int completedFields = 1; // name is always present
+
+    if (profile.bio != null && profile.bio!.isNotEmpty) completedFields++;
+    if (profile.phoneNumber != null && profile.phoneNumber!.isNotEmpty)
+      completedFields++;
+    if (profile.location != null && profile.location!.isNotEmpty)
+      completedFields++;
+    if (profile.skills.isNotEmpty) completedFields++;
+    if (profile.experience != null && profile.experience!.isNotEmpty)
+      completedFields++;
+
+    return completedFields / totalFields;
+  }
+
+  String _getCompletionMessage() {
+    final percentage = _calculateCompletionPercentage();
+    if (percentage == 1.0) return 'Your profile is complete! 🎉';
+    if (percentage >= 0.8) return 'Almost there! Just a few more details.';
+    if (percentage >= 0.5) return 'Good progress! Add more info to stand out.';
+    return 'Complete your profile to attract more opportunities.';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final percentage = _calculateCompletionPercentage();
+
+    if (percentage >= 1.0) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(4.w),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.green.withOpacity(0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 24.sp),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: Text(
+                _getCompletionMessage(),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.account_circle,
+                color: Theme.of(context).colorScheme.primary,
+                size: 24.sp,
+              ),
+              SizedBox(width: 3.w),
+              Expanded(
+                child: Text(
+                  'Profile Completion',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              Text(
+                '${(percentage * 100).toInt()}%',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 2.h),
+          LinearProgressIndicator(
+            value: percentage,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.outline.withOpacity(0.2),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            _getCompletionMessage(),
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+            ),
+          ),
+          SizedBox(height: 2.h),
+          InkWell(
+            onTap: () {
+              context.pushNamed(
+                AppRoutes.hustlerEditProfileRoute,
+                extra: profile.toJson(),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.edit,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 16.sp,
+                  ),
+                  SizedBox(width: 2.w),
+                  Text(
+                    'Complete Profile',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

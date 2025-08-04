@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
+import 'package:go_router/go_router.dart';
 
 class PostJobPage extends HookConsumerWidget {
   const PostJobPage({super.key});
@@ -230,9 +231,7 @@ class PostJobPage extends HookConsumerWidget {
                                         ),
                                       ),
                                     );
-                                    Navigator.of(
-                                      context,
-                                    ).pop(); // Go back to dashboard
+                                    context.pop(); // Go back to dashboard
                                   }
                                 } catch (e) {
                                   if (context.mounted) {

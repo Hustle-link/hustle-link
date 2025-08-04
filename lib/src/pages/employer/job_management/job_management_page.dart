@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
+import 'package:go_router/go_router.dart';
 
 class JobManagementPage extends HookConsumerWidget {
   const JobManagementPage({super.key});
@@ -364,12 +365,12 @@ class _JobManagementCard extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
+              context.pop();
               // Delete job implementation
               final jobService = ref.read(firestoreJobServiceProvider);
               try {

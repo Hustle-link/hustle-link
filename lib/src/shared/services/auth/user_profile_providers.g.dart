@@ -46,7 +46,7 @@ final currentUserRoleProvider = AutoDisposeFutureProvider<UserRole?>.internal(
 // ignore: unused_element
 typedef CurrentUserRoleRef = AutoDisposeFutureProviderRef<UserRole?>;
 String _$currentHustlerProfileHash() =>
-    r'27a3a8ceb3cae4e7daae2a07c4f694d761fb88ff';
+    r'dc12a846f9230dce3e72eeb7c55062a3819fe758';
 
 /// Provider to get current hustler profile
 ///

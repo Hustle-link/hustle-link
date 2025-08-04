@@ -27,6 +27,7 @@ class LoginPage extends HookConsumerWidget {
     // error texts
     final emailErrorText = useState<String?>(null);
     final passwordErrorText = useState<String?>(null);
+    final authErrorText = useState<String?>(null);
 
     // Handle auth state changes
     useEffect(() {
@@ -46,13 +47,16 @@ class LoginPage extends HookConsumerWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               SmartDialog.dismiss();
               debugPrint('Login error on login page: ${error.toString()}');
-              SmartDialog.showToast(error.toString());
+              // Clean up the error message by removing "Exception: " prefix
+              final cleanError = error.toString().replaceAll('Exception: ', '');
+              authErrorText.value = cleanError;
             });
             return null;
           },
           data: (_) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               SmartDialog.dismiss();
+              authErrorText.value = null; // Clear any errors
               context.goNamed(AppRoutes.homeRoute);
             });
             return null;
@@ -210,6 +214,13 @@ class LoginPage extends HookConsumerWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 2.h),
+              // Show auth error container if there's an error
+              if (authErrorText.value != null)
+                ErrorContainer(
+                  errorMessage: authErrorText.value!,
+                  onDismiss: () => authErrorText.value = null,
+                ),
               ElevatedButton(
                 onPressed: authControllerMutation.isLoading
                     ? null
@@ -217,6 +228,7 @@ class LoginPage extends HookConsumerWidget {
                         // Clear any existing error messages
                         emailErrorText.value = null;
                         passwordErrorText.value = null;
+                        authErrorText.value = null;
 
                         // Validate email
                         final emailError = emailValidator(emailController.text);

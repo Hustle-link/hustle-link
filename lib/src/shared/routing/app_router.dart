@@ -9,10 +9,12 @@ import 'package:hustle_link/src/pages/auth/role_selection/role_selection_page_ne
 import 'package:hustle_link/src/pages/auth/password_reset/password_reset_page.dart';
 import 'package:hustle_link/src/pages/hustler/dashboard/hustler_dashboard_page.dart';
 import 'package:hustle_link/src/pages/hustler/profile/hustler_profile_page.dart';
+import 'package:hustle_link/src/pages/hustler/profile/edit_hustler_profile_page.dart';
 import 'package:hustle_link/src/pages/hustler/applications/hustler_applications_page.dart';
 import 'package:hustle_link/src/pages/hustler/job_details/job_details_page.dart';
 import 'package:hustle_link/src/pages/employer/dashboard/employer_dashboard_page.dart';
 import 'package:hustle_link/src/pages/employer/profile/employer_profile_page.dart';
+import 'package:hustle_link/src/pages/employer/profile/edit_employer_profile_page.dart';
 import 'package:hustle_link/src/pages/employer/job_management/job_management_page.dart';
 import 'package:hustle_link/src/pages/employer/post_job/post_job_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -172,7 +174,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
           }
         },
         builder: (context, state) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
+            const AppLoadingScreen(message: 'Setting up your dashboard...'),
       ),
 
       // Role selection page
@@ -195,6 +197,15 @@ final appRouteProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.hustlerProfile,
             name: AppRoutes.hustlerProfileRoute,
             builder: (context, state) => const HustlerProfilePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.hustlerEditProfile,
+            name: AppRoutes.hustlerEditProfileRoute,
+            builder: (context, state) {
+              final profileJson = state.extra as Map<String, dynamic>;
+              final profile = Hustler.fromJson(profileJson);
+              return EditHustlerProfilePage(profile: profile);
+            },
           ),
           GoRoute(
             path: AppRoutes.hustlerApplications,
@@ -225,6 +236,15 @@ final appRouteProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.employerProfile,
             name: AppRoutes.employerProfileRoute,
             builder: (context, state) => const EmployerProfilePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.employerEditProfile,
+            name: AppRoutes.employerEditProfileRoute,
+            builder: (context, state) {
+              final profileJson = state.extra as Map<String, dynamic>;
+              final profile = Employer.fromJson(profileJson);
+              return EditEmployerProfilePage(profile: profile);
+            },
           ),
           GoRoute(
             path: AppRoutes.employerJobs,
@@ -264,12 +284,14 @@ class AppRoutes {
   // hustler routes
   static const String hustlerDashboard = '/hustler/dashboard';
   static const String hustlerProfile = '/hustler/profile';
+  static const String hustlerEditProfile = '/hustler/profile/edit';
   static const String hustlerApplications = '/hustler/applications';
   static const String jobDetails = '/hustler/job';
 
   // employer routes
   static const String employerDashboard = '/employer/dashboard';
   static const String employerProfile = '/employer/profile';
+  static const String employerEditProfile = '/employer/profile/edit';
   static const String employerJobs = '/employer/jobs';
   static const String employerPostJob = '/employer/post-job';
 
@@ -288,12 +310,14 @@ class AppRoutes {
   // hustler route names
   static const String hustlerDashboardRoute = 'hustler_dashboard';
   static const String hustlerProfileRoute = 'hustler_profile';
+  static const String hustlerEditProfileRoute = 'hustler_edit_profile';
   static const String hustlerApplicationsRoute = 'hustler_applications';
   static const String jobDetailsRoute = 'job_details';
 
   // employer route names
   static const String employerDashboardRoute = 'employer_dashboard';
   static const String employerProfileRoute = 'employer_profile';
+  static const String employerEditProfileRoute = 'employer_edit_profile';
   static const String employerJobsRoute = 'employer_jobs';
   static const String employerPostJobRoute = 'employer_post_job';
 
@@ -373,17 +397,37 @@ class HustlerShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _getCurrentIndex(context),
-        onTap: (index) => _onTap(context, index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _getCurrentIndex(context),
+        onDestinationSelected: (index) => _onTap(context, index),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+        surfaceTintColor: Theme.of(context).colorScheme.primary,
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            selectedIcon: Icon(
+              Icons.home,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            label: 'Home',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.assignment),
+            selectedIcon: Icon(
+              Icons.assignment,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             label: 'Applications',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            selectedIcon: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            label: 'Profile',
+          ),
         ],
       ),
     );
@@ -423,21 +467,45 @@ class EmployerShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _getCurrentIndex(context),
-        onTap: (index) => _onTap(context, index),
-        items: const [
-          BottomNavigationBarItem(
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _getCurrentIndex(context),
+        onDestinationSelected: (index) => _onTap(context, index),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+        surfaceTintColor: Theme.of(context).colorScheme.primary,
+        destinations: [
+          NavigationDestination(
             icon: Icon(Icons.dashboard),
+            selectedIcon: Icon(
+              Icons.dashboard,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             label: 'Dashboard',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Jobs'),
-          BottomNavigationBarItem(
+          NavigationDestination(
+            icon: Icon(Icons.work),
+            selectedIcon: Icon(
+              Icons.work,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            label: 'Jobs',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.add_circle),
+            selectedIcon: Icon(
+              Icons.add_circle,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             label: 'Post Job',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            selectedIcon: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            label: 'Profile',
+          ),
         ],
       ),
     );

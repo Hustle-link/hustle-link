@@ -81,13 +81,21 @@ class FirestoreUserService {
   /// Get hustler profile
   Future<Hustler?> getHustlerProfile(String uid) async {
     try {
+      debugPrint('Attempting to get hustler profile for UID: $uid');
       final doc = await _hustlersCollection.doc(uid).get();
+      debugPrint('Document exists: ${doc.exists}');
+
       if (doc.exists) {
+        debugPrint(
+          'Hustler profile found for $uid and returning it as Hustler ${doc.data()}',
+        );
         return Hustler.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        debugPrint('No hustler profile found for UID: $uid');
       }
       return null;
     } catch (e) {
-      debugPrint('Error getting hustler profile: $e');
+      debugPrint('Error getting hustler profile for UID $uid: $e');
       throw Exception('Failed to get hustler profile: $e');
     }
   }
@@ -114,6 +122,33 @@ class FirestoreUserService {
     } catch (e) {
       debugPrint('Error updating hustler skills: $e');
       throw Exception('Failed to update hustler skills: $e');
+    }
+  }
+
+  /// Update hustler profile
+  Future<void> updateHustlerProfile(String uid, Hustler updatedProfile) async {
+    try {
+      final profileData = updatedProfile.toJson();
+      await _hustlersCollection.doc(uid).update(profileData);
+      debugPrint('Hustler profile updated for $uid');
+    } catch (e) {
+      debugPrint('Error updating hustler profile: $e');
+      throw Exception('Failed to update hustler profile: $e');
+    }
+  }
+
+  /// Update employer profile
+  Future<void> updateEmployerProfile(
+    String uid,
+    Employer updatedProfile,
+  ) async {
+    try {
+      final profileData = updatedProfile.toJson();
+      await _employersCollection.doc(uid).update(profileData);
+      debugPrint('Employer profile updated for $uid');
+    } catch (e) {
+      debugPrint('Error updating employer profile: $e');
+      throw Exception('Failed to update employer profile: $e');
     }
   }
 }
