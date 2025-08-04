@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Jobs collection rules
+    match /jobs/{jobId} {
+      // Anyone can read jobs
+      allow read: if true;
+      // Only authenticated users can create jobs
+      allow create: if request.auth != null;
+      // Only the job creator can update/delete their jobs
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.employerId;
+    }
+    
+    // Job applications
+    match /jobApplications/{applicationId} {
+      // Users can read applications they created or for jobs they posted
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.applicantId || 
+         request.auth.uid == resource.data.employerId);
+      // Only authenticated users can create applications
+      allow create: if request.auth != null;
+      // Users can update their own applications
+      allow update: if request.auth != null && request.auth.uid == resource.data.applicantId;
+    }
+  }
+}

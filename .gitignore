@@ -44,9 +44,21 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# firebase files
-.firebase.json
+# Firebase files
+firebase.json
+firestore.rules
+firestore.indexes.json
+lib/firebase_options.dart
+.firebase/
+.firebaserc
+
+# Firebase hosting cache
+firebase-debug.log
+firebase-debug.*.log
+.firebase/
 
 # Android/Flutter specific
 /android/**/google-services.json
 /ios/**/GoogleService-Info.plist
+google-services.json
+GoogleService-Info.plist
