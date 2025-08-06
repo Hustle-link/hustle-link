@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Enhanced storage rules with file size and type validation
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Rules for profile images
+    match /profile_images/{userId}/{fileName} {
+      // Allow authenticated users to upload their own profile images with restrictions
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && request.resource.size < 5 * 1024 * 1024  // 5MB limit
+        && request.resource.contentType.matches('image/.*');
+    }
+    
+    // Rules for certifications with enhanced security
+    match /certifications/{userId}/{fileName} {
+      // Allow authenticated users to upload their own certifications with restrictions
+      allow write: if request.auth != null 
+        && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024  // 10MB limit
+        && request.resource.contentType.matches('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|application/vnd.ms-word');
+      
+      // Allow users to read their own certifications
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow verified employers to read certifications for verification
+      allow read: if request.auth != null 
+        && firestore.exists(/databases/(default)/documents/employers/$(request.auth.uid));
+    }
+    
+    // Rules for job-related files (if needed in the future)
+    match /job_files/{userId}/{fileName} {
+      // Allow authenticated users to upload job-related files with restrictions
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024;  // 10MB limit
+    }
+    
+    // General rule: deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

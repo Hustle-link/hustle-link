@@ -6,7 +6,7 @@ part of 'auth_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authControllerHash() => r'bbaa327a87b55f91682602443f89a78a4171cace';
+String _$authControllerHash() => r'56e41e2797554cd950e84ce0b5c85022bfaa5118';
 
 /// AuthController to manage authentication state
 ///

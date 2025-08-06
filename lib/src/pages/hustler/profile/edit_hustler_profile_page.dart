@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:go_router/go_router.dart';
 
 class EditHustlerProfilePage extends HookConsumerWidget {
@@ -66,17 +66,27 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
     Future<void> pickCertificationFiles() async {
       try {
-        final result = await FilePicker.platform.pickFiles(
-          type: FileType.custom,
-          allowedExtensions: ['pdf', 'doc', 'docx'],
-          allowMultiple: true,
+        const XTypeGroup typeGroup = XTypeGroup(
+          label: 'Documents',
+          extensions: <String>['pdf', 'doc', 'docx'],
+          mimeTypes: <String>[
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          ],
         );
 
-        if (result != null) {
-          final files = result.paths.map((path) => File(path!)).toList();
+        final List<XFile> files = await openFiles(
+          acceptedTypeGroups: <XTypeGroup>[typeGroup],
+        );
+
+        if (files.isNotEmpty) {
+          final List<File> fileList = files
+              .map((file) => File(file.path))
+              .toList();
           newCertificationFiles.value = [
             ...newCertificationFiles.value,
-            ...files,
+            ...fileList,
           ];
         }
       } catch (e) {

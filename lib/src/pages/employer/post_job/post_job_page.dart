@@ -231,7 +231,7 @@ class PostJobPage extends HookConsumerWidget {
                                         ),
                                       ),
                                     );
-                                    context.pop(); // Go back to dashboard
+                                    context.go(AppRoutes.employerDashboard);
                                   }
                                 } catch (e) {
                                   if (context.mounted) {
