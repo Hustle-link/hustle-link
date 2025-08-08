@@ -136,7 +136,7 @@ class RoleSelectionPageNew extends HookConsumerWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: authState.map(
+            child: authState.when(
               idle: () => const Text(
                 'Get Started',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

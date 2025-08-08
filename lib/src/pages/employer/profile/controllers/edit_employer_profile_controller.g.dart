@@ -7,14 +7,14 @@ part of 'edit_employer_profile_controller.dart';
 // **************************************************************************
 
 String _$editEmployerProfileControllerHash() =>
-    r'be7d72082eb27d97fff3168646e5fbc3e2b16822';
+    r'3648ab152afc4412994c51ae5e50f0a2b8c19e83';
 
 /// See also [EditEmployerProfileController].
 @ProviderFor(EditEmployerProfileController)
 final editEmployerProfileControllerProvider =
     AutoDisposeNotifierProvider<
       EditEmployerProfileController,
-      AsyncUpdate<void>
+      AsyncValue<void>
     >.internal(
       EditEmployerProfileController.new,
       name: r'editEmployerProfileControllerProvider',
@@ -25,7 +25,6 @@ final editEmployerProfileControllerProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$EditEmployerProfileController =
-    AutoDisposeNotifier<AsyncUpdate<void>>;
+typedef _$EditEmployerProfileController = AutoDisposeNotifier<AsyncValue<void>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

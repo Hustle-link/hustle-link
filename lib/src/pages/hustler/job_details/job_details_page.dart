@@ -19,36 +19,33 @@ class JobDetailsPage extends HookConsumerWidget {
     final coverLetterController = useTextEditingController();
     final coverFocus = useFocusNode();
 
-    // Listen for mutation side effects (success/error)
-    ref.listen(jobDetailsControllerProvider, (prev, next) {
-      next.map(
-        idle: () => null,
-        loading: () => null,
-        error: (err, _) {
-          final msg = err.toString().replaceFirst('Exception: ', '');
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
-          }
-          return null;
-        },
-        data: (_) {
-          // On success, refresh applied state and toast
-          ref.invalidate(hasAppliedProvider(jobId));
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Application submitted successfully!'),
-              ),
-            );
-          }
-          return null;
-        },
-      );
+    // Listen for async state side effects (success/error)
+    ref.listen<AsyncValue<void>>(jobDetailsControllerProvider, (prev, next) {
+      // Show error snack when entering error state
+      if (next.hasError) {
+        final msg = next.error.toString().replaceFirst('Exception: ', '');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(msg),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+        return;
+      }
+      // On transition from loading -> data, treat as success
+      final wasLoading = prev?.isLoading == true;
+      if (wasLoading && next.hasValue) {
+        ref.invalidate(hasAppliedProvider(jobId));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Application submitted successfully!'),
+            ),
+          );
+        }
+      }
     });
 
     // If data loaded but null, show not found state early

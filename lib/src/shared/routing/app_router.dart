@@ -79,21 +79,22 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       final firstTimeOpenApp = sharedPrefs;
       // debug print statements for auth state changes
       //todo: remove debug print statements in production
+      final location = state.uri.path; // Use uri.path for reliable matching
       debugPrint('First time open app: ${firstTimeOpenApp.firstTimeOpenApp}');
       debugPrint('Auth state changed: ${auth.currentUser?.uid}');
-      debugPrint('Redirecting: ${state.path}');
+      debugPrint('Redirecting: $location');
       // Check if the user is logged in
       final loggedIn = auth.currentUser?.uid != null;
-      final isLoginPage = state.path == AppRoutes.login;
-      final isRegisterPage = state.path == AppRoutes.register;
-      final isResetPasswordPage = state.path == AppRoutes.resetPassword;
+      final isLoginPage = location == AppRoutes.login;
+      final isRegisterPage = location == AppRoutes.register;
+      final isResetPasswordPage = location == AppRoutes.resetPassword;
 
       // debug print statements for allowNavToRegister
       debugPrint('Allow navigation to register: $allowNavToRegister');
 
       // If first time opening the app, redirect to welcome page
       if (firstTimeOpenApp.firstTimeOpenApp == true &&
-          state.path != AppRoutes.welcome) {
+          location != AppRoutes.welcome) {
         return AppRoutes.welcome;
       }
 

@@ -15,7 +15,20 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Hustler {
 
- String get uid; String get email; String get name; List<String> get skills; DateTime get createdAt; String? get bio; String? get experience; String? get location; String? get phoneNumber; String? get photoUrl; double? get rating; int? get completedJobs; List<String> get certifications;
+/// The unique identifier for the hustler, typically from Firebase Auth.
+ String get uid;/// The hustler's email address.
+ String get email;/// The full name of the hustler.
+ String get name;/// A list of skills the hustler possesses.
+ List<String> get skills;/// The date and time when the hustler account was created.
+ DateTime get createdAt;/// A short biography or summary about the hustler.
+ String? get bio;/// A description of the hustler's work experience.
+ String? get experience;/// The hustler's physical location or address.
+ String? get location;/// The contact phone number for the hustler.
+ String? get phoneNumber;/// The URL of the hustler's profile photo.
+ String? get photoUrl;/// The average rating of the hustler, based on feedback from employers.
+ double? get rating;/// The total number of jobs completed by this hustler.
+ int? get completedJobs;/// A list of URLs pointing to the hustler's certification documents or images.
+ List<String> get certifications;
 /// Create a copy of Hustler
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -224,25 +237,40 @@ class _Hustler implements Hustler {
   const _Hustler({required this.uid, required this.email, required this.name, required final  List<String> skills, required this.createdAt, this.bio, this.experience, this.location, this.phoneNumber, this.photoUrl, this.rating, this.completedJobs, final  List<String> certifications = const []}): _skills = skills,_certifications = certifications;
   factory _Hustler.fromJson(Map<String, dynamic> json) => _$HustlerFromJson(json);
 
+/// The unique identifier for the hustler, typically from Firebase Auth.
 @override final  String uid;
+/// The hustler's email address.
 @override final  String email;
+/// The full name of the hustler.
 @override final  String name;
+/// A list of skills the hustler possesses.
  final  List<String> _skills;
+/// A list of skills the hustler possesses.
 @override List<String> get skills {
   if (_skills is EqualUnmodifiableListView) return _skills;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_skills);
 }
 
+/// The date and time when the hustler account was created.
 @override final  DateTime createdAt;
+/// A short biography or summary about the hustler.
 @override final  String? bio;
+/// A description of the hustler's work experience.
 @override final  String? experience;
+/// The hustler's physical location or address.
 @override final  String? location;
+/// The contact phone number for the hustler.
 @override final  String? phoneNumber;
+/// The URL of the hustler's profile photo.
 @override final  String? photoUrl;
+/// The average rating of the hustler, based on feedback from employers.
 @override final  double? rating;
+/// The total number of jobs completed by this hustler.
 @override final  int? completedJobs;
+/// A list of URLs pointing to the hustler's certification documents or images.
  final  List<String> _certifications;
+/// A list of URLs pointing to the hustler's certification documents or images.
 @override@JsonKey() List<String> get certifications {
   if (_certifications is EqualUnmodifiableListView) return _certifications;
   // ignore: implicit_dynamic_type

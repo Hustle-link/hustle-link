@@ -33,6 +33,22 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
     final controller = ref.read(editHustlerProfileControllerProvider.notifier);
     final mutation = ref.watch(editHustlerProfileControllerProvider);
+    ref.listen<AsyncValue<void>>(editHustlerProfileControllerProvider, (
+      prev,
+      next,
+    ) {
+      if (next.hasError) {
+        final msg = next.error.toString().replaceFirst('Exception: ', '');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(msg),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    });
     final formKey = useRef(GlobalKey<FormState>());
     final selectedProfileImage = useState<File?>(null);
     final certifications = useState<List<String>>([...profile.certifications]);

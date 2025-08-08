@@ -44,6 +44,22 @@ class EditEmployerProfilePage extends HookConsumerWidget {
     // Access the controller and mutation state for saving the profile.
     final controller = ref.read(editEmployerProfileControllerProvider.notifier);
     final mutation = ref.watch(editEmployerProfileControllerProvider);
+    ref.listen<AsyncValue<void>>(editEmployerProfileControllerProvider, (
+      prev,
+      next,
+    ) {
+      if (next.hasError) {
+        final msg = next.error.toString().replaceFirst('Exception: ', '');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(msg),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    });
     // A key to manage the form's state.
     final formKey = useRef(GlobalKey<FormState>());
     // State to hold the new profile image file selected by the user.

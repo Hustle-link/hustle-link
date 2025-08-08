@@ -35,6 +35,19 @@ class PostJobPage extends HookConsumerWidget {
     // Access the controller and mutation state for posting/updating a job.
     final controller = ref.read(postJobControllerProvider.notifier);
     final mutation = ref.watch(postJobControllerProvider);
+    ref.listen<AsyncValue<void>>(postJobControllerProvider, (prev, next) {
+      if (next.hasError) {
+        final msg = next.error.toString().replaceFirst('Exception: ', '');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(msg),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    });
     final jobService = ref.watch(firestoreJobServiceProvider);
 
     // Check if the page is in "edit mode" by looking for a 'editJobId' in the route extras.

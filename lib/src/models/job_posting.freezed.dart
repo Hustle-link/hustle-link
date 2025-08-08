@@ -15,7 +15,20 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobPosting {
 
- String get id; String get employerUid; String get title; String get description; List<String> get skillsRequired; double get compensation; DateTime get createdAt; JobStatus get status; String? get location; String? get employerName; String? get employerCompany; DateTime? get deadline; int? get applicationsCount;
+/// The unique identifier for the job posting document in Firestore.
+ String get id;/// The unique identifier of the employer who created the posting.
+ String get employerUid;/// The title of the job.
+ String get title;/// A detailed description of the job, including responsibilities and requirements.
+ String get description;/// A list of skills required for the job.
+ List<String> get skillsRequired;/// The compensation or salary for the job.
+ double get compensation;/// The date and time when the job posting was created.
+ DateTime get createdAt;/// The current status of the job posting.
+ JobStatus get status;/// The location where the job is based.
+ String? get location;/// The name of the employer (denormalized for easy display).
+ String? get employerName;/// The company name of the employer (denormalized for easy display).
+ String? get employerCompany;/// The deadline for applying to the job.
+ DateTime? get deadline;/// The number of applications received for this job.
+ int? get applicationsCount;
 /// Create a copy of JobPosting
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -224,24 +237,38 @@ class _JobPosting implements JobPosting {
   const _JobPosting({required this.id, required this.employerUid, required this.title, required this.description, required final  List<String> skillsRequired, required this.compensation, required this.createdAt, required this.status, this.location, this.employerName, this.employerCompany, this.deadline, this.applicationsCount}): _skillsRequired = skillsRequired;
   factory _JobPosting.fromJson(Map<String, dynamic> json) => _$JobPostingFromJson(json);
 
+/// The unique identifier for the job posting document in Firestore.
 @override final  String id;
+/// The unique identifier of the employer who created the posting.
 @override final  String employerUid;
+/// The title of the job.
 @override final  String title;
+/// A detailed description of the job, including responsibilities and requirements.
 @override final  String description;
+/// A list of skills required for the job.
  final  List<String> _skillsRequired;
+/// A list of skills required for the job.
 @override List<String> get skillsRequired {
   if (_skillsRequired is EqualUnmodifiableListView) return _skillsRequired;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_skillsRequired);
 }
 
+/// The compensation or salary for the job.
 @override final  double compensation;
+/// The date and time when the job posting was created.
 @override final  DateTime createdAt;
+/// The current status of the job posting.
 @override final  JobStatus status;
+/// The location where the job is based.
 @override final  String? location;
+/// The name of the employer (denormalized for easy display).
 @override final  String? employerName;
+/// The company name of the employer (denormalized for easy display).
 @override final  String? employerCompany;
+/// The deadline for applying to the job.
 @override final  DateTime? deadline;
+/// The number of applications received for this job.
 @override final  int? applicationsCount;
 
 /// Create a copy of JobPosting

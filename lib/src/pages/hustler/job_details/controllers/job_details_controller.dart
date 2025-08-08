@@ -1,13 +1,12 @@
 import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:riverpod_community_mutation/riverpod_community_mutation.dart';
 
 part 'job_details_controller.g.dart';
 
 @riverpod
-class JobDetailsController extends _$JobDetailsController with Mutation {
+class JobDetailsController extends _$JobDetailsController {
   @override
-  AsyncUpdate<void> build() => const AsyncUpdate.idle();
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
   Future<JobPosting?> getJob(String jobId) {
     final jobService = ref.read(firestoreJobServiceProvider);
@@ -29,8 +28,8 @@ class JobDetailsController extends _$JobDetailsController with Mutation {
     if (user == null) {
       throw Exception('You must be logged in to apply.');
     }
-
-    await mutateAsync(() async {
+    state = const AsyncLoading();
+    try {
       final job = await jobService.getJobById(jobId);
       if (job == null) throw Exception('Job not found');
       final hustler = await ref.read(currentHustlerProfileProvider.future);
@@ -45,6 +44,10 @@ class JobDetailsController extends _$JobDetailsController with Mutation {
         hustlerName: hustler?.name,
         jobTitle: job.title,
       );
-    });
+      state = const AsyncData(null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+      rethrow;
+    }
   }
 }

@@ -15,10 +15,20 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Certification {
 
- String get id; String get userId; String get fileName; String get downloadUrl; DateTime get uploadedAt; CertificationStatus get status; String? get verifiedBy;// Admin/employer ID who verified
- DateTime? get verifiedAt; String? get rejectionReason; DateTime? get expiryDate;// For time-sensitive certifications
- String? get certificationType;// e.g., 'diploma', 'license', 'certificate'
- String? get issuingOrganization; Map<String, dynamic>? get metadata;
+/// The unique identifier for the certification document.
+ String get id;/// The UID of the user who uploaded the certification.
+ String get userId;/// The name of the uploaded file.
+ String get fileName;/// The public URL to download the certification file from storage.
+ String get downloadUrl;/// The timestamp when the certification was uploaded.
+ DateTime get uploadedAt;/// The current verification status of the certification.
+ CertificationStatus get status;/// The ID of the admin or employer who verified the certification.
+ String? get verifiedBy;/// The timestamp when the certification was verified.
+ DateTime? get verifiedAt;/// The reason for rejection, if the status is [rejected].
+ String? get rejectionReason;/// The date when the certification expires, if applicable.
+ DateTime? get expiryDate;/// The type of certification (e.g., 'diploma', 'license').
+ String? get certificationType;/// The name of the organization that issued the certification.
+ String? get issuingOrganization;/// Additional metadata that can be stored as a map.
+ Map<String, dynamic>? get metadata;
 /// Create a copy of Certification
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -227,22 +237,33 @@ class _Certification implements Certification {
   const _Certification({required this.id, required this.userId, required this.fileName, required this.downloadUrl, required this.uploadedAt, this.status = CertificationStatus.pending, this.verifiedBy, this.verifiedAt, this.rejectionReason, this.expiryDate, this.certificationType, this.issuingOrganization, final  Map<String, dynamic>? metadata}): _metadata = metadata;
   factory _Certification.fromJson(Map<String, dynamic> json) => _$CertificationFromJson(json);
 
+/// The unique identifier for the certification document.
 @override final  String id;
+/// The UID of the user who uploaded the certification.
 @override final  String userId;
+/// The name of the uploaded file.
 @override final  String fileName;
+/// The public URL to download the certification file from storage.
 @override final  String downloadUrl;
+/// The timestamp when the certification was uploaded.
 @override final  DateTime uploadedAt;
+/// The current verification status of the certification.
 @override@JsonKey() final  CertificationStatus status;
+/// The ID of the admin or employer who verified the certification.
 @override final  String? verifiedBy;
-// Admin/employer ID who verified
+/// The timestamp when the certification was verified.
 @override final  DateTime? verifiedAt;
+/// The reason for rejection, if the status is [rejected].
 @override final  String? rejectionReason;
+/// The date when the certification expires, if applicable.
 @override final  DateTime? expiryDate;
-// For time-sensitive certifications
+/// The type of certification (e.g., 'diploma', 'license').
 @override final  String? certificationType;
-// e.g., 'diploma', 'license', 'certificate'
+/// The name of the organization that issued the certification.
 @override final  String? issuingOrganization;
+/// Additional metadata that can be stored as a map.
  final  Map<String, dynamic>? _metadata;
+/// Additional metadata that can be stored as a map.
 @override Map<String, dynamic>? get metadata {
   final value = _metadata;
   if (value == null) return null;

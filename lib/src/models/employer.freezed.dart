@@ -15,7 +15,19 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Employer {
 
- String get uid; String get email; String get name; String get companyName; DateTime get createdAt; String? get companyDescription; String? get website; String? get location; String? get phoneNumber; String? get photoUrl; int? get postedJobs; double? get rating;
+/// The unique identifier for the employer, typically from Firebase Auth.
+ String get uid;/// The employer's email address.
+ String get email;/// The full name of the employer or the contact person.
+ String get name;/// The name of the company the employer represents.
+ String get companyName;/// The date and time when the employer account was created.
+ DateTime get createdAt;/// A description of the company.
+ String? get companyDescription;/// The URL of the company's website.
+ String? get website;/// The physical location or address of the company.
+ String? get location;/// The contact phone number for the company.
+ String? get phoneNumber;/// The URL of the company's logo or the employer's profile photo.
+ String? get photoUrl;/// The total number of jobs posted by this employer.
+ int? get postedJobs;/// The average rating of the employer, based on feedback from hustlers.
+ double? get rating;
 /// Create a copy of Employer
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -223,17 +235,29 @@ class _Employer implements Employer {
   const _Employer({required this.uid, required this.email, required this.name, required this.companyName, required this.createdAt, this.companyDescription, this.website, this.location, this.phoneNumber, this.photoUrl, this.postedJobs, this.rating});
   factory _Employer.fromJson(Map<String, dynamic> json) => _$EmployerFromJson(json);
 
+/// The unique identifier for the employer, typically from Firebase Auth.
 @override final  String uid;
+/// The employer's email address.
 @override final  String email;
+/// The full name of the employer or the contact person.
 @override final  String name;
+/// The name of the company the employer represents.
 @override final  String companyName;
+/// The date and time when the employer account was created.
 @override final  DateTime createdAt;
+/// A description of the company.
 @override final  String? companyDescription;
+/// The URL of the company's website.
 @override final  String? website;
+/// The physical location or address of the company.
 @override final  String? location;
+/// The contact phone number for the company.
 @override final  String? phoneNumber;
+/// The URL of the company's logo or the employer's profile photo.
 @override final  String? photoUrl;
+/// The total number of jobs posted by this employer.
 @override final  int? postedJobs;
+/// The average rating of the employer, based on feedback from hustlers.
 @override final  double? rating;
 
 /// Create a copy of Employer

@@ -8,7 +8,11 @@ part of 'firebase_auth.dart';
 
 String _$authStateChangesHash() => r'2eb415bdce4b96834dc09de16b6b894d7bb0c32b';
 
-/// See also [authStateChanges].
+/// A Riverpod provider that exposes the stream of authentication state changes.
+///
+/// This allows other parts of the app to listen to auth state changes and react accordingly.
+///
+/// Copied from [authStateChanges].
 @ProviderFor(authStateChanges)
 final authStateChangesProvider = AutoDisposeStreamProvider<User?>.internal(
   authStateChanges,

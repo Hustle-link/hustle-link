@@ -15,7 +15,17 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobApplication {
 
- String get id; String get jobId; String get hustlerUid; String get employerUid; DateTime get appliedAt; ApplicationStatus get status; String? get coverLetter; String? get hustlerName; String? get jobTitle; DateTime? get reviewedAt;
+/// The unique identifier for the job application document in Firestore.
+ String get id;/// The ID of the job being applied for.
+ String get jobId;/// The unique identifier of the hustler who applied.
+ String get hustlerUid;/// The unique identifier of the employer who posted the job.
+ String get employerUid;/// The date and time when the application was submitted.
+ DateTime get appliedAt;/// The current status of the application.
+ ApplicationStatus get status;/// The cover letter or message submitted with the application.
+ String? get coverLetter;/// The name of the hustler (denormalized for easy display).
+ String? get hustlerName;/// The title of the job (denormalized for easy display).
+ String? get jobTitle;/// The date and time when the application was reviewed by the employer.
+ DateTime? get reviewedAt;
 /// Create a copy of JobApplication
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -221,15 +231,25 @@ class _JobApplication implements JobApplication {
   const _JobApplication({required this.id, required this.jobId, required this.hustlerUid, required this.employerUid, required this.appliedAt, required this.status, this.coverLetter, this.hustlerName, this.jobTitle, this.reviewedAt});
   factory _JobApplication.fromJson(Map<String, dynamic> json) => _$JobApplicationFromJson(json);
 
+/// The unique identifier for the job application document in Firestore.
 @override final  String id;
+/// The ID of the job being applied for.
 @override final  String jobId;
+/// The unique identifier of the hustler who applied.
 @override final  String hustlerUid;
+/// The unique identifier of the employer who posted the job.
 @override final  String employerUid;
+/// The date and time when the application was submitted.
 @override final  DateTime appliedAt;
+/// The current status of the application.
 @override final  ApplicationStatus status;
+/// The cover letter or message submitted with the application.
 @override final  String? coverLetter;
+/// The name of the hustler (denormalized for easy display).
 @override final  String? hustlerName;
+/// The title of the job (denormalized for easy display).
 @override final  String? jobTitle;
+/// The date and time when the application was reviewed by the employer.
 @override final  DateTime? reviewedAt;
 
 /// Create a copy of JobApplication

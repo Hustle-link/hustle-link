@@ -1,13 +1,12 @@
 import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:riverpod_community_mutation/riverpod_community_mutation.dart';
 
 part 'post_job_controller.g.dart';
 
 @riverpod
-class PostJobController extends _$PostJobController with Mutation {
+class PostJobController extends _$PostJobController {
   @override
-  AsyncUpdate<void> build() => const AsyncUpdate.idle();
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
   Future<void> postJob({
     required String title,
@@ -19,7 +18,8 @@ class PostJobController extends _$PostJobController with Mutation {
     final jobService = ref.read(firestoreJobServiceProvider);
     final auth = ref.read(firebaseAuthServiceProvider);
 
-    await mutateAsync(() async {
+    state = const AsyncLoading();
+    try {
       final user = auth.currentUser;
       if (user == null) {
         throw Exception('You must be logged in to post a job.');
@@ -53,7 +53,11 @@ class PostJobController extends _$PostJobController with Mutation {
         employerName: employerName,
         employerCompany: employerCompany,
       );
-    });
+      state = const AsyncData(null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+      rethrow;
+    }
   }
 
   Future<void> updateJob({
@@ -66,7 +70,8 @@ class PostJobController extends _$PostJobController with Mutation {
   }) async {
     final jobService = ref.read(firestoreJobServiceProvider);
 
-    await mutateAsync(() async {
+    state = const AsyncLoading();
+    try {
       // Parse
       final skills = skillsCsv
           .split(',')
@@ -86,6 +91,10 @@ class PostJobController extends _$PostJobController with Mutation {
         compensation: compensation,
         location: (location?.trim().isEmpty ?? true) ? null : location!.trim(),
       );
-    });
+      state = const AsyncData(null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+      rethrow;
+    }
   }
 }

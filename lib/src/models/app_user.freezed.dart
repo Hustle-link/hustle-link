@@ -15,7 +15,14 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUser {
 
- String get uid; String get email; String get role; String get name; DateTime get createdAt; String? get photoUrl; String? get phoneNumber;
+/// The unique identifier for the user, typically from Firebase Auth.
+ String get uid;/// The user's email address.
+ String get email;/// The role of the user in the app (e.g., 'hustler' or 'employer').
+ String get role;/// The display name of the user.
+ String get name;/// The timestamp when the user account was created.
+ DateTime get createdAt;/// The URL for the user's profile photo.
+ String? get photoUrl;/// The user's phone number.
+ String? get phoneNumber;
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -218,12 +225,19 @@ class _AppUser implements AppUser {
   const _AppUser({required this.uid, required this.email, required this.role, required this.name, required this.createdAt, this.photoUrl, this.phoneNumber});
   factory _AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 
+/// The unique identifier for the user, typically from Firebase Auth.
 @override final  String uid;
+/// The user's email address.
 @override final  String email;
+/// The role of the user in the app (e.g., 'hustler' or 'employer').
 @override final  String role;
+/// The display name of the user.
 @override final  String name;
+/// The timestamp when the user account was created.
 @override final  DateTime createdAt;
+/// The URL for the user's profile photo.
 @override final  String? photoUrl;
+/// The user's phone number.
 @override final  String? phoneNumber;
 
 /// Create a copy of AppUser
