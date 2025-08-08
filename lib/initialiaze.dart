@@ -7,30 +7,18 @@ import 'package:riverpod/riverpod.dart';
 
 import 'src/src.dart';
 
-// Future initServices() async {
-//   // TODO: remove init debug print
-//   // debugPrint firebase init
-//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-//       .then((value) {
-//         debugPrint('Firebase initialized');
-//       })
-//       .onError((error, stackTrace) {
-//         debugPrint('Firebase initialization failed: $error');
-//       });
-//   // TODO: implement the initialization all services e.g api, storage etc
-
-//   Get.put(() {
-//     // initialize firebase auth service
-//     return FirebaseAuthService();
-//   });
-
-//   // debugPrint success
-//   debugPrint('Services initialized');
-// }
-
-// Initialize Firebase and other services
+/// A [FutureProvider] that initializes Firebase.
+///
+/// This provider is responsible for initializing the Firebase app instance.
+/// It should be overridden in the `main.dart` file to ensure Firebase is
+/// ready before the app starts. Other providers can depend on this to ensure
+/// Firebase services are available.
 final firebaseInitProvider = FutureProvider<FirebaseApp>((ref) async {
-  return await Firebase.initializeApp(
+  // TODO(Kenan): Add more robust error handling for Firebase initialization.
+  debugPrint("Initializing Firebase...");
+  final app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  debugPrint("Firebase Initialized successfully.");
+  return app;
 });

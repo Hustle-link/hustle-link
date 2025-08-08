@@ -7,7 +7,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 
+/// A widget that provides the user interface for the login screen.
+///
+/// This widget includes text fields for email and password, a login button,
+/// and links for password reset and registration. It uses hooks for managing
+/// state and controllers.
+/// TODO(UI/UX): Improve the visual feedback for loading and error states.
 class LoginPage extends HookConsumerWidget {
+  /// Creates a new instance of [LoginPage].
   const LoginPage({super.key});
 
   @override
@@ -29,44 +36,34 @@ class LoginPage extends HookConsumerWidget {
     final passwordErrorText = useState<String?>(null);
     final authErrorText = useState<String?>(null);
 
-    // Handle auth state changes
-    useEffect(() {
-      void handleAuthState() {
-        authControllerMutation.map(
-          idle: () => null,
-          loading: () {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              SmartDialog.showLoading(
-                msg: AppStringsAuth.loadingMessage,
-                maskColor: Colors.black54,
-              );
-            });
-            return null;
-          },
-          error: (error, _) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              SmartDialog.dismiss();
-              debugPrint('Login error on login page: ${error.toString()}');
-              // Clean up the error message by removing "Exception: " prefix
-              final cleanError = error.toString().replaceAll('Exception: ', '');
-              authErrorText.value = cleanError;
-            });
-            return null;
-          },
-          data: (_) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              SmartDialog.dismiss();
-              authErrorText.value = null; // Clear any errors
-              context.goNamed(AppRoutes.homeRoute);
-            });
-            return null;
-          },
-        );
-      }
-
-      handleAuthState();
-      return null;
-    }, [authControllerMutation]);
+    // Handle auth state changes using ref.listen instead of useEffect
+    // This listener handles the different states of the authentication process,
+    // showing loading dialogs, error messages, and navigating on success.
+    ref.listen(authControllerProvider, (prev, next) {
+      next.map(
+        idle: () => null,
+        loading: () {
+          SmartDialog.showLoading(
+            msg: AppStringsAuth.loadingMessage,
+            maskColor: Colors.black54,
+          );
+          return null;
+        },
+        error: (error, _) {
+          SmartDialog.dismiss();
+          debugPrint('Login error on login page: ${error.toString()}');
+          final cleanError = error.toString().replaceAll('Exception: ', '');
+          authErrorText.value = cleanError;
+          return null;
+        },
+        data: (_) {
+          SmartDialog.dismiss();
+          authErrorText.value = null; // Clear any errors
+          context.goNamed(AppRoutes.homeRoute);
+          return null;
+        },
+      );
+    });
 
     return Scaffold(
       // automatically implyleading padding if navigating from another page
@@ -93,14 +90,14 @@ class LoginPage extends HookConsumerWidget {
               SizedBox(height: 5.h),
               // image
               SvgPicture.asset('assets/images/auth/register.svg', height: 20.h),
-              //todo:remove this
+              //todo:remove this debug button
               TextButton(
                 onPressed: () async {
                   await ref
                       .read(welcomePageSharedPreferencesProvider.notifier)
                       .setFirstTimeOpenApp(true);
                 },
-                child: Text('Debug: Welcome Page'),
+                child: const Text(DebugStrings.welcomePage),
               ),
               SizedBox(height: 5.h),
               // title and input fields
@@ -128,7 +125,7 @@ class LoginPage extends HookConsumerWidget {
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.emailLabel,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   errorText: emailErrorText.value,
                 ),
                 onTapOutside: (event) {
@@ -164,7 +161,7 @@ class LoginPage extends HookConsumerWidget {
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.passwordLabel,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   errorText: passwordErrorText.value,
                 ),
                 obscureText: true,

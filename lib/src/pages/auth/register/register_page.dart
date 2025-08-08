@@ -7,7 +7,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 
+/// A widget that provides the user interface for the registration screen.
+///
+/// This widget includes text fields for email, password, and password confirmation,
+/// a registration button, and a link to the login page. It uses hooks for managing
+/// state and controllers.
+/// TODO(validation): Implement more robust real-time validation feedback for the input fields.
 class RegisterPage extends HookConsumerWidget {
+  /// Creates a new instance of [RegisterPage].
   const RegisterPage({super.key});
 
   @override
@@ -32,52 +39,39 @@ class RegisterPage extends HookConsumerWidget {
     final passwordFocusNode = useFocusNode();
     final confirmPasswordFocusNode = useFocusNode();
 
-    // Handle auth state changes for registration
-    useEffect(() {
-      void handleAuthState() {
-        authControllerMutation.map(
-          idle: () => null,
-          loading: () {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              SmartDialog.showLoading(
-                msg: AppStringsAuth.registrationLoadingMessage,
-                maskColor: Colors.black54,
-              );
-            });
-            return null;
-          },
-          error: (error, _) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              SmartDialog.dismiss();
-              debugPrint(
-                'Registration error on register page: ${error.toString()}',
-              );
-              // Clean up the error message by removing "Exception: " prefix
-              final cleanError = error.toString().replaceAll('Exception: ', '');
-              authErrorText.value = cleanError;
-            });
-            return null;
-          },
-          data: (_) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              SmartDialog.dismiss();
-              authErrorText.value = null; // Clear any errors
-              // Navigate to role selection page on successful registration
-              context.go(AppRoutes.roleSelection);
-
-              // clear the text fields only after successful registration
-              emailController.clear();
-              passwordController.clear();
-              confirmPasswordController.clear();
-            });
-            return null;
-          },
-        );
-      }
-
-      handleAuthState();
-      return null;
-    }, [authControllerMutation]);
+    // Handle auth state changes using ref.listen instead of useEffect
+    // This listener manages the state of the registration process, showing
+    // loading indicators, handling errors, and navigating on success.
+    ref.listen(authControllerProvider, (prev, next) {
+      next.map(
+        idle: () => null,
+        loading: () {
+          SmartDialog.showLoading(
+            msg: AppStringsAuth.registrationLoadingMessage,
+            maskColor: Colors.black54,
+          );
+          return null;
+        },
+        error: (error, _) {
+          SmartDialog.dismiss();
+          debugPrint(
+            'Registration error on register page: ${error.toString()}',
+          );
+          final cleanError = error.toString().replaceAll('Exception: ', '');
+          authErrorText.value = cleanError;
+          return null;
+        },
+        data: (_) {
+          SmartDialog.dismiss();
+          authErrorText.value = null; // Clear any errors
+          context.go(AppRoutes.roleSelection);
+          emailController.clear();
+          passwordController.clear();
+          confirmPasswordController.clear();
+          return null;
+        },
+      );
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -144,7 +138,7 @@ class RegisterPage extends HookConsumerWidget {
                 },
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.emailLabel,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   errorText: emailErrorText.value, // will be set dynamically
                 ),
               ),
@@ -209,7 +203,7 @@ class RegisterPage extends HookConsumerWidget {
                 },
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.passwordLabel,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   errorText: passwordErrorText.value, // will be set dynamically
                 ),
                 obscureText: true,
@@ -255,7 +249,7 @@ class RegisterPage extends HookConsumerWidget {
                 },
                 decoration: InputDecoration(
                   labelText: AppStringsAuth.confirmPasswordLabel,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   errorText:
                       confirmPasswordErrorText.value, // will be set dynamically
                 ),
@@ -362,7 +356,7 @@ class RegisterPage extends HookConsumerWidget {
                     },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     child: Text(
-                      'Login',
+                      AppStringsAuth.loginButton,
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: Theme.of(context).colorScheme.primary,

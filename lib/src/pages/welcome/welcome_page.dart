@@ -5,31 +5,41 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:sizer/sizer.dart';
 
+// TODO(refactor): Consider breaking down each page of the PageView into its own widget file for better organization.
+
+/// The welcome/onboarding page of the application.
+///
+/// This page uses a [PageView] to guide the user through a series of
+/// introductory screens. It tracks the current page to update UI elements
+/// like button text and colors dynamically.
 class WelcomePage extends HookConsumerWidget {
+  /// Creates a [WelcomePage].
   const WelcomePage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // liquid controller
+    // Controller for the PageView.
     final pageController = usePageController();
 
-    // hooks
+    // A state hook to keep track of the current page index.
     final currentPage = useState(0);
 
-    // listen to the page controller
+    // An effect hook to listen for page changes and update the state.
     useEffect(() {
-      pageController.addListener(() {
+      void listener() {
         final page = pageController.page?.round() ?? 0;
         if (currentPage.value != page) {
           currentPage.value = page;
         }
-      });
-      return () => pageController.dispose();
+      }
+
+      pageController.addListener(listener);
+      // The listener is automatically removed when the widget is disposed.
+      return () => pageController.removeListener(listener);
     }, [pageController]);
 
-    // next button string
+    /// Determines the text for the "next" button based on the current page.
     String? nextButtonText() {
       switch (currentPage.value) {
         case 0:
@@ -41,11 +51,11 @@ class WelcomePage extends HookConsumerWidget {
         case 3:
           return AppStringsWelcome.welcomeScreen4.buttonText;
         default:
-          return 'Welcome';
+          return GeneralStrings.welcome;
       }
     }
 
-    // icon color
+    /// Determines the color for icons based on the current page's background.
     Color iconColor() {
       switch (currentPage.value) {
         case 0:
@@ -61,7 +71,7 @@ class WelcomePage extends HookConsumerWidget {
       }
     }
 
-    // button color
+    /// Determines the color for button text based on the current page's background.
     Color buttonColor() {
       switch (currentPage.value) {
         case 0:
@@ -83,6 +93,7 @@ class WelcomePage extends HookConsumerWidget {
           PageView(
             controller: pageController,
             children: [
+              // First welcome screen.
               Container(
                 color: Colors.black,
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -99,7 +110,7 @@ class WelcomePage extends HookConsumerWidget {
                         width: 30.h,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     // title and subtitle
                     AnimatedSlideWidget(
                       fadeDelay: Duration(milliseconds: 200),
@@ -115,7 +126,7 @@ class WelcomePage extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     AnimatedSlideWidget(
                       fadeDelay: Duration(milliseconds: 300),
                       slideBeginOffset: Offset(0, 0.7),
@@ -126,11 +137,11 @@ class WelcomePage extends HookConsumerWidget {
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
-                    Spacer(flex: 8),
+                    const Spacer(flex: 8),
                   ],
                 ),
               ),
-              // Second page
+              // Second welcome screen.
               Container(
                 color: Theme.of(context).colorScheme.secondary,
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -147,37 +158,40 @@ class WelcomePage extends HookConsumerWidget {
                         width: 30.h,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     // title and subtitle
                     AnimatedSlideWidget(
-                      fadeDelay: Duration(milliseconds: 200),
-                      slideBeginOffset: Offset(0, 0.5),
-                      slideDelay: Duration(milliseconds: 100),
+                      fadeDelay: const Duration(milliseconds: 200),
+                      slideBeginOffset: const Offset(0, 0.5),
+                      slideDelay: const Duration(milliseconds: 100),
                       child: Text(
                         AppStringsWelcome.welcomeScreen2.title,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     AnimatedSlideWidget(
-                      fadeDelay: Duration(milliseconds: 300),
-                      slideBeginOffset: Offset(0, 0.7),
-                      slideDelay: Duration(milliseconds: 200),
+                      fadeDelay: const Duration(milliseconds: 300),
+                      slideBeginOffset: const Offset(0, 0.7),
+                      slideDelay: const Duration(milliseconds: 200),
                       child: Text(
                         AppStringsWelcome.welcomeScreen2.subtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              // Third page
+              // Third welcome screen.
               Container(
                 color: Theme.of(context).colorScheme.tertiary,
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -197,9 +211,9 @@ class WelcomePage extends HookConsumerWidget {
                     SizedBox(height: 5.h),
                     // title and subtitle
                     AnimatedSlideWidget(
-                      fadeDelay: Duration(milliseconds: 200),
-                      slideBeginOffset: Offset(0, 0.5),
-                      slideDelay: Duration(milliseconds: 100),
+                      fadeDelay: const Duration(milliseconds: 200),
+                      slideBeginOffset: const Offset(0, 0.5),
+                      slideDelay: const Duration(milliseconds: 100),
                       child: Text(
                         AppStringsWelcome.welcomeScreen3.title,
                         textAlign: TextAlign.center,
@@ -210,11 +224,11 @@ class WelcomePage extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     AnimatedSlideWidget(
-                      fadeDelay: Duration(milliseconds: 300),
-                      slideBeginOffset: Offset(0, 0.7),
-                      slideDelay: Duration(milliseconds: 200),
+                      fadeDelay: const Duration(milliseconds: 300),
+                      slideBeginOffset: const Offset(0, 0.7),
+                      slideDelay: const Duration(milliseconds: 200),
                       child: Text(
                         AppStringsWelcome.welcomeScreen3.subtitle,
                         textAlign: TextAlign.center,
@@ -227,7 +241,7 @@ class WelcomePage extends HookConsumerWidget {
                   ],
                 ),
               ),
-              // Fourth page
+              // Fourth welcome screen.
               Container(
                 color: Theme.of(context).colorScheme.secondaryContainer,
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -247,9 +261,9 @@ class WelcomePage extends HookConsumerWidget {
                     SizedBox(height: 5.h),
                     // title and subtitle
                     AnimatedSlideWidget(
-                      fadeDelay: Duration(milliseconds: 200),
-                      slideBeginOffset: Offset(0, 0.5),
-                      slideDelay: Duration(milliseconds: 100),
+                      fadeDelay: const Duration(milliseconds: 200),
+                      slideBeginOffset: const Offset(0, 0.5),
+                      slideDelay: const Duration(milliseconds: 100),
                       child: Text(
                         AppStringsWelcome.welcomeScreen4.title,
                         textAlign: TextAlign.center,
@@ -262,11 +276,11 @@ class WelcomePage extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     AnimatedSlideWidget(
-                      fadeDelay: Duration(milliseconds: 300),
-                      slideBeginOffset: Offset(0, 0.7),
-                      slideDelay: Duration(milliseconds: 200),
+                      fadeDelay: const Duration(milliseconds: 300),
+                      slideBeginOffset: const Offset(0, 0.7),
+                      slideDelay: const Duration(milliseconds: 200),
                       child: Text(
                         AppStringsWelcome.welcomeScreen4.subtitle,
                         textAlign: TextAlign.center,
@@ -283,7 +297,7 @@ class WelcomePage extends HookConsumerWidget {
               ),
             ],
           ),
-          // Page indicator
+          // A custom animated page indicator.
           Positioned(
             bottom: 20,
             left: 0,
@@ -295,7 +309,7 @@ class WelcomePage extends HookConsumerWidget {
               ),
             ),
           ),
-          // add buttons
+          // Action buttons (Skip and Next).
           Positioned(
             bottom: 20,
             right: 20,
@@ -304,7 +318,7 @@ class WelcomePage extends HookConsumerWidget {
               // mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.max,
               children: [
-                // Skip button
+                // Skip button jumps to the last page.
                 TextButton.icon(
                   onPressed: () {
                     pageController.jumpToPage(3); // Jump to last page
@@ -312,13 +326,13 @@ class WelcomePage extends HookConsumerWidget {
                   icon: Icon(Icons.arrow_forward, color: iconColor()),
                   iconAlignment: IconAlignment.end,
                   label: Text(
-                    // Skip button text from a switch case
-                    'Skip',
+                    // TODO(ux): Consider hiding the skip button on the last page.
+                    GeneralStrings.skip,
                     style: TextStyle(color: buttonColor()),
                   ),
                 ),
-                Spacer(),
-                // Next button
+                const Spacer(),
+                // Next button proceeds to the next page or navigates away.
                 TextButton(
                   onPressed: () {
                     if (currentPage.value < 3) {
@@ -327,16 +341,16 @@ class WelcomePage extends HookConsumerWidget {
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      // set first time open app to false
+                      // On the last page, mark onboarding as complete and navigate.
+                      // TODO(navigation): Ensure this navigation is robust and handles all user states.
                       ref
                           .read(welcomePageSharedPreferencesProvider.notifier)
                           .setFirstTimeOpenApp(false);
-                      // Navigate to the next screen, e.g., login or register
                       context.pushNamed(AppRoutes.loginRoute);
                     }
                   },
                   child: Text(
-                    nextButtonText() ?? 'Next',
+                    nextButtonText() ?? GeneralStrings.next,
                     style: TextStyle(color: buttonColor()),
                   ),
                 ),
@@ -349,10 +363,18 @@ class WelcomePage extends HookConsumerWidget {
   }
 }
 
+/// A widget that displays an animated page progress indicator.
+///
+/// It shows a series of dots, with the current page's dot being wider and
+/// more prominent.
 class AnimatedPageProgress extends HookConsumerWidget {
+  /// The total number of pages.
   final int pageCount;
+
+  /// The index of the current page.
   final int currentPage;
 
+  /// Creates an [AnimatedPageProgress].
   const AnimatedPageProgress({
     super.key,
     required this.pageCount,
@@ -370,7 +392,7 @@ class AnimatedPageProgress extends HookConsumerWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
             blurRadius: 8,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -379,6 +401,7 @@ class AnimatedPageProgress extends HookConsumerWidget {
         children: List.generate(pageCount, (index) {
           final isActive = index == currentPage;
 
+          // Each dot is an AnimatedContainer that changes size and color.
           return AnimatedContainer(
                 duration: 300.ms,
                 margin: const EdgeInsets.symmetric(horizontal: 4),

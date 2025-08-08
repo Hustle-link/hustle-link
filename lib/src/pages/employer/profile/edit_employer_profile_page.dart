@@ -3,17 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/pages/employer/profile/controllers/controllers.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 
+// TODO(refactor): Separate business logic from the UI by using the dedicated controller more extensively.
+
+/// A page that allows an employer to edit their profile information.
+///
+/// This includes personal details, company information, and profile picture.
+/// It takes the current [Employer] profile as a required parameter to pre-fill the form.
 class EditEmployerProfilePage extends HookConsumerWidget {
+  /// The current employer profile data to be edited.
   final Employer profile;
 
+  /// Creates an [EditEmployerProfilePage].
   const EditEmployerProfilePage({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Text editing controllers are initialized with existing profile data.
     final nameController = useTextEditingController(text: profile.name);
     final companyNameController = useTextEditingController(
       text: profile.companyName,
@@ -31,27 +41,31 @@ class EditEmployerProfilePage extends HookConsumerWidget {
       text: profile.website ?? '',
     );
 
-    final isLoading = useState(false);
+    // Access the controller and mutation state for saving the profile.
+    final controller = ref.read(editEmployerProfileControllerProvider.notifier);
+    final mutation = ref.watch(editEmployerProfileControllerProvider);
+    // A key to manage the form's state.
     final formKey = useRef(GlobalKey<FormState>());
+    // State to hold the new profile image file selected by the user.
     final selectedProfileImage = useState<File?>(null);
 
-    final userService = ref.read(firestoreUserServiceProvider);
-    final storageService = ref.read(firebaseStorageServiceProvider);
     final imagePicker = ImagePicker();
 
+    /// Opens the device's image gallery to pick a new profile photo.
     Future<void> pickProfileImage() async {
       try {
         final pickedFile = await imagePicker.pickImage(
           source: ImageSource.gallery,
           maxWidth: 1080,
           maxHeight: 1080,
-          imageQuality: 85,
+          imageQuality: 85, // Compress image to reduce size.
         );
 
         if (pickedFile != null) {
           selectedProfileImage.value = File(pickedFile.path);
         }
       } catch (e) {
+        // TODO(error-handling): Show a more user-friendly error dialog.
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -63,21 +77,27 @@ class EditEmployerProfilePage extends HookConsumerWidget {
       }
     }
 
+    /// Validates the form, uploads the new image (if any), and saves the updated profile.
     Future<void> saveProfile() async {
       if (!formKey.value.currentState!.validate()) return;
 
-      isLoading.value = true;
       try {
         String? photoUrl = profile.photoUrl;
 
-        // Upload profile image if selected
+        // If a new image is selected, upload it first.
+        // TODO(ux): Show a loading indicator specifically for the image upload.
         if (selectedProfileImage.value != null) {
-          photoUrl = await storageService.uploadProfileImage(
+          await controller.uploadProfileImage(
             profile.uid,
             selectedProfileImage.value!,
           );
+          // Note: The photoUrl is updated via a listener on the profile provider,
+          // so we re-read it here. A more robust solution might be to get the URL
+          // directly from the upload function.
+          photoUrl = ref.read(currentEmployerProfileProvider).value?.photoUrl;
         }
 
+        // Create an updated profile object with the new data.
         final updatedProfile = profile.copyWith(
           name: nameController.text.trim(),
           companyName: companyNameController.text.trim(),
@@ -96,10 +116,8 @@ class EditEmployerProfilePage extends HookConsumerWidget {
           photoUrl: photoUrl,
         );
 
-        await userService.updateEmployerProfile(profile.uid, updatedProfile);
-
-        // Invalidate the profile provider to refresh data
-        ref.invalidate(currentEmployerProfileProvider);
+        // Save the updated profile data to Firestore.
+        await controller.saveProfile(profile, updatedProfile);
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -108,7 +126,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
               backgroundColor: Colors.green,
             ),
           );
-          context.pop();
+          context.pop(); // Go back to the previous screen on success.
         }
       } catch (e) {
         if (context.mounted) {
@@ -119,8 +137,6 @@ class EditEmployerProfilePage extends HookConsumerWidget {
             ),
           );
         }
-      } finally {
-        isLoading.value = false;
       }
     }
 
@@ -129,9 +145,10 @@ class EditEmployerProfilePage extends HookConsumerWidget {
         title: const Text('Edit Profile'),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
+          // The save button shows a loading indicator when the profile is being saved.
           TextButton(
-            onPressed: isLoading.value ? null : saveProfile,
-            child: isLoading.value
+            onPressed: mutation.isLoading ? null : saveProfile,
+            child: mutation.isLoading
                 ? SizedBox(
                     width: 20.sp,
                     height: 20.sp,
@@ -141,146 +158,153 @@ class EditEmployerProfilePage extends HookConsumerWidget {
           ),
         ],
       ),
-      body: Form(
-        key: formKey.value,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(4.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Picture Section
-              Center(
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 40.sp,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: selectedProfileImage.value != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(40.sp),
-                              child: Image.file(
-                                selectedProfileImage.value!,
-                                width: 80.sp,
-                                height: 80.sp,
-                                fit: BoxFit.cover,
+      body: SafeArea(
+        child: Form(
+          key: formKey.value,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(4.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Picture Section
+                Center(
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 40.sp,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        // Display the newly selected image, the existing network image, or initials.
+                        child: selectedProfileImage.value != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(40.sp),
+                                child: Image.file(
+                                  selectedProfileImage.value!,
+                                  width: 80.sp,
+                                  height: 80.sp,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : profile.photoUrl != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(40.sp),
+                                child: Image.network(
+                                  profile.photoUrl!,
+                                  width: 80.sp,
+                                  height: 80.sp,
+                                  fit: BoxFit.cover,
+                                  // TODO(ux): Add a loading builder and error builder for the network image.
+                                ),
+                              )
+                            : Text(
+                                profile.name.isNotEmpty
+                                    ? profile.name[0].toUpperCase()
+                                    : 'E',
+                                style: TextStyle(
+                                  fontSize: 32.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
                               ),
-                            )
-                          : profile.photoUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(40.sp),
-                              child: Image.network(
-                                profile.photoUrl!,
-                                width: 80.sp,
-                                height: 80.sp,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : Text(
-                              profile.name.isNotEmpty
-                                  ? profile.name[0].toUpperCase()
-                                  : 'E',
-                              style: TextStyle(
-                                fontSize: 32.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ),
-                    ),
-                    SizedBox(height: 2.h),
-                    TextButton.icon(
-                      onPressed: pickProfileImage,
-                      icon: const Icon(Icons.camera_alt),
-                      label: Text(
-                        selectedProfileImage.value != null
-                            ? 'Change Photo'
-                            : 'Add Photo',
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 2.h),
+                      TextButton.icon(
+                        onPressed: pickProfileImage,
+                        icon: const Icon(Icons.camera_alt),
+                        label: Text(
+                          selectedProfileImage.value != null
+                              ? 'Change Photo'
+                              : 'Add Photo',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 4.h),
+                SizedBox(height: 4.h),
 
-              // Personal Information
-              _SectionTitle('Personal Information'),
-              SizedBox(height: 2.h),
+                // Personal Information Section
+                _SectionTitle('Personal Information'),
+                SizedBox(height: 2.h),
 
-              _FormField(
-                controller: nameController,
-                label: 'Full Name',
-                icon: Icons.person_outline,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Name is required';
-                  }
-                  return null;
-                },
-              ),
+                _FormField(
+                  controller: nameController,
+                  label: 'Full Name',
+                  icon: Icons.person_outline,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Name is required';
+                    }
+                    return null;
+                  },
+                ),
 
-              SizedBox(height: 3.h),
+                SizedBox(height: 3.h),
 
-              _FormField(
-                controller: companyNameController,
-                label: 'Company Name',
-                icon: Icons.business_outlined,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Company name is required';
-                  }
-                  return null;
-                },
-              ),
+                _FormField(
+                  controller: companyNameController,
+                  label: 'Company Name',
+                  icon: Icons.business_outlined,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Company name is required';
+                    }
+                    return null;
+                  },
+                ),
 
-              SizedBox(height: 4.h),
+                SizedBox(height: 4.h),
 
-              // Contact Information
-              _SectionTitle('Contact Information'),
-              SizedBox(height: 2.h),
+                // Contact Information Section
+                _SectionTitle('Contact Information'),
+                SizedBox(height: 2.h),
 
-              _FormField(
-                controller: phoneController,
-                label: 'Phone Number',
-                icon: Icons.phone_outlined,
-                keyboardType: TextInputType.phone,
-                hintText: '+1 (555) 123-4567',
-              ),
+                _FormField(
+                  controller: phoneController,
+                  label: 'Phone Number',
+                  icon: Icons.phone_outlined,
+                  keyboardType: TextInputType.phone,
+                  hintText: '+1 (555) 123-4567',
+                ),
 
-              SizedBox(height: 3.h),
+                SizedBox(height: 3.h),
 
-              _FormField(
-                controller: locationController,
-                label: 'Location',
-                icon: Icons.location_on_outlined,
-                hintText: 'City, State',
-              ),
+                _FormField(
+                  controller: locationController,
+                  label: 'Location',
+                  icon: Icons.location_on_outlined,
+                  hintText: 'City, State',
+                ),
 
-              SizedBox(height: 3.h),
+                SizedBox(height: 3.h),
 
-              _FormField(
-                controller: websiteController,
-                label: 'Website',
-                icon: Icons.language_outlined,
-                keyboardType: TextInputType.url,
-                hintText: 'https://www.company.com',
-              ),
+                _FormField(
+                  controller: websiteController,
+                  label: 'Website',
+                  icon: Icons.language_outlined,
+                  keyboardType: TextInputType.url,
+                  hintText: 'https://www.company.com',
+                  // TODO(validation): Add a URL validator.
+                ),
 
-              SizedBox(height: 4.h),
+                SizedBox(height: 4.h),
 
-              // Company Information
-              _SectionTitle('Company Information'),
-              SizedBox(height: 2.h),
+                // Company Information Section
+                _SectionTitle('Company Information'),
+                SizedBox(height: 2.h),
 
-              _FormField(
-                controller: companyDescriptionController,
-                label: 'Company Description',
-                icon: Icons.info_outline,
-                maxLines: 4,
-                hintText: 'Describe your company, mission, and values...',
-              ),
+                _FormField(
+                  controller: companyDescriptionController,
+                  label: 'Company Description',
+                  icon: Icons.info_outline,
+                  maxLines: 4,
+                  hintText: 'Describe your company, mission, and values...',
+                ),
 
-              SizedBox(height: 6.h),
-            ],
+                SizedBox(height: 6.h),
+              ],
+            ),
           ),
         ),
       ),
@@ -288,9 +312,12 @@ class EditEmployerProfilePage extends HookConsumerWidget {
   }
 }
 
+/// A reusable widget for displaying a section title.
 class _SectionTitle extends StatelessWidget {
+  /// The text to display as the title.
   final String title;
 
+  /// Creates a [_SectionTitle].
   const _SectionTitle(this.title);
 
   @override
@@ -306,15 +333,30 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
+/// A reusable, styled [TextFormField] for the profile editing form.
 class _FormField extends StatelessWidget {
+  /// The controller for the text field.
   final TextEditingController controller;
+
+  /// The label text for the form field.
   final String label;
+
+  /// The icon to display before the text field.
   final IconData icon;
+
+  /// The hint text to display when the field is empty.
   final String? hintText;
+
+  /// The maximum number of lines for the text field.
   final int maxLines;
+
+  /// The keyboard type for the text field.
   final TextInputType? keyboardType;
+
+  /// The validation function for the text field.
   final String? Function(String?)? validator;
 
+  /// Creates a [_FormField].
   const _FormField({
     required this.controller,
     required this.label,

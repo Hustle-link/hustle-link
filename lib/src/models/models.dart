@@ -1,6 +1,7 @@
 export 'app_user.dart';
-export 'hustler.dart';
-export 'employer.dart';
-export 'job_posting.dart';
-export 'job_application.dart';
 export 'certification.dart';
+export 'employer.dart';
+export 'hustler.dart';
+export 'job_application.dart';
+export 'job_posting.dart';
+export 'user.dart';

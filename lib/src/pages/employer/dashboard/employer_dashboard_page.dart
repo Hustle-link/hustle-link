@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
+import 'package:go_router/go_router.dart';
 
-/// Provider for employer's job postings
+/// A Riverpod provider that fetches the job postings for the currently
+/// authenticated employer.
+///
+/// It yields a list of [JobPosting] objects.
+// TODO(caching): Implement caching for the job postings to reduce Firestore reads.
 final employerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
   final currentUser = ref.watch(firebaseAuthServiceProvider).currentUser;
   final jobService = ref.watch(firestoreJobServiceProvider);
@@ -16,7 +21,12 @@ final employerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
   yield* jobService.getJobsByEmployer(currentUser.uid);
 });
 
+/// A widget that displays the employer's dashboard.
+///
+/// This dashboard shows the employer's profile information, statistics about their
+/// job postings, and a list of their current jobs.
 class EmployerDashboardPage extends HookConsumerWidget {
+  /// Creates a new instance of [EmployerDashboardPage].
   const EmployerDashboardPage({super.key});
 
   @override
@@ -40,8 +50,8 @@ class EmployerDashboardPage extends HookConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to post job page
-          // TODO: Implement navigation
+          // Navigate to post job page within employer shell
+          context.push(AppRoutes.employerPostJob);
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
@@ -161,7 +171,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                               ElevatedButton.icon(
                                 onPressed: () {
                                   // Navigate to post job page
-                                  // TODO: Implement navigation
+                                  context.push(AppRoutes.employerPostJob);
                                 },
                                 icon: const Icon(Icons.add),
                                 label: const Text('Post a Job'),
@@ -218,12 +228,14 @@ class EmployerDashboardPage extends HookConsumerWidget {
   }
 }
 
+/// A widget that displays a single statistic in a card format.
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
   final Color color;
 
+  /// Creates a new instance of [_StatCard].
   const _StatCard({
     required this.title,
     required this.value,
@@ -265,9 +277,14 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+/// A widget that displays a summary of a job posting in a card format.
+///
+/// This card is intended for use in the employer's dashboard.
 class EmployerJobCard extends StatelessWidget {
+  /// The job posting to display.
   final JobPosting job;
 
+  /// Creates a new instance of [EmployerJobCard].
   const EmployerJobCard({super.key, required this.job});
 
   @override
@@ -279,8 +296,11 @@ class EmployerJobCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // Navigate to job management/applications page
-          // TODO: Implement navigation
+          // Navigate to job details within the same shell and preserve back stack
+          context.pushNamed(
+            AppRoutes.employerJobDetailsRoute,
+            pathParameters: {'jobId': job.id},
+          );
         },
         child: Padding(
           padding: EdgeInsets.all(4.w),
@@ -394,6 +414,7 @@ class EmployerJobCard extends StatelessWidget {
     );
   }
 
+  /// Returns a color based on the job's status.
   Color _getStatusColor(JobStatus status) {
     switch (status) {
       case JobStatus.active:
@@ -405,6 +426,7 @@ class EmployerJobCard extends StatelessWidget {
     }
   }
 
+  /// Formats a [DateTime] object into a user-friendly string.
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);

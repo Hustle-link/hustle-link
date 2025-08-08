@@ -17,7 +17,7 @@ class RoleSelectionPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Complete Your Profile'),
+        title: const Text(RoleSelectionStrings.pageTitle),
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: Padding(
@@ -29,7 +29,7 @@ class RoleSelectionPage extends HookConsumerWidget {
 
             // Title
             Text(
-              'What\'s your name?',
+              RoleSelectionStrings.nameQuestion,
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
@@ -42,15 +42,15 @@ class RoleSelectionPage extends HookConsumerWidget {
             TextField(
               controller: nameController,
               decoration: const InputDecoration(
-                labelText: 'Full Name',
-                hintText: 'Enter your full name',
+                labelText: RoleSelectionStrings.nameLabel,
+                hintText: RoleSelectionStrings.nameHint,
               ),
             ),
             SizedBox(height: 4.h),
 
             // Role selection title
             Text(
-              'What brings you to Hustle Link?',
+              RoleSelectionStrings.roleQuestion,
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class RoleSelectionPage extends HookConsumerWidget {
             ),
             SizedBox(height: 1.h),
             Text(
-              'Choose your role to get started',
+              RoleSelectionStrings.roleSubtitle,
               style: TextStyle(
                 fontSize: 16.sp,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
@@ -69,8 +69,8 @@ class RoleSelectionPage extends HookConsumerWidget {
 
             // Role Cards
             _RoleCard(
-              title: 'I\'m a Hustler',
-              subtitle: 'Looking for freelance work and gigs',
+              title: RoleSelectionStrings.hustlerTitle,
+              subtitle: RoleSelectionStrings.hustlerSubtitle,
               icon: Icons.person_search,
               isSelected: selectedRole.value == UserRole.hustler,
               onTap: () => selectedRole.value = UserRole.hustler,
@@ -78,8 +78,8 @@ class RoleSelectionPage extends HookConsumerWidget {
             ),
             SizedBox(height: 3.h),
             _RoleCard(
-              title: 'I\'m an Employer',
-              subtitle: 'Looking to hire talented freelancers',
+              title: RoleSelectionStrings.employerTitle,
+              subtitle: RoleSelectionStrings.employerSubtitle,
               icon: Icons.business_center,
               isSelected: selectedRole.value == UserRole.employer,
               onTap: () => selectedRole.value = UserRole.employer,
@@ -108,7 +108,9 @@ class RoleSelectionPage extends HookConsumerWidget {
                             context.go('/'); // Will redirect based on role
                           }
                         } catch (e) {
-                          debugPrint('Profile creation failed: $e');
+                          debugPrint(
+                            '${RoleSelectionStrings.profileCreationFailure}$e',
+                          );
                         }
                       }
                     : null,
@@ -121,13 +123,14 @@ class RoleSelectionPage extends HookConsumerWidget {
                 ),
                 child: authState.map(
                   idle: () => const Text(
-                    'Get Started',
+                    RoleSelectionStrings.getStartedButton,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   loading: () => const CircularProgressIndicator(),
-                  error: (error, _) => const Text('Try Again'),
+                  error: (error, _) =>
+                      const Text(RoleSelectionStrings.tryAgainButton),
                   data: (_) => const Text(
-                    'Get Started',
+                    RoleSelectionStrings.getStartedButton,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),

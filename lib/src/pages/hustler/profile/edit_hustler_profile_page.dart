@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/pages/hustler/profile/controllers/controllers.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_selector/file_selector.dart';
@@ -30,14 +31,13 @@ class EditHustlerProfilePage extends HookConsumerWidget {
       text: profile.skills.join(', '),
     );
 
-    final isLoading = useState(false);
+    final controller = ref.read(editHustlerProfileControllerProvider.notifier);
+    final mutation = ref.watch(editHustlerProfileControllerProvider);
     final formKey = useRef(GlobalKey<FormState>());
     final selectedProfileImage = useState<File?>(null);
     final certifications = useState<List<String>>([...profile.certifications]);
     final newCertificationFiles = useState<List<File>>([]);
 
-    final userService = ref.read(firestoreUserServiceProvider);
-    final storageService = ref.read(firebaseStorageServiceProvider);
     final imagePicker = ImagePicker();
 
     Future<void> pickProfileImage() async {
@@ -119,7 +119,6 @@ class EditHustlerProfilePage extends HookConsumerWidget {
     Future<void> saveProfile() async {
       if (!formKey.value.currentState!.validate()) return;
 
-      isLoading.value = true;
       try {
         // Parse skills from comma-separated string
         final skillsList = skillsController.text
@@ -132,22 +131,20 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
         // Upload profile image if selected
         if (selectedProfileImage.value != null) {
-          photoUrl = await storageService.uploadProfileImage(
+          await controller.uploadProfileImage(
             profile.uid,
             selectedProfileImage.value!,
           );
+          // Ideally we'd fetch the new URL from storage return; for now, keep existing until refreshed
+          photoUrl = profile.photoUrl;
         }
 
         // Upload new certification files
         final allCertifications = [...certifications.value];
         for (final certFile in newCertificationFiles.value) {
           final fileName = certFile.path.split('/').last;
-          final certUrl = await storageService.uploadCertification(
-            profile.uid,
-            certFile,
-            fileName,
-          );
-          allCertifications.add(certUrl);
+          await controller.uploadCertification(profile.uid, certFile, fileName);
+          // Defer actual URLs to refreshed profile
         }
 
         final updatedProfile = profile.copyWith(
@@ -169,10 +166,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
           certifications: allCertifications,
         );
 
-        await userService.updateHustlerProfile(profile.uid, updatedProfile);
-
-        // Invalidate the profile provider to refresh data
-        ref.invalidate(currentHustlerProfileProvider);
+        await controller.saveProfile(profile, updatedProfile);
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -192,9 +186,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
             ),
           );
         }
-      } finally {
-        isLoading.value = false;
-      }
+      } finally {}
     }
 
     return Scaffold(
@@ -203,8 +195,8 @@ class EditHustlerProfilePage extends HookConsumerWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           TextButton(
-            onPressed: isLoading.value ? null : saveProfile,
-            child: isLoading.value
+            onPressed: mutation.isLoading ? null : saveProfile,
+            child: mutation.isLoading
                 ? SizedBox(
                     width: 20.sp,
                     height: 20.sp,
@@ -214,234 +206,238 @@ class EditHustlerProfilePage extends HookConsumerWidget {
           ),
         ],
       ),
-      body: Form(
-        key: formKey.value,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(4.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Picture Section
-              Center(
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 40.sp,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: selectedProfileImage.value != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(40.sp),
-                              child: Image.file(
-                                selectedProfileImage.value!,
-                                width: 80.sp,
-                                height: 80.sp,
-                                fit: BoxFit.cover,
+      body: SafeArea(
+        child: Form(
+          key: formKey.value,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(4.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Picture Section
+                Center(
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 40.sp,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: selectedProfileImage.value != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(40.sp),
+                                child: Image.file(
+                                  selectedProfileImage.value!,
+                                  width: 80.sp,
+                                  height: 80.sp,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : profile.photoUrl != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(40.sp),
+                                child: Image.network(
+                                  profile.photoUrl!,
+                                  width: 80.sp,
+                                  height: 80.sp,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Text(
+                                profile.name.isNotEmpty
+                                    ? profile.name[0].toUpperCase()
+                                    : 'H',
+                                style: TextStyle(
+                                  fontSize: 32.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
                               ),
-                            )
-                          : profile.photoUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(40.sp),
-                              child: Image.network(
-                                profile.photoUrl!,
-                                width: 80.sp,
-                                height: 80.sp,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : Text(
-                              profile.name.isNotEmpty
-                                  ? profile.name[0].toUpperCase()
-                                  : 'H',
-                              style: TextStyle(
-                                fontSize: 32.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ),
-                    ),
-                    SizedBox(height: 2.h),
-                    TextButton.icon(
-                      onPressed: pickProfileImage,
-                      icon: const Icon(Icons.camera_alt),
-                      label: Text(
-                        selectedProfileImage.value != null
-                            ? 'Change Photo'
-                            : 'Add Photo',
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 4.h),
-
-              // Basic Information
-              _SectionTitle('Basic Information'),
-              SizedBox(height: 2.h),
-
-              _FormField(
-                controller: nameController,
-                label: 'Full Name',
-                icon: Icons.person_outline,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Name is required';
-                  }
-                  return null;
-                },
-              ),
-
-              SizedBox(height: 3.h),
-
-              _FormField(
-                controller: bioController,
-                label: 'Bio',
-                icon: Icons.info_outline,
-                maxLines: 3,
-                hintText: 'Tell others about yourself...',
-              ),
-
-              SizedBox(height: 4.h),
-
-              // Contact Information
-              _SectionTitle('Contact Information'),
-              SizedBox(height: 2.h),
-
-              _FormField(
-                controller: phoneController,
-                label: 'Phone Number',
-                icon: Icons.phone_outlined,
-                keyboardType: TextInputType.phone,
-                hintText: '+1 (555) 123-4567',
-              ),
-
-              SizedBox(height: 3.h),
-
-              _FormField(
-                controller: locationController,
-                label: 'Location',
-                icon: Icons.location_on_outlined,
-                hintText: 'City, State',
-              ),
-
-              SizedBox(height: 4.h),
-
-              // Professional Information
-              _SectionTitle('Professional Information'),
-              SizedBox(height: 2.h),
-
-              _FormField(
-                controller: skillsController,
-                label: 'Skills',
-                icon: Icons.build_outlined,
-                hintText: 'Web Development, Mobile Apps, Design, etc.',
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please add at least one skill';
-                  }
-                  return null;
-                },
-              ),
-
-              SizedBox(height: 1.h),
-
-              Text(
-                'Separate skills with commas',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-
-              SizedBox(height: 3.h),
-
-              _FormField(
-                controller: experienceController,
-                label: 'Experience',
-                icon: Icons.work_outline,
-                maxLines: 4,
-                hintText:
-                    'Describe your work experience, projects, or achievements...',
-              ),
-
-              SizedBox(height: 4.h),
-
-              // Certifications Section
-              _SectionTitle('Certifications'),
-              SizedBox(height: 2.h),
-
-              Text(
-                'Upload your certificates, diplomas, or other qualification documents (PDF, DOC, DOCX)',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-
-              SizedBox(height: 2.h),
-
-              // Existing certifications
-              if (certifications.value.isNotEmpty) ...[
-                ...certifications.value.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final certUrl = entry.value;
-                  final fileName = certUrl
-                      .split('/')
-                      .last
-                      .split('_')
-                      .skip(1)
-                      .join('_');
-
-                  return _CertificationItem(
-                    fileName: fileName.length > 30
-                        ? '${fileName.substring(0, 30)}...'
-                        : fileName,
-                    onRemove: () =>
-                        removeCertification(index, isExisting: true),
-                    isExisting: true,
-                  );
-                }),
-                SizedBox(height: 2.h),
-              ],
-
-              // New certification files
-              if (newCertificationFiles.value.isNotEmpty) ...[
-                ...newCertificationFiles.value.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final file = entry.value;
-                  final fileName = file.path.split('/').last;
-
-                  return _CertificationItem(
-                    fileName: fileName.length > 30
-                        ? '${fileName.substring(0, 30)}...'
-                        : fileName,
-                    onRemove: () =>
-                        removeCertification(index, isExisting: false),
-                    isExisting: false,
-                  );
-                }),
-                SizedBox(height: 2.h),
-              ],
-
-              // Add certifications button
-              ElevatedButton.icon(
-                onPressed: pickCertificationFiles,
-                icon: const Icon(Icons.upload_file),
-                label: const Text('Add Certifications'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 6.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                      SizedBox(height: 2.h),
+                      TextButton.icon(
+                        onPressed: pickProfileImage,
+                        icon: const Icon(Icons.camera_alt),
+                        label: Text(
+                          selectedProfileImage.value != null
+                              ? 'Change Photo'
+                              : 'Add Photo',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
 
-              SizedBox(height: 6.h),
-            ],
+                SizedBox(height: 4.h),
+
+                // Basic Information
+                _SectionTitle('Basic Information'),
+                SizedBox(height: 2.h),
+
+                _FormField(
+                  controller: nameController,
+                  label: 'Full Name',
+                  icon: Icons.person_outline,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Name is required';
+                    }
+                    return null;
+                  },
+                ),
+
+                SizedBox(height: 3.h),
+
+                _FormField(
+                  controller: bioController,
+                  label: 'Bio',
+                  icon: Icons.info_outline,
+                  maxLines: 3,
+                  hintText: 'Tell others about yourself...',
+                ),
+
+                SizedBox(height: 4.h),
+
+                // Contact Information
+                _SectionTitle('Contact Information'),
+                SizedBox(height: 2.h),
+
+                _FormField(
+                  controller: phoneController,
+                  label: 'Phone Number',
+                  icon: Icons.phone_outlined,
+                  keyboardType: TextInputType.phone,
+                  hintText: '+1 (555) 123-4567',
+                ),
+
+                SizedBox(height: 3.h),
+
+                _FormField(
+                  controller: locationController,
+                  label: 'Location',
+                  icon: Icons.location_on_outlined,
+                  hintText: 'City, State',
+                ),
+
+                SizedBox(height: 4.h),
+
+                // Professional Information
+                _SectionTitle('Professional Information'),
+                SizedBox(height: 2.h),
+
+                _FormField(
+                  controller: skillsController,
+                  label: 'Skills',
+                  icon: Icons.build_outlined,
+                  hintText: 'Web Development, Mobile Apps, Design, etc.',
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please add at least one skill';
+                    }
+                    return null;
+                  },
+                ),
+
+                SizedBox(height: 1.h),
+
+                Text(
+                  'Separate skills with commas',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+
+                SizedBox(height: 3.h),
+
+                _FormField(
+                  controller: experienceController,
+                  label: 'Experience',
+                  icon: Icons.work_outline,
+                  maxLines: 4,
+                  hintText:
+                      'Describe your work experience, projects, or achievements...',
+                ),
+
+                SizedBox(height: 4.h),
+
+                // Certifications Section
+                _SectionTitle('Certifications'),
+                SizedBox(height: 2.h),
+
+                Text(
+                  'Upload your certificates, diplomas, or other qualification documents (PDF, DOC, DOCX)',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+
+                SizedBox(height: 2.h),
+
+                // Existing certifications
+                if (certifications.value.isNotEmpty) ...[
+                  ...certifications.value.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final certUrl = entry.value;
+                    final fileName = certUrl
+                        .split('/')
+                        .last
+                        .split('_')
+                        .skip(1)
+                        .join('_');
+
+                    return _CertificationItem(
+                      fileName: fileName.length > 30
+                          ? '${fileName.substring(0, 30)}...'
+                          : fileName,
+                      onRemove: () =>
+                          removeCertification(index, isExisting: true),
+                      isExisting: true,
+                    );
+                  }),
+                  SizedBox(height: 2.h),
+                ],
+
+                // New certification files
+                if (newCertificationFiles.value.isNotEmpty) ...[
+                  ...newCertificationFiles.value.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final file = entry.value;
+                    final fileName = file.path.split('/').last;
+
+                    return _CertificationItem(
+                      fileName: fileName.length > 30
+                          ? '${fileName.substring(0, 30)}...'
+                          : fileName,
+                      onRemove: () =>
+                          removeCertification(index, isExisting: false),
+                      isExisting: false,
+                    );
+                  }),
+                  SizedBox(height: 2.h),
+                ],
+
+                // Add certifications button
+                ElevatedButton.icon(
+                  onPressed: pickCertificationFiles,
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Add Certifications'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 6.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 6.h),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 
-/// Provider for jobs stream for current hustler
+/// A [StreamProvider] that fetches a list of job postings relevant to the current hustler.
+///
+/// It first fetches the hustler's profile to get their skills. Then, it uses
+/// these skills to query for matching jobs from the [FirestoreJobService].
+/// If the hustler has no skills, it defaults to a 'general' category to show all jobs.
 final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
+  // Depend on the future of the profile provider to ensure profile is loaded.
   final hustlerProfile = await ref.watch(currentHustlerProfileProvider.future);
   final jobService = ref.watch(firestoreJobServiceProvider);
 
@@ -13,7 +19,8 @@ final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
     return;
   }
 
-  // If hustler has no skills, show all jobs
+  // If the hustler has no skills, show all jobs by using a general filter.
+  // TODO(filtering): Implement more advanced filtering options beyond skills.
   final skills = hustlerProfile.skills.isEmpty
       ? ['general']
       : hustlerProfile.skills;
@@ -21,11 +28,17 @@ final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
   yield* jobService.getJobsForHustler(skills);
 });
 
+/// The main dashboard page for a "hustler" user.
+///
+/// Displays a welcome message, a list of jobs matching their skills, and
+/// allows them to refresh the job list.
 class HustlerDashboardPage extends HookConsumerWidget {
+  /// Creates a [HustlerDashboardPage].
   const HustlerDashboardPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the hustler's profile and the stream of jobs.
     final hustlerProfile = ref.watch(currentHustlerProfileProvider);
     final jobsStream = ref.watch(hustlerJobsProvider);
     final authController = ref.read(authControllerProvider.notifier);
@@ -35,6 +48,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
         title: const Text('Find Jobs'),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
+          // TODO(ux): Add a confirmation dialog before signing out.
           IconButton(
             onPressed: () async {
               await authController.signOut();
@@ -44,11 +58,13 @@ class HustlerDashboardPage extends HookConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
+        // Allows the user to pull-to-refresh the job list.
         onRefresh: () async {
           ref.invalidate(hustlerJobsProvider);
         },
         child: hustlerProfile.when(
           data: (profile) {
+            // TODO(ux): Provide a way to create a profile if it's missing.
             if (profile == null) {
               return const Center(child: Text('Profile not found'));
             }
@@ -56,7 +72,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header section
+                // Header section with a welcome message.
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(4.w),
@@ -90,10 +106,11 @@ class HustlerDashboardPage extends HookConsumerWidget {
                   ),
                 ),
 
-                // Jobs section
+                // Jobs list section.
                 Expanded(
                   child: jobsStream.when(
                     data: (jobs) {
+                      // If no jobs are found, display a message.
                       if (jobs.isEmpty) {
                         return Center(
                           child: Column(
@@ -135,6 +152,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
                         );
                       }
 
+                      // Display the list of jobs.
                       return ListView.builder(
                         padding: EdgeInsets.all(4.w),
                         itemCount: jobs.length,
@@ -144,8 +162,10 @@ class HustlerDashboardPage extends HookConsumerWidget {
                         },
                       );
                     },
+                    // Show a loading indicator while jobs are being fetched.
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
+                    // Show an error message if fetching jobs fails.
                     error: (error, stack) => Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -165,7 +185,9 @@ class HustlerDashboardPage extends HookConsumerWidget {
               ],
             );
           },
+          // Show a loading indicator while the profile is being fetched.
           loading: () => const Center(child: CircularProgressIndicator()),
+          // Show an error message if fetching the profile fails.
           error: (error, stack) =>
               Center(child: Text('Error loading profile: $error')),
         ),
@@ -174,9 +196,12 @@ class HustlerDashboardPage extends HookConsumerWidget {
   }
 }
 
+/// A card widget to display a summary of a [JobPosting].
 class JobCard extends StatelessWidget {
+  /// The job data to display.
   final JobPosting job;
 
+  /// Creates a [JobCard].
   const JobCard({super.key, required this.job});
 
   @override
@@ -188,15 +213,18 @@ class JobCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // Navigate to job details page
-          // TODO: Implement navigation
+          // Navigate to the detailed job view when the card is tapped.
+          context.pushNamed(
+            AppRoutes.jobDetailsRoute,
+            pathParameters: {'jobId': job.id},
+          );
         },
         child: Padding(
           padding: EdgeInsets.all(4.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Job title and company
+              // Header with job title and compensation.
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -249,7 +277,7 @@ class JobCard extends StatelessWidget {
 
               SizedBox(height: 2.h),
 
-              // Job description (truncated)
+              // Truncated job description.
               Text(
                 job.description,
                 style: TextStyle(
@@ -264,7 +292,7 @@ class JobCard extends StatelessWidget {
 
               SizedBox(height: 2.h),
 
-              // Skills required
+              // A preview of the required skills.
               Wrap(
                 spacing: 2.w,
                 runSpacing: 1.h,
@@ -291,6 +319,7 @@ class JobCard extends StatelessWidget {
                 }).toList(),
               ),
 
+              // Shows how many more skills are required if they exceed the preview count.
               if (job.skillsRequired.length > 3) ...[
                 SizedBox(height: 1.h),
                 Text(
@@ -306,7 +335,7 @@ class JobCard extends StatelessWidget {
 
               SizedBox(height: 2.h),
 
-              // Footer with location and date
+              // Footer with location, date, and applicant count.
               Row(
                 children: [
                   if (job.location != null) ...[
@@ -347,6 +376,7 @@ class JobCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
+                  // TODO(data): Ensure this count is accurate and updated.
                   if (job.applicationsCount != null &&
                       job.applicationsCount! > 0)
                     Text(
@@ -367,6 +397,7 @@ class JobCard extends StatelessWidget {
     );
   }
 
+  /// Formats a [DateTime] into a human-readable string like "2d ago".
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);

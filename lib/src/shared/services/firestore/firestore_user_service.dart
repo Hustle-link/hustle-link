@@ -3,20 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 
-/// Firestore service for user operations
+/// A service class for managing user-related operations in Firestore.
+///
+/// This class provides methods for creating and retrieving user profiles,
+/// including role-specific profiles for Hustlers and Employers.
+/// TODO(refactor): Consider splitting this service into smaller, more focused services if it grows too large.
 class FirestoreUserService {
   final FirebaseFirestore _firestore;
 
+  /// Creates a new instance of [FirestoreUserService].
   FirestoreUserService(this._firestore);
 
-  /// Collection references
+  /// A reference to the 'users' collection in Firestore.
   CollectionReference get _usersCollection => _firestore.collection('users');
+
+  /// A reference to the 'hustlers' collection in Firestore.
   CollectionReference get _hustlersCollection =>
       _firestore.collection('hustlers');
+
+  /// A reference to the 'employers' collection in Firestore.
   CollectionReference get _employersCollection =>
       _firestore.collection('employers');
 
-  /// Create user profile in Firestore
+  /// Creates a user profile in Firestore, including a base user document
+  /// and a role-specific profile.
+  ///
+  /// [uid] The user's unique ID.
+  /// [email] The user's email address.
+  /// [name] The user's name.
+  /// [role] The user's selected [UserRole].
   Future<void> createUserProfile({
     required String uid,
     required String email,
@@ -64,7 +79,10 @@ class FirestoreUserService {
     }
   }
 
-  /// Get user profile
+  /// Retrieves a user's profile from Firestore.
+  ///
+  /// [uid] The user's unique ID.
+  /// Returns an [AppUser] object if the profile exists, otherwise `null`.
   Future<AppUser?> getUserProfile(String uid) async {
     try {
       final doc = await _usersCollection.doc(uid).get();
@@ -78,7 +96,10 @@ class FirestoreUserService {
     }
   }
 
-  /// Get hustler profile
+  /// Retrieves a hustler's profile from Firestore.
+  ///
+  /// [uid] The user's unique ID.
+  /// Returns a [Hustler] object if the profile exists, otherwise `null`.
   Future<Hustler?> getHustlerProfile(String uid) async {
     try {
       debugPrint('Attempting to get hustler profile for UID: $uid');
@@ -100,7 +121,10 @@ class FirestoreUserService {
     }
   }
 
-  /// Get employer profile
+  /// Retrieves an employer's profile from Firestore.
+  ///
+  /// [uid] The user's unique ID.
+  /// Returns an [Employer] object if the profile exists, otherwise `null`.
   Future<Employer?> getEmployerProfile(String uid) async {
     try {
       final doc = await _employersCollection.doc(uid).get();
@@ -114,7 +138,10 @@ class FirestoreUserService {
     }
   }
 
-  /// Update hustler skills
+  /// Updates the skills of a hustler in Firestore.
+  ///
+  /// [uid] The hustler's unique ID.
+  /// [skills] The new list of skills.
   Future<void> updateHustlerSkills(String uid, List<String> skills) async {
     try {
       await _hustlersCollection.doc(uid).update({'skills': skills});
@@ -125,7 +152,10 @@ class FirestoreUserService {
     }
   }
 
-  /// Update hustler profile
+  /// Updates a hustler's profile in Firestore.
+  ///
+  /// [uid] The hustler's unique ID.
+  /// [updatedProfile] The updated [Hustler] object.
   Future<void> updateHustlerProfile(String uid, Hustler updatedProfile) async {
     try {
       final profileData = updatedProfile.toJson();
@@ -137,7 +167,10 @@ class FirestoreUserService {
     }
   }
 
-  /// Update employer profile
+  /// Updates an employer's profile in Firestore.
+  ///
+  /// [uid] The employer's unique ID.
+  /// [updatedProfile] The updated [Employer] object.
   Future<void> updateEmployerProfile(
     String uid,
     Employer updatedProfile,
@@ -153,12 +186,15 @@ class FirestoreUserService {
   }
 }
 
-/// Provider for FirebaseFirestore instance
+/// Provider for the [FirebaseFirestore] instance.
 final firestoreInstanceProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
 });
 
-/// Provider for FirestoreUserService
+/// Provider for the [FirestoreUserService].
+///
+/// This provider creates an instance of [FirestoreUserService] and makes it
+/// available to the rest of the application.
 final firestoreUserServiceProvider = Provider<FirestoreUserService>((ref) {
   final firestore = ref.watch(firestoreInstanceProvider);
   return FirestoreUserService(firestore);

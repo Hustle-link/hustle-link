@@ -5,7 +5,12 @@ import 'package:riverpod_community_mutation/riverpod_community_mutation.dart';
 
 part 'auth_controller.g.dart';
 
-/// AuthController to manage authentication state
+/// An authentication controller that manages the user's authentication state.
+///
+/// This controller provides methods for user registration, sign-in, sign-out,
+/// password reset, and profile creation. It uses the `riverpod_community_mutation`
+/// package to handle asynchronous operations and state management.
+// TODO(refactor): Consolidate the registration methods into a single, more robust method.
 @riverpod
 class AuthController extends _$AuthController with Mutation {
   @override
@@ -14,7 +19,10 @@ class AuthController extends _$AuthController with Mutation {
     return const AsyncUpdate.idle();
   }
 
-  /// Register a new user with email and password and create profile
+  /// Registers a new user with email, password, name, and role.
+  ///
+  /// This method creates a Firebase Auth account and then creates a corresponding
+  /// user profile in Firestore.
   Future<void> register({
     required String email,
     required String password,
@@ -58,7 +66,11 @@ class AuthController extends _$AuthController with Mutation {
     return;
   }
 
-  /// Register a new user with email and password (legacy method)
+  /// Registers a new user with email and password.
+  ///
+  /// This is a legacy method and should be replaced with the more comprehensive
+  /// `register` method.
+  @Deprecated('Use register method with profile creation instead')
   Future<void> registerLegacy(String email, String password) async {
     final firebaseAuthService = ref.watch(firebaseAuthServiceProvider);
     //
@@ -87,7 +99,7 @@ class AuthController extends _$AuthController with Mutation {
     return;
   }
 
-  /// Sign in with email and password
+  /// Signs in a user with their email and password.
   Future<void> signIn(String email, String password) async {
     final firebaseAuthService = ref.watch(firebaseAuthServiceProvider);
 
@@ -107,7 +119,7 @@ class AuthController extends _$AuthController with Mutation {
     }
   }
 
-  /// Sign out the current user
+  /// Signs out the currently authenticated user.
   Future<void> signOut() async {
     final firebaseAuthService = ref.watch(firebaseAuthServiceProvider);
 
@@ -127,7 +139,7 @@ class AuthController extends _$AuthController with Mutation {
     );
   }
 
-  /// Send password reset email
+  /// Sends a password reset email to the specified email address.
   Future<void> resetPassword(String email) async {
     final firebaseAuthService = ref.watch(firebaseAuthServiceProvider);
     await mutate(
@@ -147,7 +159,10 @@ class AuthController extends _$AuthController with Mutation {
     );
   }
 
-  /// Create user profile after Firebase Auth registration
+  /// Creates a user profile in Firestore after a user has been authenticated.
+  ///
+  /// This method is typically called after a user has registered and needs their
+  /// profile to be created.
   Future<void> createUserProfile({
     required String name,
     required UserRole role,

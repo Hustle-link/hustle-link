@@ -3,18 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 
-/// Firestore service for job operations
+/// A service class for managing job-related operations in Firestore.
+///
+/// This class provides methods for creating, reading, updating, and deleting
+/// job postings and applications.
+// TODO(refactor): Separate job and application logic into distinct services for better organization.
 class FirestoreJobService {
   final FirebaseFirestore _firestore;
 
+  /// Creates a new instance of [FirestoreJobService].
   FirestoreJobService(this._firestore);
 
-  /// Collection references
+  /// A reference to the 'jobs' collection in Firestore.
   CollectionReference get _jobsCollection => _firestore.collection('jobs');
+
+  /// A reference to the 'applications' collection in Firestore.
   CollectionReference get _applicationsCollection =>
       _firestore.collection('applications');
 
-  /// Create a new job posting
+  /// Creates a new job posting in Firestore.
+  ///
+  /// Returns the ID of the newly created job posting.
+  /// Throws an [Exception] if the operation fails.
   Future<String> createJobPosting({
     required String employerUid,
     required String title,
@@ -53,7 +63,13 @@ class FirestoreJobService {
     }
   }
 
-  /// Get jobs filtered by hustler skills (sorted by creation date, most recent first)
+  /// Retrieves a stream of job postings that match the skills of a hustler.
+  ///
+  /// [hustlerSkills] A list of skills the hustler possesses.
+  ///
+  /// The jobs are filtered to be active and are sorted by their creation date in descending order.
+  /// Returns a stream of [JobPosting] lists.
+  // TODO(optimization): Consider using a more efficient querying method, like array-contains-any, if Firestore supports it well for this use case.
   Stream<List<JobPosting>> getJobsForHustler(List<String> hustlerSkills) {
     try {
       return _jobsCollection
@@ -80,7 +96,10 @@ class FirestoreJobService {
     }
   }
 
-  /// Get all active jobs (for testing/admin purposes)
+  /// Retrieves a stream of all active job postings.
+  ///
+  /// This method is intended for administrative or testing purposes.
+  /// Returns a stream of [JobPosting] lists.
   Stream<List<JobPosting>> getAllActiveJobs() {
     try {
       return _jobsCollection
@@ -101,7 +120,10 @@ class FirestoreJobService {
     }
   }
 
-  /// Get jobs posted by employer
+  /// Retrieves a stream of job postings created by a specific employer.
+  ///
+  /// [employerUid] The unique ID of the employer.
+  /// Returns a stream of [JobPosting] lists.
   Stream<List<JobPosting>> getJobsByEmployer(String employerUid) {
     try {
       return _jobsCollection
@@ -122,7 +144,10 @@ class FirestoreJobService {
     }
   }
 
-  /// Get single job by ID
+  /// Retrieves a single job posting by its ID.
+  ///
+  /// [jobId] The unique ID of the job posting.
+  /// Returns a [JobPosting] object if found, otherwise `null`.
   Future<JobPosting?> getJobById(String jobId) async {
     try {
       final doc = await _jobsCollection.doc(jobId).get();
@@ -136,7 +161,11 @@ class FirestoreJobService {
     }
   }
 
-  /// Apply for a job
+  /// Creates a job application for a hustler.
+  ///
+  /// This method also increments the `applicationsCount` on the corresponding job posting.
+  /// Returns the ID of the newly created application.
+  /// Throws an [Exception] if the operation fails.
   Future<String> applyForJob({
     required String jobId,
     required String hustlerUid,
@@ -174,7 +203,11 @@ class FirestoreJobService {
     }
   }
 
-  /// Check if hustler has already applied for a job
+  /// Checks if a hustler has already applied for a specific job.
+  ///
+  /// [jobId] The ID of the job.
+  /// [hustlerUid] The ID of the hustler.
+  /// Returns `true` if an application exists, otherwise `false`.
   Future<bool> hasAppliedForJob(String jobId, String hustlerUid) async {
     try {
       final querySnapshot = await _applicationsCollection
@@ -189,7 +222,11 @@ class FirestoreJobService {
     }
   }
 
-  /// Get applications for a job (for employers)
+  /// Retrieves a stream of applications for a specific job.
+  ///
+  /// [jobId] The ID of the job.
+  /// This is intended for use by employers.
+  /// Returns a stream of [JobApplication] lists.
   Stream<List<JobApplication>> getApplicationsForJob(String jobId) {
     try {
       return _applicationsCollection
@@ -211,7 +248,10 @@ class FirestoreJobService {
     }
   }
 
-  /// Get applications by hustler
+  /// Retrieves a stream of applications submitted by a specific hustler.
+  ///
+  /// [hustlerUid] The ID of the hustler.
+  /// Returns a stream of [JobApplication] lists.
   Stream<List<JobApplication>> getApplicationsByHustler(String hustlerUid) {
     try {
       return _applicationsCollection
@@ -233,7 +273,10 @@ class FirestoreJobService {
     }
   }
 
-  /// Update job status
+  /// Updates the status of a job posting.
+  ///
+  /// [jobId] The ID of the job to update.
+  /// [newStatus] The new [JobStatus] to set.
   Future<void> updateJobStatus(String jobId, JobStatus newStatus) async {
     try {
       await _jobsCollection.doc(jobId).update({'status': newStatus.value});
@@ -244,7 +287,47 @@ class FirestoreJobService {
     }
   }
 
-  /// Delete a job posting
+  /// Updates an existing job posting with the provided data.
+  ///
+  /// Only non-null fields are updated.
+  /// [jobId] The ID of the job to update.
+  // TODO(validation): Add validation to ensure that the data being updated is valid.
+  Future<void> updateJobPosting(
+    String jobId, {
+    String? title,
+    String? description,
+    List<String>? skillsRequired,
+    double? compensation,
+    String? location,
+    JobStatus? status,
+    DateTime? deadline,
+  }) async {
+    try {
+      final Map<String, dynamic> data = {};
+      if (title != null) data['title'] = title;
+      if (description != null) data['description'] = description;
+      if (skillsRequired != null) data['skillsRequired'] = skillsRequired;
+      if (compensation != null) data['compensation'] = compensation;
+      if (location != null) data['location'] = location;
+      if (status != null) data['status'] = status.value;
+      if (deadline != null) data['deadline'] = deadline;
+      // optional updated timestamp
+      data['updatedAt'] = FieldValue.serverTimestamp();
+
+      if (data.isEmpty) return; // nothing to update
+
+      await _jobsCollection.doc(jobId).update(data);
+      debugPrint('Job posting updated for ID: $jobId');
+    } catch (e) {
+      debugPrint('Error updating job posting: $e');
+      throw Exception('Failed to update job posting: $e');
+    }
+  }
+
+  /// Deletes a job posting and all its associated applications.
+  ///
+  /// [jobId] The ID of the job to delete.
+  /// This operation is performed in a batch to ensure atomicity.
   Future<void> deleteJobPosting(String jobId) async {
     try {
       // First, delete all applications for this job
@@ -273,7 +356,10 @@ class FirestoreJobService {
   }
 }
 
-/// Provider for FirestoreJobService
+/// Provider for the [FirestoreJobService].
+///
+/// This provider creates an instance of [FirestoreJobService] and makes it
+/// available to the rest of the application.
 final firestoreJobServiceProvider = Provider<FirestoreJobService>((ref) {
   final firestore = ref.watch(firestoreInstanceProvider);
   return FirestoreJobService(firestore);

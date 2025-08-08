@@ -58,6 +58,7 @@ dependencies:
   liquid_swipe: ^3.1.0
   shared_preferences: ^2.5.3
   riverpod_community_mutation: ^1.1.1
+  get: ^4.6.6
   
 
 dev_dependencies:

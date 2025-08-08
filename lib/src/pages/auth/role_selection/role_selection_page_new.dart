@@ -12,129 +12,143 @@ class RoleSelectionPageNew extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedRole = useState<UserRole?>(null);
     final nameController = useTextEditingController();
+    // Rebuild when name changes to update button enabled state
+    useListenable(nameController);
     final authController = ref.read(authControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Complete Your Profile'),
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(6.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 2.h),
-
-            // Title
-            Text(
-              'What\'s your name?',
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 6.w,
+            right: 6.w,
+            top: 2.h,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              Text(
+                'What\'s your name?',
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-            ),
-            SizedBox(height: 2.h),
+              SizedBox(height: 2.h),
 
-            // Name input
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Full Name',
-                hintText: 'Enter your full name',
+              // Name input
+              TextField(
+                controller: nameController,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  hintText: 'Enter your full name',
+                ),
               ),
-            ),
-            SizedBox(height: 4.h),
+              SizedBox(height: 4.h),
 
-            // Role selection title
-            Text(
-              'What brings you to Hustle Link?',
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+              // Role selection title
+              Text(
+                'What brings you to Hustle Link?',
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              'Choose your role to get started',
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              SizedBox(height: 1.h),
+              Text(
+                'Choose your role to get started',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
+                ),
               ),
-            ),
-            SizedBox(height: 4.h),
+              SizedBox(height: 4.h),
 
-            // Role Cards
-            _RoleCard(
-              title: 'I\'m a Hustler',
-              subtitle: 'Looking for freelance work and gigs',
-              icon: Icons.person_search,
-              isSelected: selectedRole.value == UserRole.hustler,
-              onTap: () => selectedRole.value = UserRole.hustler,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            SizedBox(height: 3.h),
-            _RoleCard(
-              title: 'I\'m an Employer',
-              subtitle: 'Looking to hire talented freelancers',
-              icon: Icons.business_center,
-              isSelected: selectedRole.value == UserRole.employer,
-              onTap: () => selectedRole.value = UserRole.employer,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+              // Role Cards
+              _RoleCard(
+                title: 'I\'m a Hustler',
+                subtitle: 'Looking for freelance work and gigs',
+                icon: Icons.person_search,
+                isSelected: selectedRole.value == UserRole.hustler,
+                onTap: () => selectedRole.value = UserRole.hustler,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              SizedBox(height: 3.h),
+              _RoleCard(
+                title: 'I\'m an Employer',
+                subtitle: 'Looking to hire talented freelancers',
+                icon: Icons.business_center,
+                isSelected: selectedRole.value == UserRole.employer,
+                onTap: () => selectedRole.value = UserRole.employer,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
 
-            const Spacer(),
-
-            // Continue Button
-            SizedBox(
-              width: double.infinity,
-              height: 6.h,
-              child: ElevatedButton(
-                onPressed:
-                    (selectedRole.value != null &&
-                        nameController.text.trim().isNotEmpty)
-                    ? () async {
-                        try {
-                          await authController.createUserProfile(
-                            name: nameController.text.trim(),
-                            role: selectedRole.value!,
-                          );
-
-                          // Navigate to appropriate dashboard
-                          if (context.mounted) {
-                            context.go('/'); // Will redirect based on role
-                          }
-                        } catch (e) {
-                          debugPrint('Profile creation failed: $e');
-                        }
+              SizedBox(height: 4.h),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          left: 6.w,
+          right: 6.w,
+          bottom: 4.w + MediaQuery.of(context).viewInsets.bottom,
+          top: 8,
+        ),
+        child: SizedBox(
+          height: 6.h,
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed:
+                (selectedRole.value != null &&
+                    nameController.text.trim().isNotEmpty)
+                ? () async {
+                    try {
+                      await authController.createUserProfile(
+                        name: nameController.text.trim(),
+                        role: selectedRole.value!,
+                      );
+                      if (context.mounted) {
+                        context.go('/');
                       }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: authState.map(
-                  idle: () => const Text(
-                    'Get Started',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  loading: () => const CircularProgressIndicator(),
-                  error: (error, _) => const Text('Try Again'),
-                  data: (_) => const Text(
-                    'Get Started',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                    } catch (e) {
+                      debugPrint('Profile creation failed: $e');
+                    }
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            SizedBox(height: 2.h),
-          ],
+            child: authState.map(
+              idle: () => const Text(
+                'Get Started',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              loading: () => const CircularProgressIndicator(),
+              error: (error, _) => const Text('Try Again'),
+              data: (_) => const Text(
+                'Get Started',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
         ),
       ),
     );

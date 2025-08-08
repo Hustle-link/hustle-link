@@ -5,25 +5,20 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/pages/auth/role_selection/role_selection_page_new.dart';
-import 'package:hustle_link/src/pages/auth/password_reset/password_reset_page.dart';
-import 'package:hustle_link/src/pages/hustler/dashboard/hustler_dashboard_page.dart';
-import 'package:hustle_link/src/pages/hustler/profile/hustler_profile_page.dart';
-import 'package:hustle_link/src/pages/hustler/profile/edit_hustler_profile_page.dart';
-import 'package:hustle_link/src/pages/hustler/applications/hustler_applications_page.dart';
-import 'package:hustle_link/src/pages/hustler/job_details/job_details_page.dart';
-import 'package:hustle_link/src/pages/employer/dashboard/employer_dashboard_page.dart';
-import 'package:hustle_link/src/pages/employer/profile/employer_profile_page.dart';
-import 'package:hustle_link/src/pages/employer/profile/edit_employer_profile_page.dart';
-import 'package:hustle_link/src/pages/employer/job_management/job_management_page.dart';
-import 'package:hustle_link/src/pages/employer/post_job/post_job_page.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // part 'app_router.g.dart';
 
 // gorouter refresh stream
+/// A [ChangeNotifier] that listens to authentication and welcome page state changes
+/// to refresh the GoRouter state.
+// TODO(refactor): Consider merging auth and welcome logic into a single stream for simplicity.
 class GoRouterRefreshStream extends ChangeNotifier {
+  /// Creates a new instance of [GoRouterRefreshStream].
+  ///
+  /// It takes an [authStream] to listen for authentication state changes and
+  /// an optional [welcomeNotifier] to listen for changes in the welcome page
+  /// shared preferences.
   GoRouterRefreshStream(
     Stream<dynamic> authStream,
     ValueNotifier<dynamic>? welcomeNotifier,
@@ -40,6 +35,7 @@ class GoRouterRefreshStream extends ChangeNotifier {
     }
   }
 
+  /// The subscription to the authentication state stream.
   late StreamSubscription<dynamic> authSubscription;
   ValueNotifier<dynamic>? _welcomeNotifier;
 
@@ -57,6 +53,10 @@ class GoRouterRefreshStream extends ChangeNotifier {
   }
 }
 
+/// Provider for the [GoRouter] instance.
+///
+/// This provider creates and configures the GoRouter instance for the app,
+/// handling routing, redirection, and authentication.
 final appRouteProvider = Provider<GoRouter>((ref) {
   // watch the auth provider to get the auth state
   final auth = ref.watch(firebaseAuthServiceProvider);
@@ -73,6 +73,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       ValueNotifier(sharedPrefs.firstTimeOpenApp),
     ),
     observers: [FlutterSmartDialog.observer],
+    // TODO(security): Enhance redirection logic to handle more edge cases and roles.
     redirect: (context, state) async {
       // listen to first time open app state
       final firstTimeOpenApp = sharedPrefs;
@@ -104,13 +105,16 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       if (!loggedIn &&
           !(isLoginPage || isRegisterPage || isResetPasswordPage) &&
           !allowNavToRegister) {
-        // If not logged in and not on login/register/reset-password, redirect to login
+        // If not logged in and not on auth pages, redirect to login
         return AppRoutes.login;
       } else if (!loggedIn && isRegisterPage && !allowNavToRegister) {
-        // If not logged in and on register page, redirect to login
+        // If not logged in and on register page without permission, redirect to login
         return AppRoutes.login;
-      } else if (!loggedIn && !isRegisterPage && allowNavToRegister) {
-        // If not logged in and not register page, allow navigation
+      } else if (!loggedIn &&
+          !isRegisterPage &&
+          !isResetPasswordPage &&
+          allowNavToRegister) {
+        // If not logged in and not on register/reset pages, allow navigation to register
         return AppRoutes.register;
       }
       // Otherwise, allow navigation
@@ -148,6 +152,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.home,
         name: AppRoutes.homeRoute,
+        // TODO(optimization): Cache user profile to avoid repeated lookups on redirect.
         redirect: (context, state) async {
           final currentUser = auth.currentUser;
           if (currentUser == null) return AppRoutes.login;
@@ -185,6 +190,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       ),
 
       // Hustler routes
+      // TODO(UI/UX): Consider a more unified ShellRoute for both user roles if possible.
       ShellRoute(
         builder: (context, state, child) => HustlerShell(child: child),
         routes: [
@@ -256,13 +262,23 @@ final appRouteProvider = Provider<GoRouter>((ref) {
             name: AppRoutes.employerPostJobRoute,
             builder: (context, state) => const PostJobPage(),
           ),
+          GoRoute(
+            path: '${AppRoutes.employerJobDetails}/:jobId',
+            name: AppRoutes.employerJobDetailsRoute,
+            builder: (context, state) {
+              final jobId = state.pathParameters['jobId']!;
+              return EmployerJobDetailsPage(jobId: jobId);
+            },
+          ),
         ],
       ),
     ],
   );
 });
 
-// app routes
+/// A utility class that holds the application's route paths and names.
+/// This helps in avoiding typos and provides a centralized place for route management.
+// TODO(refactor): Organize routes into nested classes for better structure if the app grows.
 class AppRoutes {
   // paths
   // auth routes
@@ -294,6 +310,7 @@ class AppRoutes {
   static const String employerEditProfile = '/employer/profile/edit';
   static const String employerJobs = '/employer/jobs';
   static const String employerPostJob = '/employer/post-job';
+  static const String employerJobDetails = '/employer/job';
 
   // route names
   static const String loginRoute = 'login';
@@ -320,32 +337,66 @@ class AppRoutes {
   static const String employerEditProfileRoute = 'employer_edit_profile';
   static const String employerJobsRoute = 'employer_jobs';
   static const String employerPostJobRoute = 'employer_post_job';
+  static const String employerJobDetailsRoute = 'employer_job_details';
 
   // add more routes as needed
 }
 
+/// A [Notifier] to control whether navigation to the register page is allowed.
+/// This is used to manage the flow between the login and register pages.
 class AllowNavToRegisterNotifier extends Notifier<bool> {
   @override
   bool build() {
-    // Initially allow navigation to register page
+    // Initially disallow navigation to register page
     return false;
   }
 
+  /// Allows navigation to the register page.
   void allowNavigation() {
     state = true;
   }
 
+  /// Disallows navigation to the register page.
   void disallowNavigation() {
     state = false;
   }
 }
 
+/// Provider for the [AllowNavToRegisterNotifier].
 final allowNavToRegisterProvider =
     NotifierProvider<AllowNavToRegisterNotifier, bool>(
       AllowNavToRegisterNotifier.new,
     );
 
-// sharedpreferences for first time opening app
+/// A [Notifier] to control whether navigation to the reset password page is allowed.
+/// This is used to manage the flow between the login and reset password pages.
+class AllowNavToResetPasswordNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    // Initially disallow navigation to reset password page
+    return false;
+  }
+
+  /// Allows navigation to the reset password page.
+  void allowNavigation() {
+    state = true;
+  }
+
+  /// Disallows navigation to the reset password page.
+  void disallowNavigation() {
+    state = false;
+  }
+}
+
+/// Provider for the [AllowNavToResetPasswordNotifier].
+final allowNavToResetPasswordProvider =
+    NotifierProvider<AllowNavToResetPasswordNotifier, bool>(
+      AllowNavToResetPasswordNotifier.new,
+    );
+
+/// Provider for a [SharedPreferencesWithCache] instance.
+/// This is used to cache shared preferences for performance.
+// TODO(optimization): Evaluate if a future provider is the best approach here.
 final sharedPrefsFutureProvider = FutureProvider<SharedPreferencesWithCache>((
   ref,
 ) async {
@@ -354,21 +405,29 @@ final sharedPrefsFutureProvider = FutureProvider<SharedPreferencesWithCache>((
   );
 });
 
+/// A [ChangeNotifier] for managing the 'first time open app' state using SharedPreferences.
+/// It provides methods to get and set this value.
 class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
   bool? _firstTimeOpenApp;
   final Ref ref;
 
+  /// Creates a new instance of [WelcomePageSharedPreferencesNotifier].
   WelcomePageSharedPreferencesNotifier(this.ref) {
     _init();
   }
 
+  /// The current value of the 'first time open app' flag.
   bool? get firstTimeOpenApp => _firstTimeOpenApp;
 
+  /// Initializes the notifier by reading the value from SharedPreferences.
   Future<void> _init() async {
     _firstTimeOpenApp = await getFirstTimeOpenApp();
     notifyListeners();
   }
 
+  /// Sets the 'first time open app' flag in SharedPreferences.
+  ///
+  /// [value] The new boolean value to set.
   Future<void> setFirstTimeOpenApp(bool value) async {
     final prefs = await ref.read(sharedPrefsFutureProvider.future);
     await prefs.setBool('first_time_open_app', value);
@@ -376,21 +435,28 @@ class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Gets the 'first time open app' flag from SharedPreferences.
+  ///
+  /// Returns `true` if the flag is not set, indicating it's the first time.
   Future<bool> getFirstTimeOpenApp() async {
     final prefs = await ref.read(sharedPrefsFutureProvider.future);
     return prefs.getBool('first_time_open_app') ?? true;
   }
 }
 
+/// Provider for the [WelcomePageSharedPreferencesNotifier].
 final welcomePageSharedPreferencesProvider =
     ChangeNotifierProvider<WelcomePageSharedPreferencesNotifier>(
       (ref) => WelcomePageSharedPreferencesNotifier(ref),
     );
 
-/// Shell widget for hustler navigation
+/// A shell widget for the Hustler user role, providing a bottom navigation bar.
+/// It wraps the main content of the Hustler-specific pages.
 class HustlerShell extends ConsumerWidget {
+  /// The child widget to be displayed in the shell.
   final Widget child;
 
+  /// Creates a new instance of [HustlerShell].
   const HustlerShell({super.key, required this.child});
 
   @override
@@ -403,6 +469,7 @@ class HustlerShell extends ConsumerWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
         indicatorColor: Theme.of(context).colorScheme.primaryContainer,
         surfaceTintColor: Theme.of(context).colorScheme.primary,
+        // TODO(UI/UX): Add tooltips to navigation destinations for better accessibility.
         destinations: [
           NavigationDestination(
             icon: Icon(Icons.home),
@@ -433,6 +500,7 @@ class HustlerShell extends ConsumerWidget {
     );
   }
 
+  /// Determines the current index of the navigation bar based on the current route.
   int _getCurrentIndex(BuildContext context) {
     final location = GoRouter.of(
       context,
@@ -442,6 +510,7 @@ class HustlerShell extends ConsumerWidget {
     return 0; // Dashboard
   }
 
+  /// Handles tap events on the navigation bar destinations.
   void _onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
@@ -457,70 +526,107 @@ class HustlerShell extends ConsumerWidget {
   }
 }
 
-/// Shell widget for employer navigation
+/// A shell widget for the Employer user role, providing a bottom navigation bar
+/// and a custom theme.
 class EmployerShell extends ConsumerWidget {
+  /// The child widget to be displayed in the shell.
   final Widget child;
 
+  /// Creates a new instance of [EmployerShell].
   const EmployerShell({super.key, required this.child});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _getCurrentIndex(context),
-        onDestinationSelected: (index) => _onTap(context, index),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        indicatorColor: Theme.of(context).colorScheme.primaryContainer,
-        surfaceTintColor: Theme.of(context).colorScheme.primary,
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard),
-            selectedIcon: Icon(
-              Icons.dashboard,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            label: 'Dashboard',
+    // Swap primary/secondary so employer uses the secondary palette for primary accents
+    final swappedScheme = _swapPrimarySecondary(Theme.of(context).colorScheme);
+    final employerTheme = Theme.of(
+      context,
+    ).copyWith(colorScheme: swappedScheme);
+
+    return Theme(
+      data: employerTheme,
+      child: Builder(
+        builder: (context) => Scaffold(
+          body: child,
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _getCurrentIndex(context),
+            onDestinationSelected: (index) => _onTap(context, index),
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+            surfaceTintColor: Theme.of(context).colorScheme.primary,
+            // TODO(UI/UX): Add tooltips to navigation destinations for better accessibility.
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.dashboard),
+                selectedIcon: Icon(
+                  Icons.dashboard,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: 'Dashboard',
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.work),
+                selectedIcon: Icon(
+                  Icons.work,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: 'Jobs',
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.add_circle),
+                selectedIcon: Icon(
+                  Icons.add_circle,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: 'Post Job',
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.person),
+                selectedIcon: Icon(
+                  Icons.person,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: 'Profile',
+              ),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.work),
-            selectedIcon: Icon(
-              Icons.work,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            label: 'Jobs',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.add_circle),
-            selectedIcon: Icon(
-              Icons.add_circle,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            label: 'Post Job',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person),
-            selectedIcon: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }
 
+  /// Creates a new [ColorScheme] by swapping the primary and secondary colors.
+  /// This is used to give the employer section a distinct visual theme.
+  // Creates a ColorScheme where primary uses the original secondary palette.
+  ColorScheme _swapPrimarySecondary(ColorScheme cs) {
+    return cs.copyWith(
+      primary: cs.secondary,
+      onPrimary: cs.onSecondary,
+      primaryContainer: cs.secondaryContainer,
+      onPrimaryContainer: cs.onSecondaryContainer,
+      // Keep existing secondary to avoid changing secondary usages directly
+      // You can also swap back if you prefer a full swap:
+      // secondary: cs.primary,
+      // onSecondary: cs.onPrimary,
+      // secondaryContainer: cs.primaryContainer,
+      // onSecondaryContainer: cs.onPrimaryContainer,
+    );
+  }
+
+  /// Determines the current index of the navigation bar based on the current route.
   int _getCurrentIndex(BuildContext context) {
     final location = GoRouter.of(
       context,
     ).routerDelegate.currentConfiguration.uri.path;
     if (location.startsWith('/employer/jobs')) return 1;
+    // Ensure job details route highlights the Jobs tab as well
+    if (location.startsWith('/employer/job')) return 1;
     if (location.startsWith('/employer/post-job')) return 2;
     if (location.startsWith('/employer/profile')) return 3;
     return 0; // Dashboard
   }
 
+  /// Handles tap events on the navigation bar destinations.
   void _onTap(BuildContext context, int index) {
     switch (index) {
       case 0:

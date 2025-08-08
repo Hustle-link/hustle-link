@@ -3,7 +3,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 
-/// Provider for hustler's job applications
+/// A [StreamProvider] that provides a list of job applications for the current hustler.
+///
+/// It listens to the authentication state and fetches the corresponding applications
+/// from the [FirestoreJobService]. If the user is not logged in, it yields an empty list.
 final hustlerApplicationsProvider = StreamProvider<List<JobApplication>>((
   ref,
 ) async* {
@@ -15,14 +18,18 @@ final hustlerApplicationsProvider = StreamProvider<List<JobApplication>>((
     return;
   }
 
+  // Yields a stream of job applications for the current user's UID.
   yield* jobService.getApplicationsByHustler(currentUser.uid);
 });
 
+/// A page that displays a list of all jobs the current hustler has applied for.
 class HustlerApplicationsPage extends HookConsumerWidget {
+  /// Creates a [HustlerApplicationsPage].
   const HustlerApplicationsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the provider to get the list of applications.
     final applications = ref.watch(hustlerApplicationsProvider);
 
     return Scaffold(
@@ -31,7 +38,9 @@ class HustlerApplicationsPage extends HookConsumerWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: applications.when(
+        // When data is successfully loaded, display the list of applications.
         data: (applicationsList) {
+          // If the list is empty, show a message prompting the user to apply for jobs.
           if (applicationsList.isEmpty) {
             return Center(
               child: Column(
@@ -67,6 +76,7 @@ class HustlerApplicationsPage extends HookConsumerWidget {
             );
           }
 
+          // If there are applications, display them in a list.
           return ListView.builder(
             padding: EdgeInsets.all(4.w),
             itemCount: applicationsList.length,
@@ -79,7 +89,9 @@ class HustlerApplicationsPage extends HookConsumerWidget {
             },
           );
         },
+        // Show a loading indicator while fetching applications.
         loading: () => const Center(child: CircularProgressIndicator()),
+        // Show an error message if fetching applications fails.
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -108,9 +120,12 @@ class HustlerApplicationsPage extends HookConsumerWidget {
   }
 }
 
+/// A card widget that displays the details of a single job application.
 class _ApplicationCard extends StatelessWidget {
+  /// The job application data to display.
   final JobApplication application;
 
+  /// Creates an [_ApplicationCard].
   const _ApplicationCard({required this.application});
 
   @override
@@ -123,7 +138,7 @@ class _ApplicationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with job title and status
+            // Header with job title and application status.
             Row(
               children: [
                 Expanded(
@@ -159,7 +174,7 @@ class _ApplicationCard extends StatelessWidget {
 
             SizedBox(height: 3.h),
 
-            // Application details
+            // Display the cover letter if it exists.
             if (application.coverLetter != null) ...[
               Text(
                 'Cover Letter:',
@@ -193,7 +208,7 @@ class _ApplicationCard extends StatelessWidget {
               SizedBox(height: 3.h),
             ],
 
-            // Application metadata
+            // Application metadata, such as the application date.
             Row(
               children: [
                 Icon(
@@ -215,7 +230,8 @@ class _ApplicationCard extends StatelessWidget {
                 if (application.status == ApplicationStatus.pending) ...[
                   TextButton(
                     onPressed: () {
-                      // TODO: Navigate to job details or withdraw application
+                      // TODO(feature): Implement navigation to job details page.
+                      // TODO(feature): Implement logic to withdraw an application.
                     },
                     child: const Text('View Job'),
                   ),
@@ -228,6 +244,7 @@ class _ApplicationCard extends StatelessWidget {
     );
   }
 
+  /// Converts a [DateTime] object to a human-readable time-ago string.
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
@@ -244,13 +261,18 @@ class _ApplicationCard extends StatelessWidget {
   }
 }
 
+/// A chip widget that displays the status of an application with a
+/// corresponding color and icon.
 class _ApplicationStatusChip extends StatelessWidget {
+  /// The status of the application.
   final ApplicationStatus status;
 
+  /// Creates an [_ApplicationStatusChip].
   const _ApplicationStatusChip({required this.status});
 
   @override
   Widget build(BuildContext context) {
+    /// Returns a color based on the application status.
     Color getStatusColor() {
       switch (status) {
         case ApplicationStatus.pending:
@@ -264,6 +286,7 @@ class _ApplicationStatusChip extends StatelessWidget {
       }
     }
 
+    /// Returns a text representation of the application status.
     String getStatusText() {
       switch (status) {
         case ApplicationStatus.pending:
@@ -277,6 +300,7 @@ class _ApplicationStatusChip extends StatelessWidget {
       }
     }
 
+    /// Returns an icon based on the application status.
     IconData getStatusIcon() {
       switch (status) {
         case ApplicationStatus.pending:

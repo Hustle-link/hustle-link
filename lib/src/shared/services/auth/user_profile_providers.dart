@@ -5,7 +5,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_profile_providers.g.dart';
 
-/// Provider to get current user's profile
+/// A Riverpod provider that fetches the profile of the currently authenticated user.
+//
+/// It depends on [firebaseAuthServiceProvider] to get the current user
+/// and [firestoreUserServiceProvider] to fetch the user's profile from Firestore.
+///
+/// Returns an [AppUser] object if the user is authenticated and their profile exists,
+/// otherwise returns `null`.
+/// TODO(caching): Implement caching for the user profile to reduce Firestore reads.
 @riverpod
 Future<AppUser?> currentUserProfile(Ref ref) async {
   final authService = ref.watch(firebaseAuthServiceProvider);
@@ -17,7 +24,12 @@ Future<AppUser?> currentUserProfile(Ref ref) async {
   return await userService.getUserProfile(currentUser.uid);
 }
 
-/// Provider to get current user's role
+/// A Riverpod provider that determines the [UserRole] of the currently authenticated user.
+///
+/// It depends on the [currentUserProfileProvider] to get the user's profile.
+///
+/// Returns the user's [UserRole], defaulting to [UserRole.hustler] if the
+/// role is not specified or the profile does not exist.
 @riverpod
 Future<UserRole?> currentUserRole(Ref ref) async {
   final userProfile = await ref.watch(currentUserProfileProvider.future);
@@ -29,7 +41,13 @@ Future<UserRole?> currentUserRole(Ref ref) async {
   );
 }
 
-/// Provider to get current hustler profile
+/// A Riverpod provider that fetches the [Hustler] profile of the currently authenticated user.
+///
+/// It checks the user's role via [currentUserRoleProvider] and only fetches the
+/// profile if the user is a [UserRole.hustler].
+///
+/// Returns a [Hustler] object if the user is a hustler, otherwise `null`.
+/// TODO(error-handling): Add more robust error handling for cases where the profile might be inconsistent.
 @riverpod
 Future<Hustler?> currentHustlerProfile(Ref ref) async {
   final authService = ref.watch(firebaseAuthServiceProvider);
@@ -56,7 +74,12 @@ Future<Hustler?> currentHustlerProfile(Ref ref) async {
   return await userService.getHustlerProfile(currentUser.uid);
 }
 
-/// Provider to get current employer profile
+/// A Riverpod provider that fetches the [Employer] profile of the currently authenticated user.
+///
+/// It checks the user's role via [currentUserRoleProvider] and only fetches the
+/// profile if the user is a [UserRole.employer].
+///
+/// Returns an [Employer] object if the user is an employer, otherwise `null`.
 @riverpod
 Future<Employer?> currentEmployerProfile(Ref ref) async {
   final authService = ref.watch(firebaseAuthServiceProvider);

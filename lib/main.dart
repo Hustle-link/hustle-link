@@ -6,35 +6,44 @@ import 'package:hustle_link/firebase_options.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 
+/// The entry point of the application.
 Future<void> main() async {
-  // ensure widgets binding are intialized
+  // Ensure that the Flutter widget binding is initialized before running the app.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // init services
+  // Initialize Firebase with the default options for the current platform.
+  // TODO(Kenan): Consider moving this to the `firebaseInitProvider` and using a splash screen.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // run app
-  runApp(ProviderScope(child: const MyApp()));
+
+  // Run the app within a `ProviderScope` to enable Riverpod for state management.
+  runApp(const ProviderScope(child: MyApp()));
 }
 
+/// The root widget of the HustleLink application.
 class MyApp extends HookConsumerWidget {
+  /// Creates an instance of [MyApp].
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // watch router
+    // Watch the router provider to get the app's routing configuration.
     final router = ref.watch(appRouteProvider);
 
-    // watch theme
+    // Watch the theme provider to get the app's theme data.
+    // TODO(Kenan): Implement a dark theme and allow the user to switch between themes.
     final theme = ref.watch(themeProvider);
 
+    // Use the Sizer widget to make the UI responsive across different screen sizes.
     return Sizer(
       builder: (context, orientation, screenType) {
-        // listen to first time open app state
         return MaterialApp.router(
+          // Disable the debug banner in the top-right corner.
           debugShowCheckedModeBanner: false,
+          // Configure the app's router.
           routerConfig: router,
+          // Set the light theme for the app.
           theme: theme.light(),
+          // Initialize FlutterSmartDialog for displaying custom dialogs, toasts, and loading indicators.
           builder: FlutterSmartDialog.init(
             builder: (context, child) {
               return child!;
