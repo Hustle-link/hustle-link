@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:hustle_link/src/pages/hustler/job_details/controllers/job_details_providers.dart';
 
@@ -11,9 +12,9 @@ import 'package:hustle_link/src/pages/hustler/job_details/controllers/job_detail
 // TODO(caching): Implement caching for job applications to reduce Firestore reads.
 final jobApplicationsProvider =
     StreamProvider.family<List<JobApplication>, String>((ref, jobId) {
-      final svc = ref.watch(firestoreJobServiceProvider);
-      return svc.getApplicationsForJob(jobId);
-    });
+  final svc = ref.watch(firestoreJobServiceProvider);
+  return svc.getApplicationsForJob(jobId);
+});
 
 /// A widget that displays the details of a job posting for an employer.
 ///
@@ -28,14 +29,15 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final jobAsync = ref.watch(jobByIdProvider(jobId));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Job Details'),
+        title: Text(l10n.jobDetails),
         actions: [
           IconButton(
-            tooltip: 'Edit Job',
+            tooltip: l10n.editJob,
             onPressed: jobAsync.maybeWhen(
               data: (job) => job == null
                   ? null
@@ -54,7 +56,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
       body: jobAsync.when(
         data: (job) {
           if (job == null) {
-            return const Center(child: Text('Job not found'));
+            return Center(child: Text(l10n.jobNotFound));
           }
 
           return ListView(
@@ -113,11 +115,11 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
                   if (job.deadline != null)
                     _Meta(
                       icon: Icons.event_outlined,
-                      label: 'Deadline: ${_fmtDate(job.deadline!)}',
+                      label: '${l10n.deadline}: ${_fmtDate(job.deadline!)}',
                     ),
                   _Meta(
                     icon: Icons.access_time,
-                    label: _timeAgo(job.createdAt),
+                    label: _timeAgo(job.createdAt, l10n),
                   ),
                 ],
               ),
@@ -147,7 +149,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
               Row(
                 children: [
                   Text(
-                    'Applications',
+                    l10n.applications(''),
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -156,7 +158,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
                   const Spacer(),
                   if ((job.applicationsCount ?? 0) > 0)
                     Text(
-                      '${job.applicationsCount} total',
+                      l10n.total(job.applicationsCount.toString()),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -187,7 +189,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
                     ),
                     error: (e, st) => Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Text('Error loading applications: $e'),
+                      child: Text(l10n.errorLoadingApplications),
                     ),
                   );
                 },
@@ -244,7 +246,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
                   );
                 },
                 icon: const Icon(Icons.people_outline),
-                label: const Text('View Applications'),
+                label: Text(l10n.viewApplications),
               ),
         orElse: () => null,
       ),
@@ -252,12 +254,12 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
   }
 
   /// Formats a [DateTime] object into a "time ago" string.
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(DateTime dt, AppLocalizations l10n) {
     final d = DateTime.now().difference(dt);
-    if (d.inDays > 0) return '${d.inDays}d ago';
-    if (d.inHours > 0) return '${d.inHours}h ago';
-    if (d.inMinutes > 0) return '${d.inMinutes}m ago';
-    return 'Just now';
+    if (d.inDays > 0) return l10n.ago('${d.inDays}d');
+    if (d.inHours > 0) return l10n.ago('${d.inHours}h');
+    if (d.inMinutes > 0) return l10n.ago('${d.inMinutes}m');
+    return l10n.justNow;
   }
 
   /// Formats a [DateTime] object into a "day/month/year" string.
@@ -301,20 +303,21 @@ class _StatusChip extends StatelessWidget {
   const _StatusChip({required this.status});
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Color color;
     String text;
     switch (status) {
       case JobStatus.active:
         color = Colors.green;
-        text = 'Active';
+        text = l10n.active;
         break;
       case JobStatus.closed:
         color = Colors.red;
-        text = 'Closed';
+        text = l10n.closed;
         break;
       case JobStatus.draft:
         color = Colors.orange;
-        text = 'Draft';
+        text = l10n.draft;
         break;
     }
     return Container(
@@ -336,6 +339,7 @@ class _StatusChip extends StatelessWidget {
 class _EmptyApps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Column(
@@ -347,7 +351,7 @@ class _EmptyApps extends StatelessWidget {
           ),
           SizedBox(height: 1.h),
           Text(
-            'No applications yet',
+            l10n.noApplicationsYet,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -366,24 +370,25 @@ class _ApplicationTile extends StatelessWidget {
   const _ApplicationTile({required this.app});
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Color statusColor;
     String statusText;
     switch (app.status) {
       case ApplicationStatus.pending:
         statusColor = Colors.orange;
-        statusText = 'Pending';
+        statusText = l10n.pending;
         break;
       case ApplicationStatus.reviewed:
         statusColor = Colors.blue;
-        statusText = 'Reviewed';
+        statusText = l10n.reviewed;
         break;
       case ApplicationStatus.accepted:
         statusColor = Colors.green;
-        statusText = 'Accepted';
+        statusText = l10n.accepted;
         break;
       case ApplicationStatus.rejected:
         statusColor = Colors.red;
-        statusText = 'Rejected';
+        statusText = l10n.rejected;
         break;
     }
 
@@ -396,7 +401,7 @@ class _ApplicationTile extends StatelessWidget {
         app.hustlerName ?? app.hustlerUid,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: Text('Applied ${_timeAgo(app.appliedAt)}'),
+      subtitle: Text(l10n.applied(_timeAgo(app.appliedAt, l10n))),
       trailing: Container(
         padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
         decoration: BoxDecoration(
@@ -408,11 +413,11 @@ class _ApplicationTile extends StatelessWidget {
     );
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(DateTime dt, AppLocalizations l10n) {
     final d = DateTime.now().difference(dt);
-    if (d.inDays > 0) return '${d.inDays}d ago';
-    if (d.inHours > 0) return '${d.inHours}h ago';
-    if (d.inMinutes > 0) return '${d.inMinutes}m ago';
-    return 'Just now';
+    if (d.inDays > 0) return l10n.ago('${d.inDays}d');
+    if (d.inHours > 0) return l10n.ago('${d.inHours}h');
+    if (d.inMinutes > 0) return l10n.ago('${d.inMinutes}m');
+    return l10n.justNow;
   }
 }

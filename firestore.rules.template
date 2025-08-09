@@ -1,6 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
+    function isSubscribed(userId) {
+      let user = get(/databases/$(database)/documents/users/$(userId)).data;
+      return user.subscription != null && user.subscription.isActive == true;
+    }
+
+    function getJobsCount(userId) {
+      return firestore.get(/databases/$(database)/documents/users/$(userId)).data.postedJobs;
+    }
+
     // Users can read and write their own user document
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -11,7 +21,8 @@ service cloud.firestore {
       // Anyone can read jobs
       allow read: if true;
       // Only authenticated users can create jobs
-      allow create: if request.auth != null;
+      allow create: if request.auth != null &&
+                      (isSubscribed(request.auth.uid) || getJobsCount(request.auth.uid) < 3);
       // Only the job creator can update/delete their jobs
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.employerId;
     }

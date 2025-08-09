@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/pages/hustler/job_details/controllers/controllers.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 class JobDetailsPage extends HookConsumerWidget {
@@ -11,6 +12,7 @@ class JobDetailsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final jobAsync = ref.watch(jobByIdProvider(jobId));
     final appliedAsync = ref.watch(hasAppliedProvider(jobId));
     final mutation = ref.watch(jobDetailsControllerProvider);
@@ -40,8 +42,8 @@ class JobDetailsPage extends HookConsumerWidget {
         ref.invalidate(hasAppliedProvider(jobId));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Application submitted successfully!'),
+            SnackBar(
+              content: Text(l10n.applicationSubmittedSuccessfully),
             ),
           );
         }
@@ -51,8 +53,8 @@ class JobDetailsPage extends HookConsumerWidget {
     // If data loaded but null, show not found state early
     if (jobAsync.hasValue && jobAsync.value == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Job Details')),
-        body: const Center(child: Text('Job not found')),
+        appBar: AppBar(title: Text(l10n.jobDetails)),
+        body: Center(child: Text(l10n.jobNotFound)),
       );
     }
 
@@ -60,20 +62,20 @@ class JobDetailsPage extends HookConsumerWidget {
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(
-        appBar: AppBar(title: const Text('Job Details')),
+        appBar: AppBar(title: Text(l10n.jobDetails)),
         body: Center(child: Text('Error: $e')),
       ),
       data: (jobData) {
         if (jobData == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Job Details')),
-            body: const Center(child: Text('Job not found')),
+            appBar: AppBar(title: Text(l10n.jobDetails)),
+            body: Center(child: Text(l10n.jobNotFound)),
           );
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Job Details'),
+            title: Text(l10n.jobDetails),
             backgroundColor: Theme.of(context).colorScheme.surface,
           ),
           body: SingleChildScrollView(
@@ -162,7 +164,7 @@ class JobDetailsPage extends HookConsumerWidget {
 
                 SizedBox(height: 4.h),
 
-                _SectionTitle('About this job'),
+                _SectionTitle(l10n.aboutThisJob),
                 SizedBox(height: 2.h),
                 Text(
                   jobData.description,
@@ -174,7 +176,7 @@ class JobDetailsPage extends HookConsumerWidget {
                 ),
 
                 SizedBox(height: 4.h),
-                _SectionTitle('Required Skills'),
+                _SectionTitle(l10n.requiredSkills),
                 SizedBox(height: 2.h),
                 Wrap(
                   spacing: 2.w,
@@ -204,13 +206,13 @@ class JobDetailsPage extends HookConsumerWidget {
                 ),
 
                 SizedBox(height: 4.h),
-                _SectionTitle('Details'),
+                _SectionTitle(l10n.details),
                 SizedBox(height: 2.h),
-                _InfoRow('Posted', _formatDate(jobData.createdAt)),
+                _InfoRow(l10n.posted, _formatDate(jobData.createdAt)),
                 if (jobData.applicationsCount != null)
-                  _InfoRow('Applicants', '${jobData.applicationsCount}'),
+                  _InfoRow(l10n.applicants(jobData.applicationsCount.toString()), ''),
                 if (jobData.deadline != null)
-                  _InfoRow('Deadline', _formatDate(jobData.deadline!)),
+                  _InfoRow(l10n.deadline, _formatDate(jobData.deadline!)),
 
                 SizedBox(height: 6.h),
 
@@ -221,14 +223,14 @@ class JobDetailsPage extends HookConsumerWidget {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _SectionTitle('Apply for this job'),
+                            _SectionTitle(l10n.applyForThisJob),
                             SizedBox(height: 2.h),
                             TextField(
                               controller: coverLetterController,
                               focusNode: coverFocus,
                               maxLines: 4,
                               decoration: InputDecoration(
-                                hintText: 'Write a cover letter (optional)',
+                                hintText: l10n.writeACoverLetter,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -276,7 +278,7 @@ class JobDetailsPage extends HookConsumerWidget {
                           ),
                           SizedBox(width: 2.w),
                           Text(
-                            'Already Applied',
+                            l10n.alreadyApplied,
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
@@ -320,7 +322,7 @@ class JobDetailsPage extends HookConsumerWidget {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : Text(
-                            'Apply Now',
+                            l10n.applyNow,
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,

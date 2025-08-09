@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:hustle_link/src/pages/employer/profile/controllers/controllers.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Text editing controllers are initialized with existing profile data.
     final nameController = useTextEditingController(text: profile.name);
     final companyNameController = useTextEditingController(
@@ -85,7 +87,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to pick image: $e'),
+              content: Text(l10n.failedToPickImage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -137,8 +139,8 @@ class EditEmployerProfilePage extends HookConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile updated successfully!'),
+            SnackBar(
+              content: Text(l10n.profileUpdatedSuccessfully),
               backgroundColor: Colors.green,
             ),
           );
@@ -148,7 +150,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to update profile: $e'),
+              content: Text(l10n.failedToUpdateProfile(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -158,7 +160,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(l10n.editProfile),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           // The save button shows a loading indicator when the profile is being saved.
@@ -170,7 +172,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
                     height: 20.sp,
                     child: const CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Save'),
+                : Text(l10n.save),
           ),
         ],
       ),
@@ -230,8 +232,8 @@ class EditEmployerProfilePage extends HookConsumerWidget {
                         icon: const Icon(Icons.camera_alt),
                         label: Text(
                           selectedProfileImage.value != null
-                              ? 'Change Photo'
-                              : 'Add Photo',
+                              ? l10n.changePhoto
+                              : l10n.addPhoto,
                         ),
                       ),
                     ],
@@ -241,16 +243,16 @@ class EditEmployerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Personal Information Section
-                _SectionTitle('Personal Information'),
+                _SectionTitle(l10n.personalInformation),
                 SizedBox(height: 2.h),
 
                 _FormField(
                   controller: nameController,
-                  label: 'Full Name',
+                  label: l10n.fullName,
                   icon: Icons.person_outline,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Name is required';
+                      return l10n.nameIsRequired;
                     }
                     return null;
                   },
@@ -260,11 +262,11 @@ class EditEmployerProfilePage extends HookConsumerWidget {
 
                 _FormField(
                   controller: companyNameController,
-                  label: 'Company Name',
+                  label: l10n.companyName,
                   icon: Icons.business_outlined,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Company name is required';
+                      return l10n.companyNameIsRequired;
                     }
                     return null;
                   },
@@ -273,12 +275,12 @@ class EditEmployerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Contact Information Section
-                _SectionTitle('Contact Information'),
+                _SectionTitle(l10n.contactInformation),
                 SizedBox(height: 2.h),
 
                 _FormField(
                   controller: phoneController,
-                  label: 'Phone Number',
+                  label: l10n.phoneNumber,
                   icon: Icons.phone_outlined,
                   keyboardType: TextInputType.phone,
                   hintText: '+1 (555) 123-4567',
@@ -288,16 +290,16 @@ class EditEmployerProfilePage extends HookConsumerWidget {
 
                 _FormField(
                   controller: locationController,
-                  label: 'Location',
+                  label: l10n.location,
                   icon: Icons.location_on_outlined,
-                  hintText: 'City, State',
+                  hintText: l10n.cityState,
                 ),
 
                 SizedBox(height: 3.h),
 
                 _FormField(
                   controller: websiteController,
-                  label: 'Website',
+                  label: l10n.website,
                   icon: Icons.language_outlined,
                   keyboardType: TextInputType.url,
                   hintText: 'https://www.company.com',
@@ -307,15 +309,15 @@ class EditEmployerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Company Information Section
-                _SectionTitle('Company Information'),
+                _SectionTitle(l10n.companyInformation),
                 SizedBox(height: 2.h),
 
                 _FormField(
                   controller: companyDescriptionController,
-                  label: 'Company Description',
+                  label: l10n.companyDescription,
                   icon: Icons.info_outline,
                   maxLines: 4,
-                  hintText: 'Describe your company, mission, and values...',
+                  hintText: l10n.describeYourCompany,
                 ),
 
                 SizedBox(height: 6.h),

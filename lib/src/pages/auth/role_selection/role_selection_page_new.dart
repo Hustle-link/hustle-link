@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 class RoleSelectionPageNew extends HookConsumerWidget {
@@ -10,6 +11,7 @@ class RoleSelectionPageNew extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedRole = useState<UserRole?>(null);
     final nameController = useTextEditingController();
     // Rebuild when name changes to update button enabled state
@@ -20,7 +22,7 @@ class RoleSelectionPageNew extends HookConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Complete Your Profile'),
+        title: Text(l10n.completeYourProfile),
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: SafeArea(
@@ -36,7 +38,7 @@ class RoleSelectionPageNew extends HookConsumerWidget {
             children: [
               // Title
               Text(
-                'What\'s your name?',
+                l10n.whatsYourName,
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
@@ -49,16 +51,16 @@ class RoleSelectionPageNew extends HookConsumerWidget {
               TextField(
                 controller: nameController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  hintText: 'Enter your full name',
+                decoration: InputDecoration(
+                  labelText: l10n.fullName,
+                  hintText: l10n.enterYourFullName,
                 ),
               ),
               SizedBox(height: 4.h),
 
               // Role selection title
               Text(
-                'What brings you to Hustle Link?',
+                l10n.whatBringsYouToHustleLink,
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
@@ -67,7 +69,7 @@ class RoleSelectionPageNew extends HookConsumerWidget {
               ),
               SizedBox(height: 1.h),
               Text(
-                'Choose your role to get started',
+                l10n.chooseYourRole,
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: Theme.of(
@@ -79,8 +81,8 @@ class RoleSelectionPageNew extends HookConsumerWidget {
 
               // Role Cards
               _RoleCard(
-                title: 'I\'m a Hustler',
-                subtitle: 'Looking for freelance work and gigs',
+                title: l10n.imAHustler,
+                subtitle: l10n.lookingForFreelanceWork,
                 icon: Icons.person_search,
                 isSelected: selectedRole.value == UserRole.hustler,
                 onTap: () => selectedRole.value = UserRole.hustler,
@@ -88,8 +90,8 @@ class RoleSelectionPageNew extends HookConsumerWidget {
               ),
               SizedBox(height: 3.h),
               _RoleCard(
-                title: 'I\'m an Employer',
-                subtitle: 'Looking to hire talented freelancers',
+                title: l10n.imAnEmployer,
+                subtitle: l10n.lookingToHireTalent,
                 icon: Icons.business_center,
                 isSelected: selectedRole.value == UserRole.employer,
                 onTap: () => selectedRole.value = UserRole.employer,
@@ -137,15 +139,15 @@ class RoleSelectionPageNew extends HookConsumerWidget {
               ),
             ),
             child: authState.when(
-              idle: () => const Text(
-                'Get Started',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              idle: () => Text(
+                l10n.getStarted,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               loading: () => const CircularProgressIndicator(),
-              error: (error, _) => const Text('Try Again'),
-              data: (_) => const Text(
-                'Get Started',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              error: (error, _) => Text(l10n.tryAgain),
+              data: (_) => Text(
+                l10n.getStarted,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// A [StreamProvider] that fetches a list of job postings relevant to the current hustler.
@@ -25,7 +26,9 @@ final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
       ? ['general']
       : hustlerProfile.skills;
 
-  yield* jobService.getJobsForHustler(skills);
+  final isSubscribed = hustlerProfile.subscription?.isActive ?? false;
+
+  yield* jobService.getJobsForHustler(skills, limit: isSubscribed ? null : 5);
 });
 
 /// The main dashboard page for a "hustler" user.
@@ -38,6 +41,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Watch the hustler's profile and the stream of jobs.
     final hustlerProfile = ref.watch(currentHustlerProfileProvider);
     final jobsStream = ref.watch(hustlerJobsProvider);
@@ -45,7 +49,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Jobs'),
+        title: Text(l10n.findJobs),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           // TODO(ux): Add a confirmation dialog before signing out.
@@ -66,7 +70,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
           data: (profile) {
             // TODO(ux): Provide a way to create a profile if it's missing.
             if (profile == null) {
-              return const Center(child: Text('Profile not found'));
+              return Center(child: Text(l10n.profileNotFound));
             }
 
             return Column(
@@ -81,7 +85,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Welcome back, ${profile.name}!',
+                        l10n.welcomeBack(profile.name),
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
@@ -93,8 +97,8 @@ class HustlerDashboardPage extends HookConsumerWidget {
                       SizedBox(height: 1.h),
                       Text(
                         profile.skills.isEmpty
-                            ? 'Add skills to your profile to see relevant jobs'
-                            : 'Jobs matching your skills: ${profile.skills.join(', ')}',
+                            ? l10n.addSkillsToProfile
+                            : l10n.jobsMatchingYourSkills(profile.skills.join(', ')),
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Theme.of(
@@ -125,7 +129,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
                               ),
                               SizedBox(height: 2.h),
                               Text(
-                                'No jobs available',
+                                l10n.noJobsAvailable,
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w600,
@@ -137,8 +141,8 @@ class HustlerDashboardPage extends HookConsumerWidget {
                               SizedBox(height: 1.h),
                               Text(
                                 profile.skills.isEmpty
-                                    ? 'Add skills to your profile to see relevant jobs'
-                                    : 'Check back later for new opportunities',
+                                    ? l10n.addSkillsToProfile
+                                    : l10n.checkBackLater,
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: Theme.of(
@@ -170,12 +174,12 @@ class HustlerDashboardPage extends HookConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Error loading jobs: $error'),
+                          Text(l10n.errorLoadingJobs(error.toString())),
                           ElevatedButton(
                             onPressed: () {
                               ref.invalidate(hustlerJobsProvider);
                             },
-                            child: const Text('Retry'),
+                            child: Text(l10n.retry),
                           ),
                         ],
                       ),
@@ -189,7 +193,7 @@ class HustlerDashboardPage extends HookConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           // Show an error message if fetching the profile fails.
           error: (error, stack) =>
-              Center(child: Text('Error loading profile: $error')),
+              Center(child: Text(l10n.errorLoadingProfile(error.toString()))),
         ),
       ),
     );
@@ -206,6 +210,7 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: EdgeInsets.only(bottom: 3.h),
       elevation: 2,
@@ -323,7 +328,7 @@ class JobCard extends StatelessWidget {
               if (job.skillsRequired.length > 3) ...[
                 SizedBox(height: 1.h),
                 Text(
-                  '+${job.skillsRequired.length - 3} more skills',
+                  l10n.moreSkills((job.skillsRequired.length - 3).toString()),
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(
@@ -367,7 +372,7 @@ class JobCard extends StatelessWidget {
                   ),
                   SizedBox(width: 1.w),
                   Text(
-                    _formatDate(job.createdAt),
+                    _formatDate(job.createdAt, l10n),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Theme.of(
@@ -380,7 +385,7 @@ class JobCard extends StatelessWidget {
                   if (job.applicationsCount != null &&
                       job.applicationsCount! > 0)
                     Text(
-                      '${job.applicationsCount} applicants',
+                      l10n.applicants(job.applicationsCount.toString()),
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Theme.of(
@@ -398,18 +403,18 @@ class JobCard extends StatelessWidget {
   }
 
   /// Formats a [DateTime] into a human-readable string like "2d ago".
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime date, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(date);
 
     if (difference.inDays > 7) {
       return '${date.day}/${date.month}/${date.year}';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return l10n.ago('${difference.inDays}d');
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return l10n.ago('${difference.inHours}h');
     } else {
-      return 'Just now';
+      return l10n.justNow;
     }
   }
 }
