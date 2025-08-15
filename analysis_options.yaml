@@ -27,12 +27,8 @@ linter:
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
 
-# formatter
-formatter:
-  # The formatter can be configured to apply specific formatting rules.
-  # For example, you can set the line length or enable/disallow trailing commas.
-  line_length: 80  # Set the maximum line length for formatting
-  trailing_commas: true  # Enable trailing commas in lists and maps
+# Note: Dart's formatter (dart format) doesn't support custom options here.
+# Remove unsupported formatter configuration to avoid analyzer errors.
 
 analyzer: 
   plugins: 

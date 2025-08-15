@@ -364,7 +364,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                     fontSize: 12.sp,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                   ),
                 ),
 
@@ -375,8 +375,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                   label: l10n.experience,
                   icon: Icons.work_outline,
                   maxLines: 4,
-                  hintText:
-                      l10n.experienceHint,
+                  hintText: l10n.experienceHint,
                 ),
 
                 SizedBox(height: 4.h),
@@ -391,7 +390,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                     fontSize: 12.sp,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                   ),
                 ),
 
@@ -512,7 +511,9 @@ class _FormField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.outline.withAlpha((0.5 * 255).toInt()),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -549,7 +550,9 @@ class _CertificationItem extends StatelessWidget {
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(
+            context,
+          ).colorScheme.outline.withAlpha((0.3 * 255).toInt()),
         ),
         borderRadius: BorderRadius.circular(12),
         color: Theme.of(context).colorScheme.surface,
@@ -581,9 +584,9 @@ class _CertificationItem extends StatelessWidget {
                     fontSize: 12.sp,
                     color: isExisting
                         ? Colors.green
-                        : Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                        : Theme.of(context).colorScheme.onSurface.withAlpha(
+                            (0.6 * 255).toInt(),
+                          ),
                   ),
                 ),
               ],

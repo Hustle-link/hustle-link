@@ -33,19 +33,17 @@ class LoginPage extends HookConsumerWidget {
     final authError = useState<String?>(null);
 
     // Listen to the authentication state to handle loading, errors, and success.
-    ref.listen<Mutation<void, Map<String, String>>>(authControllerProvider,
-        (prev, next) {
-      next.map(
-        idle: () => SmartDialog.dismiss(),
-        loading: () => SmartDialog.showLoading(msg: 'Signing in...'),
-        error: (e, _) {
-          SmartDialog.dismiss();
-          authError.value = e.toString().replaceFirst('Exception: ', '');
-        },
+    ref.listen<AsyncValue<void>>(authControllerProvider, (prev, next) {
+      next.when(
         data: (_) {
           SmartDialog.dismiss();
           authError.value = null;
           context.goNamed(AppRoutes.homeRoute);
+        },
+        loading: () => SmartDialog.showLoading(msg: 'Signing in...'),
+        error: (e, _) {
+          SmartDialog.dismiss();
+          authError.value = e.toString().replaceFirst('Exception: ', '');
         },
       );
     });
@@ -62,14 +60,16 @@ class LoginPage extends HookConsumerWidget {
               SizedBox(height: 5.h),
               Text(
                 l10n.loginTitle,
-                style: textTheme.headlineMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 1.h),
               Text(
                 l10n.loginSubtitle,
-                style: textTheme.titleMedium
-                    ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                style: textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
               ),
               SizedBox(height: 4.h),
               _buildLoginForm(
@@ -119,7 +119,7 @@ class LoginPage extends HookConsumerWidget {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
-            labelText: l10n.emailLabel,
+            labelText: AppLocalizations.of(context)!.emailLabel,
             errorText: emailError.value,
           ),
           onChanged: (_) => emailError.value = null,
@@ -130,7 +130,7 @@ class LoginPage extends HookConsumerWidget {
           obscureText: true,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
-            labelText: l10n.passwordLabel,
+            labelText: AppLocalizations.of(context)!.passwordLabel,
             errorText: passwordError.value,
           ),
           onChanged: (_) => passwordError.value = null,
@@ -140,7 +140,7 @@ class LoginPage extends HookConsumerWidget {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () => context.pushNamed(AppRoutes.resetPasswordRoute),
-            child: Text(l10n.forgotPassword),
+            child: Text(AppLocalizations.of(context)!.forgotPassword),
           ),
         ),
         if (authError.value != null)
@@ -163,7 +163,9 @@ class LoginPage extends HookConsumerWidget {
                   final email = emailController.text;
                   final password = passwordController.text;
                   final emailValidationError = emailValidator(email);
-                  final passwordValidationError = loginPasswordValidator(password);
+                  final passwordValidationError = loginPasswordValidator(
+                    password,
+                  );
 
                   if (emailValidationError != null ||
                       passwordValidationError != null) {
@@ -178,11 +180,10 @@ class LoginPage extends HookConsumerWidget {
                       .signIn(email, password);
                 },
           child: Text(
-            l10n.signIn,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+            AppLocalizations.of(context)!.signIn,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
         ),
       ],

@@ -20,10 +20,7 @@ class RegisterPage extends HookConsumerWidget {
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+      appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
@@ -34,14 +31,16 @@ class RegisterPage extends HookConsumerWidget {
               SizedBox(height: 4.h),
               Text(
                 l10n.registerTitle,
-                style: textTheme.headlineMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 1.h),
               Text(
                 l10n.registerSubtitle,
-                style: textTheme.titleMedium
-                    ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                style: textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                ),
               ),
               SizedBox(height: 4.h),
               _RegisterForm(),
@@ -64,7 +63,11 @@ class RegisterPage extends HookConsumerWidget {
   }
 
   /// Builds the footer section with a link to the login page.
-  Widget _buildFooter(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+  Widget _buildFooter(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -98,17 +101,18 @@ class _RegisterForm extends HookConsumerWidget {
 
     final authState = ref.watch(authControllerProvider);
 
-    ref.listen<Mutation<void, Map<String, String>>>(authControllerProvider, (prev, next) {
-      next.map(
-        idle: () => SmartDialog.dismiss(),
-        loading: () => SmartDialog.showLoading(msg: l10n.registrationLoadingMessage),
-        error: (e, _) {
-          SmartDialog.dismiss();
-          authError.value = e.toString().replaceFirst('Exception: ', '');
-        },
+    ref.listen<AsyncValue<void>>(authControllerProvider, (prev, next) {
+      next.when(
         data: (_) {
           SmartDialog.dismiss();
           context.goNamed(AppRoutes.roleSelection);
+        },
+        loading: () => SmartDialog.showLoading(
+          msg: AppLocalizations.of(context)!.registrationLoadingMessage,
+        ),
+        error: (e, _) {
+          SmartDialog.dismiss();
+          authError.value = e.toString().replaceFirst('Exception: ', '');
         },
       );
     });
@@ -120,7 +124,10 @@ class _RegisterForm extends HookConsumerWidget {
 
       emailError.value = emailValidator(email);
       passwordError.value = passwordValidator(password);
-      confirmPasswordError.value = confirmPasswordValidator(confirmPassword, password);
+      confirmPasswordError.value = confirmPasswordValidator(
+        confirmPassword,
+        password,
+      );
     }
 
     return Column(
@@ -131,7 +138,7 @@ class _RegisterForm extends HookConsumerWidget {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
-            labelText: l10n.emailLabel,
+            labelText: AppLocalizations.of(context)!.emailLabel,
             errorText: emailError.value,
           ),
           onChanged: (_) => validate(),
@@ -142,7 +149,7 @@ class _RegisterForm extends HookConsumerWidget {
           obscureText: true,
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
-            labelText: l10n.passwordLabel,
+            labelText: AppLocalizations.of(context)!.passwordLabel,
             errorText: passwordError.value,
           ),
           onChanged: (_) => validate(),
@@ -153,7 +160,7 @@ class _RegisterForm extends HookConsumerWidget {
           obscureText: true,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
-            labelText: l10n.confirmPasswordLabel,
+            labelText: AppLocalizations.of(context)!.confirmPasswordLabel,
             errorText: confirmPasswordError.value,
           ),
           onChanged: (_) => validate(),
@@ -176,7 +183,9 @@ class _RegisterForm extends HookConsumerWidget {
                       passwordError.value == null &&
                       confirmPasswordError.value == null) {
                     FocusScope.of(context).unfocus();
-                    ref.read(authControllerProvider.notifier).registerLegacy(
+                    ref
+                        .read(authControllerProvider.notifier)
+                        .registerLegacy(
                           emailController.text,
                           passwordController.text,
                         );
@@ -184,10 +193,9 @@ class _RegisterForm extends HookConsumerWidget {
                 },
           child: Text(
             l10n.registerButton,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
         ),
       ],

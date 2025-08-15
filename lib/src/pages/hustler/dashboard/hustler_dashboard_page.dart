@@ -26,7 +26,9 @@ final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
       ? ['general']
       : hustlerProfile.skills;
 
-  final isSubscribed = hustlerProfile.subscription?.isActive ?? false;
+  // Subscription is stored on AppUser, not Hustler profile.
+  final appUser = await ref.watch(currentUserProfileProvider.future);
+  final isSubscribed = appUser?.subscription?.isActive ?? false;
 
   yield* jobService.getJobsForHustler(skills, limit: isSubscribed ? null : 5);
 });
@@ -98,12 +100,15 @@ class HustlerDashboardPage extends HookConsumerWidget {
                       Text(
                         profile.skills.isEmpty
                             ? l10n.addSkillsToProfile
-                            : l10n.jobsMatchingYourSkills(profile.skills.join(', ')),
+                            : l10n.jobsMatchingYourSkills(
+                                profile.skills.join(', '),
+                              ),
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer
+                              .withAlpha((0.8 * 255).toInt()),
                         ),
                       ),
                     ],
@@ -123,9 +128,8 @@ class HustlerDashboardPage extends HookConsumerWidget {
                               Icon(
                                 Icons.work_off,
                                 size: 64.sp,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withOpacity(0.5),
+                                color: Theme.of(context).colorScheme.onSurface
+                                    .withAlpha((0.5 * 255).toInt()),
                               ),
                               SizedBox(height: 2.h),
                               Text(
@@ -145,9 +149,8 @@ class HustlerDashboardPage extends HookConsumerWidget {
                                     : l10n.checkBackLater,
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.7),
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withAlpha((0.7 * 255).toInt()),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -289,7 +292,7 @@ class JobCard extends StatelessWidget {
                   fontSize: 14.sp,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.8),
+                  ).colorScheme.onSurface.withAlpha((0.8 * 255).toInt()),
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
@@ -333,7 +336,7 @@ class JobCard extends StatelessWidget {
                     fontSize: 12.sp,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                   ),
                 ),
               ],
@@ -349,7 +352,7 @@ class JobCard extends StatelessWidget {
                       size: 16.sp,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                     ),
                     SizedBox(width: 1.w),
                     Text(
@@ -358,7 +361,7 @@ class JobCard extends StatelessWidget {
                         fontSize: 12.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                       ),
                     ),
                     SizedBox(width: 4.w),
@@ -368,7 +371,7 @@ class JobCard extends StatelessWidget {
                     size: 16.sp,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                   ),
                   SizedBox(width: 1.w),
                   Text(
@@ -377,7 +380,7 @@ class JobCard extends StatelessWidget {
                       fontSize: 12.sp,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                     ),
                   ),
                   const Spacer(),
@@ -390,7 +393,7 @@ class JobCard extends StatelessWidget {
                         fontSize: 12.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                       ),
                     ),
                 ],

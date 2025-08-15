@@ -5,3 +5,4 @@ export 'hustler.dart';
 export 'job_application.dart';
 export 'job_posting.dart';
 export 'user.dart';
+export 'subscription.dart';

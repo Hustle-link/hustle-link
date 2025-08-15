@@ -386,11 +386,13 @@ class AnimatedPageProgress extends HookConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4), // translucent background
+        color: Colors.black.withAlpha(
+          (0.4 * 255).toInt(),
+        ), // translucent background
         borderRadius: BorderRadius.circular(30), // pill shape
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withAlpha((0.3 * 255).toInt()),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -410,7 +412,7 @@ class AnimatedPageProgress extends HookConsumerWidget {
                 decoration: BoxDecoration(
                   color: isActive
                       ? Colors.white
-                      : Colors.white.withOpacity(0.3),
+                      : Colors.white.withAlpha((0.3 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                 ),
               )

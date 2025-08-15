@@ -10,7 +10,7 @@ class SubscriptionPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final user = ref.watch(currentUserProvider);
+    final user = ref.watch(currentUserProfileProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,11 +37,10 @@ class SubscriptionPage extends HookConsumerWidget {
             _SubscriptionCard(
               title: l10n.freePlan,
               price: '\$0/mo',
-              features: [
-                l10n.viewFiveJobs,
-                l10n.postThreeJobs,
-              ],
-              isCurrentPlan: user.value?.subscription == null || !user.value!.subscription!.isActive,
+              features: [l10n.viewFiveJobs, l10n.postThreeJobs],
+              isCurrentPlan:
+                  user.asData?.value?.subscription == null ||
+                  !(user.asData?.value?.subscription?.isActive ?? false),
             ),
             SizedBox(height: 3.h),
             _SubscriptionCard(
@@ -52,22 +51,24 @@ class SubscriptionPage extends HookConsumerWidget {
                 l10n.unlimitedJobViews,
                 l10n.prioritySupport,
               ],
-              isCurrentPlan: user.value?.subscription?.isActive ?? false,
+              isCurrentPlan:
+                  user.asData?.value?.subscription?.isActive ?? false,
               onTap: () async {
                 // Simulate payment and subscription update
                 final userService = ref.read(firestoreUserServiceProvider);
-                if (user.value != null) {
+                final current = user.asData?.value;
+                if (current != null) {
                   final newSubscription = Subscription(
                     plan: 'premium',
                     isActive: true,
                     endDate: DateTime.now().add(const Duration(days: 30)),
                   );
-                  final updatedUser = user.value!.copyWith(subscription: newSubscription);
+                  final updatedUser = current.copyWith(
+                    subscription: newSubscription,
+                  );
                   await userService.updateUser(updatedUser);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.subscriptionSuccessful),
-                    ),
+                    SnackBar(content: Text(l10n.subscriptionSuccessful)),
                   );
                 }
               },
@@ -97,6 +98,7 @@ class _SubscriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: isCurrentPlan ? 8 : 2,
       shape: RoundedRectangleBorder(
@@ -134,10 +136,12 @@ class _SubscriptionCard extends StatelessWidget {
               onPressed: isCurrentPlan ? null : onTap,
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 2.h),
-                backgroundColor: isCurrentPlan ? Colors.grey : theme.colorScheme.primary,
+                backgroundColor: isCurrentPlan
+                    ? Colors.grey
+                    : theme.colorScheme.primary,
               ),
               child: Text(
-                isCurrentPlan ? 'Current Plan' : 'Subscribe',
+                isCurrentPlan ? l10n.currentPlan : l10n.subscribe,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -164,10 +168,7 @@ class _FeatureRow extends StatelessWidget {
           const Icon(Icons.check, color: Colors.green),
           SizedBox(width: 2.w),
           Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
           ),
         ],
       ),

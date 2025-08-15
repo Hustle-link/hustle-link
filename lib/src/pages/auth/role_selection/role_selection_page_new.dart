@@ -141,7 +141,10 @@ class RoleSelectionPageNew extends HookConsumerWidget {
             child: authState.when(
               data: (_) => Text(
                 l10n.getStarted,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               loading: () => const SizedBox(
                 width: 24,

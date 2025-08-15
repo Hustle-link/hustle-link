@@ -138,6 +138,19 @@ class FirestoreUserService {
     }
   }
 
+  /// Updates the base [AppUser] document in Firestore.
+  ///
+  /// Use this to update fields like [Subscription] or name/email when needed.
+  Future<void> updateUser(AppUser user) async {
+    try {
+      await _usersCollection.doc(user.uid).update(user.toJson());
+      debugPrint('User updated for ${user.uid}');
+    } catch (e) {
+      debugPrint('Error updating user: $e');
+      throw Exception('Failed to update user: $e');
+    }
+  }
+
   /// Updates the skills of a hustler in Firestore.
   ///
   /// [uid] The hustler's unique ID.

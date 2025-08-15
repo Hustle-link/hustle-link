@@ -22,13 +22,13 @@ class HustlerProfilePage extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              final profile = await ref.read(
+              final profileData = await ref.read(
                 currentHustlerProfileProvider.future,
               );
-              if (profile != null && context.mounted) {
+              if (profileData != null) {
                 context.pushNamed(
                   AppRoutes.hustlerEditProfileRoute,
-                  extra: profile.toJson(),
+                  extra: profileData.toJson(),
                 );
               }
             },
@@ -97,7 +97,11 @@ class HustlerProfilePage extends HookConsumerWidget {
                           );
                         },
                         message:
-                            '${l10n.addPhoneNumberAndLocation}${profile.phoneNumber == null && profile.location == null ? '' : profile.phoneNumber == null ? l10n.addPhoneNumber : l10n.addLocation}',
+                            '${l10n.addPhoneNumberAndLocation}${profile.phoneNumber == null && profile.location == null
+                                ? ''
+                                : profile.phoneNumber == null
+                                ? l10n.addPhoneNumber
+                                : l10n.addLocation}',
                       ),
                   ],
                 ),
@@ -124,9 +128,8 @@ class HustlerProfilePage extends HookConsumerWidget {
                               ).colorScheme.primaryContainer,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withOpacity(0.3),
+                                color: Theme.of(context).colorScheme.primary
+                                    .withAlpha((0.3 * 255).toInt()),
                               ),
                             ),
                             child: Text(
@@ -299,9 +302,7 @@ class HustlerProfilePage extends HookConsumerWidget {
             final Uri emailLaunchUri = Uri(
               scheme: 'mailto',
               path: 'hustlelink05@gmail.com',
-              queryParameters: {
-                'subject': 'Support Request - HustleLink App',
-              },
+              queryParameters: {'subject': 'Support Request - HustleLink App'},
             );
 
             if (await canLaunchUrl(emailLaunchUri)) {
@@ -311,7 +312,8 @@ class HustlerProfilePage extends HookConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                      'Could not open email client. Please email hustlelink05@gmail.com'),
+                    'Could not open email client. Please email hustlelink05@gmail.com',
+                  ),
                 ),
               );
             }
@@ -319,7 +321,10 @@ class HustlerProfilePage extends HookConsumerWidget {
         ),
         const Divider(),
         ListTile(
-          leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+          leading: Icon(
+            Icons.logout,
+            color: Theme.of(context).colorScheme.error,
+          ),
           title: Text(
             l10n.logout,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
@@ -370,9 +375,7 @@ class _ProfileHeader extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 32.sp,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onPrimary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
           ),
@@ -382,9 +385,7 @@ class _ProfileHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.bold,
-              color: Theme.of(
-                context,
-              ).colorScheme.onPrimaryContainer,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
           if (profile.bio != null) ...[
@@ -395,7 +396,7 @@ class _ProfileHeader extends StatelessWidget {
                 fontSize: 14.sp,
                 color: Theme.of(
                   context,
-                ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                ).colorScheme.onPrimaryContainer.withAlpha((0.8 * 255).toInt()),
               ),
               textAlign: TextAlign.center,
             ),
@@ -409,19 +410,16 @@ class _ProfileHeader extends StatelessWidget {
                 );
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 4.w,
-                  vertical: 1.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
                 decoration: BoxDecoration(
                   color: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.1),
+                  ).colorScheme.primary.withAlpha((0.1 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.3),
+                    ).colorScheme.primary.withAlpha((0.3 * 255).toInt()),
                   ),
                 ),
                 child: Row(
@@ -437,9 +435,7 @@ class _ProfileHeader extends StatelessWidget {
                       l10n.addBio,
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -513,7 +509,7 @@ class _InfoRow extends StatelessWidget {
                         fontSize: 12.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withAlpha((0.6 * 255).toInt()),
                       ),
                     ),
                     if (isEditable) ...[
@@ -523,7 +519,7 @@ class _InfoRow extends StatelessWidget {
                         size: 12.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.6),
+                        ).colorScheme.primary.withAlpha((0.6 * 255).toInt()),
                       ),
                     ],
                   ],
@@ -582,7 +578,9 @@ class _StatCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12.sp,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withAlpha((0.7 * 255).toInt()),
             ),
             textAlign: TextAlign.center,
           ),
@@ -613,7 +611,9 @@ class _AddInfoPrompt extends StatelessWidget {
             ).colorScheme.primaryContainer.withOpacity(0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withAlpha((0.3 * 255).toInt()),
               style: BorderStyle.solid,
             ),
           ),
@@ -638,7 +638,9 @@ class _AddInfoPrompt extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withAlpha((0.6 * 255).toInt()),
               ),
             ],
           ),
@@ -717,7 +719,9 @@ class _ProfileCompletionCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(
+            context,
+          ).colorScheme.primary.withAlpha((0.3 * 255).toInt()),
         ),
       ),
       child: Column(
@@ -766,7 +770,9 @@ class _ProfileCompletionCard extends StatelessWidget {
             _getCompletionMessage(l10n),
             style: TextStyle(
               fontSize: 14.sp,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withAlpha((0.8 * 255).toInt()),
             ),
           ),
           SizedBox(height: 2.h),

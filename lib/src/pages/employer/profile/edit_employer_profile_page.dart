@@ -309,7 +309,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Company Information Section
-                _SectionTitle(l10n.companyInformation),
+                _SectionTitle(l10n.aboutCompany),
                 SizedBox(height: 2.h),
 
                 _FormField(
@@ -397,7 +397,9 @@ class _FormField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.outline.withAlpha((0.5 * 255).toInt()),
           ),
         ),
         focusedBorder: OutlineInputBorder(

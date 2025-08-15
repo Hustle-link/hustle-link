@@ -42,7 +42,9 @@ class AppLoadingScreen extends StatelessWidget {
               message ?? 'Loading...',
               style: TextStyle(
                 fontSize: 16.sp,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withAlpha((0.7 * 255).toInt()),
               ),
             ),
           ],

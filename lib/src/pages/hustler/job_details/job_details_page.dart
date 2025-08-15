@@ -42,9 +42,7 @@ class JobDetailsPage extends HookConsumerWidget {
         ref.invalidate(hasAppliedProvider(jobId));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.applicationSubmittedSuccessfully),
-            ),
+            SnackBar(content: Text(l10n.applicationSubmittedSuccessfully)),
           );
         }
       }
@@ -194,7 +192,6 @@ class JobDetailsPage extends HookConsumerWidget {
                       child: Text(
                         skill,
                         style: TextStyle(
-                          fontSize: 14.sp,
                           color: Theme.of(
                             context,
                           ).colorScheme.onSecondaryContainer,
@@ -210,7 +207,10 @@ class JobDetailsPage extends HookConsumerWidget {
                 SizedBox(height: 2.h),
                 _InfoRow(l10n.posted, _formatDate(jobData.createdAt)),
                 if (jobData.applicationsCount != null)
-                  _InfoRow(l10n.applicants(jobData.applicationsCount.toString()), ''),
+                  _InfoRow(
+                    l10n.applicants(jobData.applicationsCount.toString()),
+                    '',
+                  ),
                 if (jobData.deadline != null)
                   _InfoRow(l10n.deadline, _formatDate(jobData.deadline!)),
 
@@ -374,7 +374,9 @@ class _InfoRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withAlpha((0.7 * 255).toInt()),
             ),
           ),
           SizedBox(width: 2.w),

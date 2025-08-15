@@ -108,7 +108,7 @@ class SuccessContainer extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 1.h),
       padding: EdgeInsets.all(2.h),
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
+        color: Colors.green.withAlpha((0.1 * 255).toInt()),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.green, width: 1),
       ),

@@ -57,8 +57,6 @@ class AppMaterialTheme {
       onError: AppColors.onError,
       surface: AppColors.surface,
       onSurface: AppColors.onSurface,
-      background: AppColors.background,
-      onBackground: AppColors.onBackground,
       outline: AppColors.outline,
       shadow: AppColors.shadow,
       surfaceTint: AppColors.primary,
@@ -87,16 +85,14 @@ class AppMaterialTheme {
         bodyColor: colorScheme.onSurface,
         displayColor: colorScheme.onSurface,
       ),
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: colorScheme.surface,
       canvasColor: colorScheme.surface,
       // Define other properties like button themes, input decoration themes, etc.
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
       ),
@@ -109,7 +105,9 @@ class AppMaterialTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
-        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
+        labelStyle: TextStyle(
+          color: colorScheme.onSurface.withAlpha((0.7 * 255).toInt()),
+        ),
       ),
     );
   }

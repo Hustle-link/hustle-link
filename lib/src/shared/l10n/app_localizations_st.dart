@@ -1,9 +1,48 @@
 import 'app_localizations.dart';
-import 'package:intl/intl.dart' as intl;
 
 /// The translations for Setswana (`st`).
 class AppLocalizationsSt extends AppLocalizations {
-  AppLocalizationsSt([String locale = 'st']) : super(locale);
+  AppLocalizationsSt([super.locale = 'st']);
+
+  @override
+  String get subscriptions => 'Dipeeletso';
+
+  @override
+  String get chooseYourPlan => 'Tlhopha leano la gago';
+
+  @override
+  String get currentPlan => 'Leano la ga jaana';
+
+  @override
+  String get freePlan => 'Leano la mahala';
+
+  @override
+  String get unlockFullPotential =>
+      'Bula bokgoni jwa gago jotlhe ka dikarolo tsa rona tsa premium.';
+
+  @override
+  String get viewFiveJobs => 'Leba go fitlha ditiro tse 5 tsa morao-rao';
+
+  @override
+  String get postThreeJobs => 'Bula ditiro di le 3';
+
+  @override
+  String get premiumPlan => 'Leano la Premium';
+
+  @override
+  String get unlimitedJobPostings => 'Ditiro tse di sa lekanyeng';
+
+  @override
+  String get unlimitedJobViews => 'Go leba ditiro go sa lekanyeng';
+
+  @override
+  String get prioritySupport => 'Kemonokeng e e Tlotlegileng';
+
+  @override
+  String get subscribe => 'Ipeeletse';
+
+  @override
+  String get subscriptionSuccessful => 'Peeletso e atlegile!';
 
   @override
   String get loginTitle => 'O boa gape!';
@@ -33,7 +72,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get registerTitle => 'Tsenela Hustle Link Gompieno!';
 
   @override
-  String get registerSubtitle => 'Bula akhaonto ya gago ya mahala mme o simolole go golagana le ditiro tse di makatsang gompieno!.';
+  String get registerSubtitle =>
+      'Bula akhaonto ya gago ya mahala mme o simolole go golagana le ditiro tse di makatsang gompieno!.';
 
   @override
   String get confirmPasswordLabel => 'Netefatsa Lephoko la Sephiri';
@@ -45,7 +85,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get resetPassword => 'Seta Lephoko la Sephiri Sesha';
 
   @override
-  String get resetPasswordSubtitle => 'Tsenya email ya gago go amogela kgolagano ya go seta lephoko la sephiri sesha.';
+  String get resetPasswordSubtitle =>
+      'Tsenya email ya gago go amogela kgolagano ya go seta lephoko la sephiri sesha.';
 
   @override
   String get resetPasswordButton => 'Romela Kgolagano ya go Seta Sesha';
@@ -72,7 +113,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get registrationError => 'Ikwadiso e paletswe. Lekola gape.';
 
   @override
-  String get loginError => 'Go tsena go paletswe. Lekola tshedimosetso ya gago mme o leke gape.';
+  String get loginError =>
+      'Go tsena go paletswe. Lekola tshedimosetso ya gago mme o leke gape.';
 
   @override
   String get emailRequired => 'Email e a tlhokega.';
@@ -81,16 +123,19 @@ class AppLocalizationsSt extends AppLocalizations {
   String get passwordRequired => 'Lephoko la sephiri le a tlhokega.';
 
   @override
-  String get confirmPasswordRequired => 'Tsweetswee netefatsa lephoko la gago la sephiri.';
+  String get confirmPasswordRequired =>
+      'Tsweetswee netefatsa lephoko la gago la sephiri.';
 
   @override
   String get passwordsDoNotMatch => 'Maphoko a sephiri ga a tshwane.';
 
   @override
-  String get invalidEmail => 'Tsweetswee tsenya aterese ya email e e nepagetseng.';
+  String get invalidEmail =>
+      'Tsweetswee tsenya aterese ya email e e nepagetseng.';
 
   @override
-  String get weakPassword => 'Lephoko la sephiri le tshwanetse go nna le ditlhaka di le 6 go ya godimo.';
+  String get weakPassword =>
+      'Lephoko la sephiri le tshwanetse go nna le ditlhaka di le 6 go ya godimo.';
 
   @override
   String get userNotFound => 'Ga go na modirisi yo o fitlhetsweng ka email e.';
@@ -108,7 +153,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get passwordResetTitle => 'Go Seta Lephoko la Sephiri Sesha';
 
   @override
-  String get passwordResetSubTitle => 'Tsenya aterese ya email ya gago fa tlase go amogela kgolagano ya go seta lephoko la sephiri sesha.';
+  String get passwordResetSubTitle =>
+      'Tsenya aterese ya email ya gago fa tlase go amogela kgolagano ya go seta lephoko la sephiri sesha.';
 
   @override
   String get emailHint => 'Tsenya email ya gago';
@@ -136,7 +182,8 @@ class AppLocalizationsSt extends AppLocalizations {
   }
 
   @override
-  String get didNotGetEmail => 'Ga o a amogela email? Lekola foromo ya gago ya spam kgotsa leka gape.';
+  String get didNotGetEmail =>
+      'Ga o a amogela email? Lekola foromo ya gago ya spam kgotsa leka gape.';
 
   @override
   String get completeYourProfile => 'Tlatsa Porofaele ya Gago';
@@ -166,7 +213,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get imAnEmployer => 'Ke Mohiri';
 
   @override
-  String get lookingToHireTalent => 'Ke batla go hira batho ba ba nang le talente';
+  String get lookingToHireTalent =>
+      'Ke batla go hira batho ba ba nang le talente';
 
   @override
   String get getStarted => 'Simolola';
@@ -183,7 +231,8 @@ class AppLocalizationsSt extends AppLocalizations {
   }
 
   @override
-  String get addSkillsToProfile => 'Tsenya bokgoni mo porofaeleng ya gago go bona ditiro tse di maleba';
+  String get addSkillsToProfile =>
+      'Tsenya bokgoni mo porofaeleng ya gago go bona ditiro tse di maleba';
 
   @override
   String jobsMatchingYourSkills(String skills) {
@@ -194,7 +243,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get noJobsAvailable => 'Ga go na ditiro tse di leng teng';
 
   @override
-  String get checkBackLater => 'Lekola gape moragonyana go bona ditšhono tse disha';
+  String get checkBackLater =>
+      'Lekola gape moragonyana go bona ditšhono tse disha';
 
   @override
   String errorLoadingJobs(String error) {
@@ -237,10 +287,12 @@ class AppLocalizationsSt extends AppLocalizations {
   String get noApplicationsYet => 'Ga go na Dikopo Tšhono';
 
   @override
-  String get startApplyingForJobs => 'Simolola go dira dikopo tsa ditiro go di bona fano';
+  String get startApplyingForJobs =>
+      'Simolola go dira dikopo tsa ditiro go di bona fano';
 
   @override
-  String get errorLoadingApplications => 'Phoso e nnile teng fa go laolwa dikopo';
+  String get errorLoadingApplications =>
+      'Phoso e nnile teng fa go laolwa dikopo';
 
   @override
   String get jobTitle => 'Sehlogo sa Tiro';
@@ -304,7 +356,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get skills => 'Bokgoni';
 
   @override
-  String get addYourSkills => 'Tsenya bokgoni jwa gago go bona ditiro tse di maleba';
+  String get addYourSkills =>
+      'Tsenya bokgoni jwa gago go bona ditiro tse di maleba';
 
   @override
   String get statistics => 'Dipalopalo';
@@ -319,7 +372,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get experience => 'Maitemogelo';
 
   @override
-  String get addYourWorkExperience => 'Tsenya maitemogelo a gago a tiro le diphitlhelelo';
+  String get addYourWorkExperience =>
+      'Tsenya maitemogelo a gago a tiro le diphitlhelelo';
 
   @override
   String get account => 'Akhaonto';
@@ -364,10 +418,12 @@ class AppLocalizationsSt extends AppLocalizations {
   String get almostThere => 'O setse o le gaufi! Tlatsa dintlha di sekae fela.';
 
   @override
-  String get goodProgress => 'Tswelelopele e ntle! Tsenya tshedimosetso e nngwe go iponagatsa.';
+  String get goodProgress =>
+      'Tswelelopele e ntle! Tsenya tshedimosetso e nngwe go iponagatsa.';
 
   @override
-  String get completeYourProfileToAttractMoreOpportunities => 'Tlatsa porofaele ya gago go ngoka ditšhono tse dintsi.';
+  String get completeYourProfileToAttractMoreOpportunities =>
+      'Tlatsa porofaele ya gago go ngoka ditšhono tse dintsi.';
 
   @override
   String get completeProfile => 'Tlatsa Porofaele';
@@ -421,22 +477,26 @@ class AppLocalizationsSt extends AppLocalizations {
   String get professionalInformation => 'Tshedimosetso ya Tiro';
 
   @override
-  String get skillsHint => 'Thabololo ya Wepe, Di-app tsa Selula, Tlhamo, jalo le jalo.';
+  String get skillsHint =>
+      'Thabololo ya Wepe, Di-app tsa Selula, Tlhamo, jalo le jalo.';
 
   @override
-  String get pleaseAddAtLeastOneSkill => 'Tsweetswee tsenya bokgoni bo le bongwe';
+  String get pleaseAddAtLeastOneSkill =>
+      'Tsweetswee tsenya bokgoni bo le bongwe';
 
   @override
   String get separateSkillsWithCommas => 'Kgaoganya bokgoni ka khoma';
 
   @override
-  String get experienceHint => 'Tlhalosa maitemogelo a gago a tiro, diporojeke, kgotsa diphitlhelelo...';
+  String get experienceHint =>
+      'Tlhalosa maitemogelo a gago a tiro, diporojeke, kgotsa diphitlhelelo...';
 
   @override
   String get certifications => 'Ditifikeiti';
 
   @override
-  String get uploadCertificates => 'Tsenya ditifikeiti tsa gago, didipoloma, kgotsa ditokomane tse dingwe tsa dithuto (PDF, DOC, DOCX)';
+  String get uploadCertificates =>
+      'Tsenya ditifikeiti tsa gago, didipoloma, kgotsa ditokomane tse dingwe tsa dithuto (PDF, DOC, DOCX)';
 
   @override
   String get uploaded => 'E tsenitswe';
@@ -498,7 +558,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get noJobsPostedYet => 'Ga go na ditiro tse di poseditsweng';
 
   @override
-  String get createYourFirstJobPosting => 'Bula tiro ya gago ya ntlha go batla batho ba ba nang le talente';
+  String get createYourFirstJobPosting =>
+      'Bula tiro ya gago ya ntlha go batla batho ba ba nang le talente';
 
   @override
   String get postAJob => 'Bula Tiro';
@@ -516,7 +577,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get postNewJob => 'Bula Tiro e Ntšha';
 
   @override
-  String get postYourFirstJob => 'Bula tiro ya gago ya ntlha go batla batho ba ba nang le talente';
+  String get postYourFirstJob =>
+      'Bula tiro ya gago ya ntlha go batla batho ba ba nang le talente';
 
   @override
   String get viewApplications => 'Leba Dikopo';
@@ -562,10 +624,12 @@ class AppLocalizationsSt extends AppLocalizations {
   String get updatePostingTitle => 'Fetola tiro ya gago';
 
   @override
-  String get createPostingSubtitle => 'Tlatsa dintlha go hohela batho ba ba nang le talente';
+  String get createPostingSubtitle =>
+      'Tlatsa dintlha go hohela batho ba ba nang le talente';
 
   @override
-  String get updatePostingSubtitle => 'Fetola dintlha tse o batlang go di fetola';
+  String get updatePostingSubtitle =>
+      'Fetola dintlha tse o batlang go di fetola';
 
   @override
   String get jobDescription => 'Tlhaloso ya Tiro';
@@ -586,7 +650,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get locationHint => 'Remote, New York, etc.';
 
   @override
-  String get descriptionSubtitle => 'Tlhalosa karolo, maikarabelo, le ditlhokego';
+  String get descriptionSubtitle =>
+      'Tlhalosa karolo, maikarabelo, le ditlhokego';
 
   @override
   String get jobTitleRequired => 'Tsweetswee tsenya sehlogo sa tiro';
@@ -595,7 +660,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get jobDescriptionRequired => 'Tsweetswee tsenya tlhaloso ya tiro';
 
   @override
-  String get jobDescriptionTooShort => 'Tlhaloso e tshwanetse go nna le ditlhaka di le 50 go ya godimo';
+  String get jobDescriptionTooShort =>
+      'Tlhaloso e tshwanetse go nna le ditlhaka di le 50 go ya godimo';
 
   @override
   String get skillsRequired => 'Tsweetswee tsenya bokgoni jo bo tlhokegang';
@@ -625,22 +691,27 @@ class AppLocalizationsSt extends AppLocalizations {
   String get aboutCompany => 'Ka ga Khamphani';
 
   @override
-  String get addAShortDescriptionAboutYourCompany => 'Tsenya tlhaloso e khutshwane ka ga khamphani ya gago';
+  String get addAShortDescriptionAboutYourCompany =>
+      'Tsenya tlhaloso e khutshwane ka ga khamphani ya gago';
 
   @override
   String get employer => 'Mohiri';
 
   @override
-  String get yourCompanyProfileIsComplete => 'Porofaele ya khamphani ya gago e feletse!';
+  String get yourCompanyProfileIsComplete =>
+      'Porofaele ya khamphani ya gago e feletse!';
 
   @override
-  String get almostThereCompany => 'O setse o le gaufi! Tlatsa dintlha tse di setseng.';
+  String get almostThereCompany =>
+      'O setse o le gaufi! Tlatsa dintlha tse di setseng.';
 
   @override
-  String get goodProgressCompany => 'Tswelelopele e ntle! Tsenya tshedimosetso e nngwe ka ga khamphani.';
+  String get goodProgressCompany =>
+      'Tswelelopele e ntle! Tsenya tshedimosetso e nngwe ka ga khamphani.';
 
   @override
-  String get completeYourCompanyProfileToBuildTrust => 'Tlatsa porofaele ya khamphani ya gago go aga tshepo le bathapi.';
+  String get completeYourCompanyProfileToBuildTrust =>
+      'Tlatsa porofaele ya khamphani ya gago go aga tshepo le bathapi.';
 
   @override
   String get personalInformation => 'Tshedimosetso ya Botho';
@@ -655,7 +726,8 @@ class AppLocalizationsSt extends AppLocalizations {
   String get companyDescription => 'Tlhaloso ya Khamphani';
 
   @override
-  String get describeYourCompany => 'Tlhalosa khamphani ya gago, maikaelelo, le boleng...';
+  String get describeYourCompany =>
+      'Tlhalosa khamphani ya gago, maikaelelo, le boleng...';
 
   @override
   String total(String count) {

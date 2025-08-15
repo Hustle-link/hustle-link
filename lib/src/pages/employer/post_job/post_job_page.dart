@@ -78,8 +78,9 @@ class PostJobPage extends HookConsumerWidget {
       prefill();
       return null;
     }, [editJobId]);
-    // Fetch the current employer's profile.
+    // Fetch the current employer's profile and base user (for subscription status).
     final employerProfile = ref.watch(currentEmployerProfileProvider);
+    final userProfile = ref.watch(currentUserProfileProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +98,8 @@ class PostJobPage extends HookConsumerWidget {
             return const Center(child: Text(PostJobStrings.profileNotFound));
           }
 
-          final isSubscribed = profile.subscription?.isActive ?? false;
+          final isSubscribed =
+              userProfile.asData?.value?.subscription?.isActive ?? false;
           final canPostJob = isSubscribed || (profile.postedJobs ?? 0) < 3;
 
           if (editJobId == null && !canPostJob) {

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
-import 'package:hustle_link/src/pages/hustler/job_details/controllers/job_details_providers.dart';
 
 /// A Riverpod provider that fetches a stream of applications for a specific job.
 ///
@@ -12,9 +10,9 @@ import 'package:hustle_link/src/pages/hustler/job_details/controllers/job_detail
 // TODO(caching): Implement caching for job applications to reduce Firestore reads.
 final jobApplicationsProvider =
     StreamProvider.family<List<JobApplication>, String>((ref, jobId) {
-  final svc = ref.watch(firestoreJobServiceProvider);
-  return svc.getApplicationsForJob(jobId);
-});
+      final svc = ref.watch(firestoreJobServiceProvider);
+      return svc.getApplicationsForJob(jobId);
+    });
 
 /// A widget that displays the details of a job posting for an employer.
 ///
@@ -149,7 +147,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
               Row(
                 children: [
                   Text(
-                    l10n.applications(''),
+                    l10n.jobApplications,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -323,9 +321,9 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.8.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         text,
@@ -405,7 +403,7 @@ class _ApplicationTile extends StatelessWidget {
       trailing: Container(
         padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
         decoration: BoxDecoration(
-          color: statusColor.withOpacity(0.12),
+          color: statusColor.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(statusText, style: TextStyle(color: statusColor)),

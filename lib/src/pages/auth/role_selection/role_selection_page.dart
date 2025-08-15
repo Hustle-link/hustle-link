@@ -62,7 +62,9 @@ class RoleSelectionPage extends HookConsumerWidget {
               RoleSelectionStrings.roleSubtitle,
               style: TextStyle(
                 fontSize: 16.sp,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             SizedBox(height: 4.h),
@@ -121,18 +123,14 @@ class RoleSelectionPage extends HookConsumerWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: authState.map(
-                  idle: () => const Text(
+                child: authState.when(
+                  data: (_) => const Text(
                     RoleSelectionStrings.getStartedButton,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   loading: () => const CircularProgressIndicator(),
                   error: (error, _) =>
                       const Text(RoleSelectionStrings.tryAgainButton),
-                  data: (_) => const Text(
-                    RoleSelectionStrings.getStartedButton,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
                 ),
               ),
             ),
@@ -170,18 +168,18 @@ class _RoleCard extends StatelessWidget {
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? color : Colors.grey.withOpacity(0.3),
+            color: isSelected ? color : Colors.grey.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
-          color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24.sp),
@@ -206,7 +204,7 @@ class _RoleCard extends StatelessWidget {
                       fontSize: 14.sp,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
