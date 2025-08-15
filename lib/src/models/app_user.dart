@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hustle_link/src/models/subscription.dart';
 
 part 'app_user.freezed.dart';
 part 'app_user.g.dart';
@@ -34,6 +35,9 @@ abstract class AppUser with _$AppUser {
 
     /// The user's phone number.
     String? phoneNumber,
+
+    /// The user's subscription details.
+    Subscription? subscription,
   }) = _AppUser;
 
   /// Creates an [AppUser] from a JSON object.

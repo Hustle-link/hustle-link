@@ -6,306 +6,204 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 
-/// A widget that provides the user interface for the login screen.
+/// A screen for users to log in to their account.
 ///
-/// This widget includes text fields for email and password, a login button,
-/// and links for password reset and registration. It uses hooks for managing
-/// state and controllers.
-/// TODO(UI/UX): Improve the visual feedback for loading and error states.
+/// This page provides fields for email and password, a login button, and links
+/// for password recovery and registration. It's built with a responsive layout
+/// and uses Riverpod for state management.
 class LoginPage extends HookConsumerWidget {
-  /// Creates a new instance of [LoginPage].
+  /// Creates an instance of [LoginPage].
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // use text controllers for email and password
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
+    // Controllers for the form fields.
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
 
-    // use auth controller
-    final authController = ref.read(authControllerProvider.notifier);
-    final authControllerMutation = ref.watch(authControllerProvider);
+    // State for managing form validation errors.
+    final emailError = useState<String?>(null);
+    final passwordError = useState<String?>(null);
+    final authError = useState<String?>(null);
 
-    // focus nodes
-    final emailFocusNode = useFocusNode();
-    final passwordFocusNode = useFocusNode();
-
-    // error texts
-    final emailErrorText = useState<String?>(null);
-    final passwordErrorText = useState<String?>(null);
-    final authErrorText = useState<String?>(null);
-
-    // Handle auth state changes using ref.listen instead of useEffect
-    // This listener handles the different states of the authentication process,
-    // showing loading dialogs, error messages, and navigating on success.
-    ref.listen(authControllerProvider, (prev, next) {
+    // Listen to the authentication state to handle loading, errors, and success.
+    ref.listen<Mutation<void, Map<String, String>>>(authControllerProvider,
+        (prev, next) {
       next.map(
-        idle: () => null,
-        loading: () {
-          SmartDialog.showLoading(
-            msg: AppStringsAuth.loadingMessage,
-            maskColor: Colors.black54,
-          );
-          return null;
-        },
-        error: (error, _) {
+        idle: () => SmartDialog.dismiss(),
+        loading: () => SmartDialog.showLoading(msg: 'Signing in...'),
+        error: (e, _) {
           SmartDialog.dismiss();
-          debugPrint('Login error on login page: ${error.toString()}');
-          final cleanError = error.toString().replaceAll('Exception: ', '');
-          authErrorText.value = cleanError;
-          return null;
+          authError.value = e.toString().replaceFirst('Exception: ', '');
         },
         data: (_) {
           SmartDialog.dismiss();
-          authErrorText.value = null; // Clear any errors
+          authError.value = null;
           context.goNamed(AppRoutes.homeRoute);
-          return null;
         },
       );
     });
 
     return Scaffold(
-      // automatically implyleading padding if navigating from another page
       resizeToAvoidBottomInset: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        // title: Text(AppStringsAuth.loginTitle),
-        automaticallyImplyLeading: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.transparent,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 4.w,
-          right: 4.w,
-          // top: 2.h,
-          // bottom: MediaQuery.of(context).viewInsets.bottom + 16, // <-- Add this
-        ),
-        child: Form(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _buildHeader(context),
               SizedBox(height: 5.h),
-              // image
-              SvgPicture.asset('assets/images/auth/register.svg', height: 20.h),
-              //todo:remove this debug button
-              TextButton(
-                onPressed: () async {
-                  await ref
-                      .read(welcomePageSharedPreferencesProvider.notifier)
-                      .setFirstTimeOpenApp(true);
-                },
-                child: const Text(DebugStrings.welcomePage),
-              ),
-              SizedBox(height: 5.h),
-              // title and input fields
               Text(
-                AppStringsAuth.loginTitle,
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                l10n.loginTitle,
+                style: textTheme.headlineMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 2.h),
+              SizedBox(height: 1.h),
               Text(
-                AppStringsAuth.loginSubtitle,
-
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: Theme.of(context).textTheme.bodySmall?.backgroundColor,
-                ),
-                textAlign: TextAlign.start,
+                l10n.loginSubtitle,
+                style: textTheme.titleMedium
+                    ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.7)),
               ),
               SizedBox(height: 4.h),
-              // email and password fields
-              TextField(
-                controller: emailController,
-                focusNode: emailFocusNode,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  labelText: AppStringsAuth.emailLabel,
-                  border: const OutlineInputBorder(),
-                  errorText: emailErrorText.value,
-                ),
-                onTapOutside: (event) {
-                  // validate email
-                  if (emailFocusNode.hasFocus) {
-                    // validate email format
-                    final emailError = emailValidator(emailController.text);
-                    if (emailError != null) {
-                      emailErrorText.value = emailError;
-                    } else {
-                      emailErrorText.value = null; // clear error if valid
-                    }
-                  }
-                  // unfocus the text field
-                  emailFocusNode.unfocus();
-                },
-                onEditingComplete: () {
-                  // validate email when user finishes editing
-                  final emailError = emailValidator(emailController.text);
-                  if (emailError != null) {
-                    emailErrorText.value = emailError;
-                  } else {
-                    emailErrorText.value = null; // clear error if valid
-                  }
-                  // move to password field
-                  passwordFocusNode.requestFocus();
-                },
-              ),
-              SizedBox(height: 3.h),
-              TextField(
-                controller: passwordController,
-                focusNode: passwordFocusNode,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: AppStringsAuth.passwordLabel,
-                  border: const OutlineInputBorder(),
-                  errorText: passwordErrorText.value,
-                ),
-                obscureText: true,
-                onTapOutside: (event) {
-                  // validate password
-                  if (passwordFocusNode.hasFocus) {
-                    final passwordError = loginPasswordValidator(
-                      passwordController.text,
-                    );
-                    if (passwordError != null) {
-                      passwordErrorText.value = passwordError;
-                    } else {
-                      passwordErrorText.value = null;
-                    }
-                  }
-                  passwordFocusNode.unfocus();
-                },
-                onEditingComplete: () {
-                  // validate password when user finishes editing
-                  final passwordError = loginPasswordValidator(
-                    passwordController.text,
-                  );
-                  if (passwordError != null) {
-                    passwordErrorText.value = passwordError;
-                  } else {
-                    passwordErrorText.value = null;
-                  }
-                  // unfocus when done
-                  passwordFocusNode.unfocus();
-                },
-              ),
-              SizedBox(height: 0.2.h),
-              // forgot password link
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    // navigate to forgot password page
-                    context.pushNamed(AppRoutes.resetPasswordRoute);
-                  },
-                  child: Text(
-                    AppStringsAuth.forgotPassword,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ),
+              _buildLoginForm(
+                context: context,
+                ref: ref,
+                emailController: emailController,
+                passwordController: passwordController,
+                emailError: emailError,
+                passwordError: passwordError,
+                authError: authError,
               ),
               SizedBox(height: 2.h),
-              // Show auth error container if there's an error
-              if (authErrorText.value != null)
-                ErrorContainer(
-                  errorMessage: authErrorText.value!,
-                  onDismiss: () => authErrorText.value = null,
-                ),
-              ElevatedButton(
-                onPressed: authControllerMutation.isLoading
-                    ? null
-                    : () async {
-                        // Clear any existing error messages
-                        emailErrorText.value = null;
-                        passwordErrorText.value = null;
-                        authErrorText.value = null;
-
-                        // Validate email
-                        final emailError = emailValidator(emailController.text);
-                        if (emailError != null) {
-                          emailErrorText.value = emailError;
-                          return;
-                        }
-
-                        // Validate password
-                        final passwordError = loginPasswordValidator(
-                          passwordController.text,
-                        );
-                        if (passwordError != null) {
-                          passwordErrorText.value = passwordError;
-                          return;
-                        }
-
-                        // Dismiss keyboard
-                        FocusScope.of(context).unfocus();
-
-                        // call signIn method from auth controller
-                        await authController.signIn(
-                          emailController.text.trim(),
-                          passwordController.text,
-                        );
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer,
-                  side: BorderSide.none,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 2.h),
-                ),
-                child: Text(
-                  AppStringsAuth.loginButton,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-                ),
-              ),
-              SizedBox(height: 2.h),
-              // register link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppStringsAuth.noAccount,
-                    style: TextStyle(fontSize: 15.sp),
-                  ),
-                  SizedBox(width: 1.w),
-                  TextButton(
-                    onPressed: () {
-                      // set allow navigation to register page
-                      ref
-                          .read(allowNavToRegisterProvider.notifier)
-                          .allowNavigation();
-                      // close the keyboard
-                      FocusScope.of(context).unfocus();
-                      // navigate to register page
-                      context.goNamed(AppRoutes.registerRoute);
-                    },
-                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    child: Text(
-                      AppStringsAuth.createAccount,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _buildFooter(context, ref),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  /// Builds the header section with the app logo.
+  Widget _buildHeader(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/images/auth/login.svg',
+      height: 20.h,
+      placeholderBuilder: (context) => SizedBox(height: 20.h),
+    );
+  }
+
+  /// Builds the login form with email, password, and submission button.
+  Widget _buildLoginForm({
+    required BuildContext context,
+    required WidgetRef ref,
+    required TextEditingController emailController,
+    required TextEditingController passwordController,
+    required ValueNotifier<String?> emailError,
+    required ValueNotifier<String?> passwordError,
+    required ValueNotifier<String?> authError,
+  }) {
+    final authState = ref.watch(authControllerProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: emailController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            labelText: l10n.emailLabel,
+            errorText: emailError.value,
+          ),
+          onChanged: (_) => emailError.value = null,
+        ),
+        SizedBox(height: 2.h),
+        TextField(
+          controller: passwordController,
+          obscureText: true,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            labelText: l10n.passwordLabel,
+            errorText: passwordError.value,
+          ),
+          onChanged: (_) => passwordError.value = null,
+        ),
+        SizedBox(height: 1.h),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () => context.pushNamed(AppRoutes.resetPasswordRoute),
+            child: Text(l10n.forgotPassword),
+          ),
+        ),
+        if (authError.value != null)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 2.h),
+            child: ErrorContainer(
+              errorMessage: authError.value!,
+              onDismiss: () => authError.value = null,
+            ),
+          ),
+        SizedBox(height: 2.h),
+        ElevatedButton(
+          onPressed: authState.isLoading
+              ? null
+              : () {
+                  // Clear previous errors
+                  authError.value = null;
+
+                  // Validate fields
+                  final email = emailController.text;
+                  final password = passwordController.text;
+                  final emailValidationError = emailValidator(email);
+                  final passwordValidationError = loginPasswordValidator(password);
+
+                  if (emailValidationError != null ||
+                      passwordValidationError != null) {
+                    emailError.value = emailValidationError;
+                    passwordError.value = passwordValidationError;
+                    return;
+                  }
+
+                  FocusScope.of(context).unfocus();
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .signIn(email, password);
+                },
+          child: Text(
+            l10n.signIn,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the footer section with the link to the registration page.
+  Widget _buildFooter(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(l10n.noAccount),
+        TextButton(
+          onPressed: () {
+            ref.read(allowNavToRegisterProvider.notifier).allowNavigation();
+            context.goNamed(AppRoutes.registerRoute);
+          },
+          child: Text(l10n.createAccount),
+        ),
+      ],
     );
   }
 }

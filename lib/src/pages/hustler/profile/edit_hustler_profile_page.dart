@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:hustle_link/src/pages/hustler/profile/controllers/controllers.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_selector/file_selector.dart';
@@ -16,6 +17,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = useTextEditingController(text: profile.name);
     final bioController = useTextEditingController(text: profile.bio ?? '');
     final experienceController = useTextEditingController(
@@ -72,7 +74,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to pick image: $e'),
+              content: Text(l10n.failedToPickImage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -109,7 +111,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to pick files: $e'),
+              content: Text(l10n.failedToPickFiles(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -186,8 +188,8 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile updated successfully!'),
+            SnackBar(
+              content: Text(l10n.profileUpdatedSuccessfully),
               backgroundColor: Colors.green,
             ),
           );
@@ -197,7 +199,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to update profile: $e'),
+              content: Text(l10n.failedToUpdateProfile(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -207,7 +209,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(l10n.editProfile),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           TextButton(
@@ -218,7 +220,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                     height: 20.sp,
                     child: const CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Save'),
+                : Text(l10n.save),
           ),
         ],
       ),
@@ -276,8 +278,8 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                         icon: const Icon(Icons.camera_alt),
                         label: Text(
                           selectedProfileImage.value != null
-                              ? 'Change Photo'
-                              : 'Add Photo',
+                              ? l10n.changePhoto
+                              : l10n.addPhoto,
                         ),
                       ),
                     ],
@@ -287,16 +289,16 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Basic Information
-                _SectionTitle('Basic Information'),
+                _SectionTitle(l10n.basicInformation),
                 SizedBox(height: 2.h),
 
                 _FormField(
                   controller: nameController,
-                  label: 'Full Name',
+                  label: l10n.fullName,
                   icon: Icons.person_outline,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Name is required';
+                      return l10n.nameIsRequired;
                     }
                     return null;
                   },
@@ -306,49 +308,49 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
                 _FormField(
                   controller: bioController,
-                  label: 'Bio',
+                  label: l10n.bio,
                   icon: Icons.info_outline,
                   maxLines: 3,
-                  hintText: 'Tell others about yourself...',
+                  hintText: l10n.tellOthersAboutYourself,
                 ),
 
                 SizedBox(height: 4.h),
 
                 // Contact Information
-                _SectionTitle('Contact Information'),
+                _SectionTitle(l10n.contactInformation),
                 SizedBox(height: 2.h),
 
                 _FormField(
                   controller: phoneController,
-                  label: 'Phone Number',
+                  label: l10n.phoneNumber,
                   icon: Icons.phone_outlined,
                   keyboardType: TextInputType.phone,
-                  hintText: '+1 (555) 123-4567',
+                  hintText: '+267 7123 4567',
                 ),
 
                 SizedBox(height: 3.h),
 
                 _FormField(
                   controller: locationController,
-                  label: 'Location',
+                  label: l10n.location,
                   icon: Icons.location_on_outlined,
-                  hintText: 'City, State',
+                  hintText: l10n.cityState,
                 ),
 
                 SizedBox(height: 4.h),
 
                 // Professional Information
-                _SectionTitle('Professional Information'),
+                _SectionTitle(l10n.professionalInformation),
                 SizedBox(height: 2.h),
 
                 _FormField(
                   controller: skillsController,
-                  label: 'Skills',
+                  label: l10n.skills,
                   icon: Icons.build_outlined,
-                  hintText: 'Web Development, Mobile Apps, Design, etc.',
+                  hintText: l10n.skillsHint,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please add at least one skill';
+                      return l10n.pleaseAddAtLeastOneSkill;
                     }
                     return null;
                   },
@@ -357,7 +359,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 1.h),
 
                 Text(
-                  'Separate skills with commas',
+                  l10n.separateSkillsWithCommas,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(
@@ -370,21 +372,21 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
                 _FormField(
                   controller: experienceController,
-                  label: 'Experience',
+                  label: l10n.experience,
                   icon: Icons.work_outline,
                   maxLines: 4,
                   hintText:
-                      'Describe your work experience, projects, or achievements...',
+                      l10n.experienceHint,
                 ),
 
                 SizedBox(height: 4.h),
 
                 // Certifications Section
-                _SectionTitle('Certifications'),
+                _SectionTitle(l10n.certifications),
                 SizedBox(height: 2.h),
 
                 Text(
-                  'Upload your certificates, diplomas, or other qualification documents (PDF, DOC, DOCX)',
+                  l10n.uploadCertificates,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(
@@ -442,7 +444,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
                 ElevatedButton.icon(
                   onPressed: pickCertificationFiles,
                   icon: const Icon(Icons.upload_file),
-                  label: const Text('Add Certifications'),
+                  label: Text(l10n.addCertifications),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 6.h),
                     shape: RoundedRectangleBorder(
@@ -541,6 +543,7 @@ class _CertificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: EdgeInsets.only(bottom: 1.h),
       padding: EdgeInsets.all(3.w),
@@ -573,7 +576,7 @@ class _CertificationItem extends StatelessWidget {
                 ),
                 SizedBox(height: 0.5.h),
                 Text(
-                  isExisting ? 'Uploaded' : 'Ready to upload',
+                  isExisting ? l10n.uploaded : l10n.readyToUpload,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: isExisting

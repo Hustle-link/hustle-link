@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // TODO(refactor): Break down this page into smaller, more manageable widgets.
 
@@ -17,6 +19,7 @@ class EmployerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Watch the provider that supplies the current employer's profile data.
     final employerProfile = ref.watch(currentEmployerProfileProvider);
     // Read the auth controller to handle sign-out actions.
@@ -30,16 +33,16 @@ class EmployerProfilePage extends HookConsumerWidget {
         if (profile == null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Profile'),
+              title: Text(l10n.profile),
               backgroundColor: Theme.of(context).colorScheme.surface,
             ),
-            body: const Center(child: Text('Profile not found')),
+            body: Center(child: Text(l10n.profileNotFound)),
           );
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Profile'),
+            title: Text(l10n.profile),
             backgroundColor: Theme.of(context).colorScheme.surface,
             actions: [
               // Button to navigate to the edit profile page.
@@ -51,7 +54,7 @@ class EmployerProfilePage extends HookConsumerWidget {
                   );
                 },
                 icon: const Icon(Icons.edit),
-                tooltip: 'Edit Profile',
+                tooltip: l10n.editProfile,
               ),
               // Button to sign the user out.
               IconButton(
@@ -74,98 +77,38 @@ class EmployerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // The main profile header with picture, name, and company.
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(6.w),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      // Profile Picture or initials.
-                      CircleAvatar(
-                        radius: 40.sp,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        child: profile.photoUrl != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(40.sp),
-                                child: Image.network(
-                                  profile.photoUrl!,
-                                  width: 80.sp,
-                                  height: 80.sp,
-                                  fit: BoxFit.cover,
-                                  // TODO(ux): Add loading and error builders for the network image.
-                                ),
-                              )
-                            : Text(
-                                profile.name.isNotEmpty
-                                    ? profile.name[0].toUpperCase()
-                                    : 'E',
-                                style: TextStyle(
-                                  fontSize: 32.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        profile.name,
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                      SizedBox(height: 0.5.h),
-                      Text(
-                        profile.companyName,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer.withOpacity(0.8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _ProfileHeader(profile: profile),
 
                 SizedBox(height: 4.h),
 
                 // Section for contact information.
                 _InfoSection(
-                  title: 'Contact Information',
+                  title: l10n.contactInformation,
                   children: [
                     _InfoRow(
                       icon: Icons.email_outlined,
-                      label: 'Email',
+                      label: l10n.emailLabel,
                       value: profile.email,
                       isEditable: false, // Email is not editable.
                     ),
                     if (profile.phoneNumber != null)
                       _InfoRow(
                         icon: Icons.phone_outlined,
-                        label: 'Phone',
+                        label: l10n.phone,
                         value: profile.phoneNumber!,
                         isEditable: true,
                       ),
                     if (profile.location != null)
                       _InfoRow(
                         icon: Icons.location_on_outlined,
-                        label: 'Location',
+                        label: l10n.location,
                         value: profile.location!,
                         isEditable: true,
                       ),
                     if (profile.website != null)
                       _InfoRow(
                         icon: Icons.language_outlined,
-                        label: 'Website',
+                        label: l10n.website,
                         value: profile.website!,
                         isEditable: true,
                       ),
@@ -182,7 +125,11 @@ class EmployerProfilePage extends HookConsumerWidget {
                         },
                         // Dynamically generates the prompt message.
                         message:
-                            'Add ${[if (profile.phoneNumber == null) 'phone number', if (profile.location == null) 'location', if (profile.website == null) 'website'].join(', ')}',
+                            'Add ${[
+                          if (profile.phoneNumber == null) l10n.addPhoneNumber,
+                          if (profile.location == null) l10n.addLocation,
+                          if (profile.website == null) l10n.addWebsite
+                        ].join(', ')}',
                       ),
                   ],
                 ),
@@ -192,7 +139,7 @@ class EmployerProfilePage extends HookConsumerWidget {
                 // Section for company information.
                 if (profile.companyDescription != null) ...[
                   _InfoSection(
-                    title: 'About Company',
+                    title: l10n.aboutCompany,
                     children: [
                       Text(
                         profile.companyDescription!,
@@ -214,20 +161,20 @@ class EmployerProfilePage extends HookConsumerWidget {
                         extra: profile.toJson(),
                       );
                     },
-                    message: 'Add a short description about your company',
+                    message: l10n.addAShortDescriptionAboutYourCompany,
                   ),
                   SizedBox(height: 4.h),
                 ],
 
                 // Section for statistics like jobs posted and rating.
                 _InfoSection(
-                  title: 'Statistics',
+                  title: l10n.statistics,
                   children: [
                     Row(
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: 'Jobs Posted',
+                            title: l10n.postedJobs,
                             // TODO(data): Ensure this value is kept up-to-date.
                             value: '${profile.postedJobs ?? 0}',
                             icon: Icons.work_outline,
@@ -237,7 +184,7 @@ class EmployerProfilePage extends HookConsumerWidget {
                         SizedBox(width: 4.w),
                         Expanded(
                           child: _StatCard(
-                            title: 'Rating',
+                            title: l10n.rating,
                             // TODO(data): Implement a real rating system.
                             value: profile.rating != null
                                 ? '${profile.rating!.toStringAsFixed(1)}⭐'
@@ -255,43 +202,37 @@ class EmployerProfilePage extends HookConsumerWidget {
 
                 // Section for account information.
                 _InfoSection(
-                  title: 'Account Information',
+                  title: l10n.account,
                   children: [
                     _InfoRow(
                       icon: Icons.calendar_today_outlined,
-                      label: 'Member Since',
+                      label: l10n.memberSince,
                       value:
                           '${profile.createdAt.day}/${profile.createdAt.month}/${profile.createdAt.year}',
                     ),
                     _InfoRow(
                       icon: Icons.badge_outlined,
-                      label: 'Account Type',
-                      value: 'Employer',
+                      label: l10n.accountType,
+                      value: l10n.employer,
                     ),
                   ],
                 ),
 
+                SizedBox(height: 4.h),
+
+                // Support and Logout Section
+                _buildSupportSection(context, ref),
+
                 SizedBox(height: 6.h),
               ],
             ),
-          ),
-          // Floating action button to quickly access the edit page.
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              context.pushNamed(
-                AppRoutes.employerEditProfileRoute,
-                extra: profile.toJson(),
-              );
-            },
-            tooltip: 'Edit Profile',
-            child: const Icon(Icons.edit),
           ),
         );
       },
       // Show a loading indicator while the profile is being fetched.
       loading: () => Scaffold(
         appBar: AppBar(
-          title: const Text('Profile'),
+          title: Text(l10n.profile),
           backgroundColor: Theme.of(context).colorScheme.surface,
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -299,10 +240,157 @@ class EmployerProfilePage extends HookConsumerWidget {
       // Show an error message if fetching the profile fails.
       error: (error, stack) => Scaffold(
         appBar: AppBar(
-          title: const Text('Profile'),
+          title: Text(l10n.profile),
           backgroundColor: Theme.of(context).colorScheme.surface,
         ),
-        body: Center(child: Text('Error loading profile: $error')),
+        body: Center(child: Text(l10n.errorLoadingProfile(error.toString()))),
+      ),
+    );
+  }
+
+  Widget _buildSupportSection(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final currentLocale = ref.watch(localeNotifierProvider);
+    final localeNotifier = ref.read(localeNotifierProvider.notifier);
+    return _InfoSection(
+      title: l10n.supportAndActions,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.subscriptions),
+          title: Text(l10n.subscriptions),
+          onTap: () => context.push(AppRoutes.subscription),
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.language),
+          title: Text(l10n.language),
+          trailing: DropdownButton<Locale>(
+            value: currentLocale,
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                localeNotifier.setLocale(newLocale);
+              }
+            },
+            items: [
+              DropdownMenuItem(
+                value: const Locale('en'),
+                child: Text(l10n.english),
+              ),
+              DropdownMenuItem(
+                value: const Locale('st'),
+                child: Text(l10n.setswana),
+              ),
+            ],
+          ),
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.support_agent),
+          title: Text(l10n.contactSupport),
+          subtitle: Text(l10n.getHelpAndSendFeedback),
+          onTap: () async {
+            final Uri emailLaunchUri = Uri(
+              scheme: 'mailto',
+              path: 'hustlelink05@gmail.com',
+              queryParameters: {
+                'subject': 'Support Request - HustleLink App',
+              },
+            );
+
+            if (await canLaunchUrl(emailLaunchUri)) {
+              await launchUrl(emailLaunchUri);
+            } else {
+              // Fallback for web or if no email client is available
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      'Could not open email client. Please email hustlelink05@gmail.com'),
+                ),
+              );
+            }
+          },
+        ),
+        const Divider(),
+        ListTile(
+          leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+          title: Text(
+            l10n.logout,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+          onTap: () async {
+            await ref.read(authControllerProvider.notifier).signOut();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  final Employer profile;
+  const _ProfileHeader({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(6.w),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          // Profile Picture or initials.
+          CircleAvatar(
+            radius: 40.sp,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: profile.photoUrl != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(40.sp),
+                    child: Image.network(
+                      profile.photoUrl!,
+                      width: 80.sp,
+                      height: 80.sp,
+                      fit: BoxFit.cover,
+                      // TODO(ux): Add loading and error builders for the network image.
+                    ),
+                  )
+                : Text(
+                    profile.name.isNotEmpty
+                        ? profile.name[0].toUpperCase()
+                        : 'E',
+                    style: TextStyle(
+                      fontSize: 32.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onPrimary,
+                    ),
+                  ),
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            profile.name,
+            style: TextStyle(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(
+                context,
+              ).colorScheme.onPrimaryContainer,
+            ),
+          ),
+          SizedBox(height: 0.5.h),
+          Text(
+            profile.companyName,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: Theme.of(
+                context,
+              ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -555,15 +643,16 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
   }
 
   /// Returns a message based on the completion percentage.
-  String _message(double p) {
-    if (p == 1.0) return 'Your company profile is complete!';
-    if (p >= 0.75) return 'Almost there! Add the remaining details.';
-    if (p >= 0.5) return 'Good progress! Add more company info.';
-    return 'Complete your company profile to build trust with hustlers.';
+  String _message(double p, AppLocalizations l10n) {
+    if (p == 1.0) return l10n.yourCompanyProfileIsComplete;
+    if (p >= 0.75) return l10n.almostThereCompany;
+    if (p >= 0.5) return l10n.goodProgressCompany;
+    return l10n.completeYourCompanyProfileToBuildTrust;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final p = _calculateCompletionPercentage();
     // If the profile is complete, show a simple success message.
     if (p >= 1.0) {
@@ -581,7 +670,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
             SizedBox(width: 3.w),
             Expanded(
               child: Text(
-                _message(p),
+                _message(p, l10n),
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.green.shade700,
@@ -618,7 +707,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
               SizedBox(width: 3.w),
               Expanded(
                 child: Text(
-                  'Profile Completion',
+                  l10n.profileCompletion,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -648,7 +737,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
           Text(
-            _message(p),
+            _message(p, l10n),
             style: TextStyle(
               fontSize: 14.sp,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
@@ -679,7 +768,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    'Complete Profile',
+                    l10n.completeProfile,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Theme.of(context).colorScheme.onPrimary,

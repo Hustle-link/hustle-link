@@ -5,6 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/firebase_options.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 
 /// The entry point of the application.
 Future<void> main() async {
@@ -33,6 +35,9 @@ class MyApp extends HookConsumerWidget {
     // TODO(Kenan): Implement a dark theme and allow the user to switch between themes.
     final theme = ref.watch(themeProvider);
 
+    // Watch the locale provider to get the app's current locale.
+    final locale = ref.watch(localeNotifierProvider);
+
     // Use the Sizer widget to make the UI responsive across different screen sizes.
     return Sizer(
       builder: (context, orientation, screenType) {
@@ -43,6 +48,19 @@ class MyApp extends HookConsumerWidget {
           routerConfig: router,
           // Set the light theme for the app.
           theme: theme.light(),
+          // Set the current locale
+          locale: locale,
+          // -- Add the following two lines --
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''), // English, no country code
+            Locale('st', ''), // Setswana, no country code
+          ],
           // Initialize FlutterSmartDialog for displaying custom dialogs, toasts, and loading indicators.
           builder: FlutterSmartDialog.init(
             builder: (context, child) {

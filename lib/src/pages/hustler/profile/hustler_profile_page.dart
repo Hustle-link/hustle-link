@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HustlerProfilePage extends HookConsumerWidget {
   const HustlerProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final hustlerProfile = ref.watch(currentHustlerProfileProvider);
     final authController = ref.read(authControllerProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(l10n.profile),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           IconButton(
@@ -30,7 +33,7 @@ class HustlerProfilePage extends HookConsumerWidget {
               }
             },
             icon: const Icon(Icons.edit),
-            tooltip: 'Edit Profile',
+            tooltip: l10n.editProfile,
           ),
           IconButton(
             onPressed: () async {
@@ -43,7 +46,7 @@ class HustlerProfilePage extends HookConsumerWidget {
       body: hustlerProfile.when(
         data: (profile) {
           if (profile == null) {
-            return const Center(child: Text('Profile not found'));
+            return Center(child: Text(l10n.profileNotFound));
           }
 
           return SingleChildScrollView(
@@ -57,141 +60,31 @@ class HustlerProfilePage extends HookConsumerWidget {
                 SizedBox(height: 4.h),
 
                 // Profile Header
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(6.w),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      // Profile Picture Placeholder
-                      CircleAvatar(
-                        radius: 40.sp,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        child: profile.photoUrl != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(40.sp),
-                                child: Image.network(
-                                  profile.photoUrl!,
-                                  width: 80.sp,
-                                  height: 80.sp,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Text(
-                                profile.name.isNotEmpty
-                                    ? profile.name[0].toUpperCase()
-                                    : 'H',
-                                style: TextStyle(
-                                  fontSize: 32.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        profile.name,
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                      if (profile.bio != null) ...[
-                        SizedBox(height: 0.5.h),
-                        Text(
-                          profile.bio!,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimaryContainer.withOpacity(0.8),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ] else ...[
-                        SizedBox(height: 0.5.h),
-                        InkWell(
-                          onTap: () {
-                            context.pushNamed(
-                              AppRoutes.hustlerEditProfileRoute,
-                              extra: profile.toJson(),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 4.w,
-                              vertical: 1.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withOpacity(0.3),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  size: 16.sp,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                SizedBox(width: 1.w),
-                                Text(
-                                  'Add bio',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                _ProfileHeader(profile: profile),
 
                 SizedBox(height: 4.h),
 
                 // Contact Information
                 _InfoSection(
-                  title: 'Contact Information',
+                  title: l10n.contactInformation,
                   children: [
                     _InfoRow(
                       icon: Icons.email_outlined,
-                      label: 'Email',
+                      label: l10n.emailLabel,
                       value: profile.email,
                       isEditable: false, // Email usually shouldn't be editable
                     ),
                     if (profile.phoneNumber != null)
                       _InfoRow(
                         icon: Icons.phone_outlined,
-                        label: 'Phone',
+                        label: l10n.phone,
                         value: profile.phoneNumber!,
                         isEditable: true,
                       ),
                     if (profile.location != null)
                       _InfoRow(
                         icon: Icons.location_on_outlined,
-                        label: 'Location',
+                        label: l10n.location,
                         value: profile.location!,
                         isEditable: true,
                       ),
@@ -204,11 +97,7 @@ class HustlerProfilePage extends HookConsumerWidget {
                           );
                         },
                         message:
-                            'Add ${profile.phoneNumber == null && profile.location == null
-                                ? 'phone number and location'
-                                : profile.phoneNumber == null
-                                ? 'phone number'
-                                : 'location'}',
+                            '${l10n.addPhoneNumberAndLocation}${profile.phoneNumber == null && profile.location == null ? '' : profile.phoneNumber == null ? l10n.addPhoneNumber : l10n.addLocation}',
                       ),
                   ],
                 ),
@@ -217,7 +106,7 @@ class HustlerProfilePage extends HookConsumerWidget {
 
                 // Skills
                 _InfoSection(
-                  title: 'Skills',
+                  title: l10n.skills,
                   children: [
                     if (profile.skills.isNotEmpty) ...[
                       Wrap(
@@ -261,7 +150,7 @@ class HustlerProfilePage extends HookConsumerWidget {
                             extra: profile.toJson(),
                           );
                         },
-                        message: 'Add your skills to find relevant jobs',
+                        message: l10n.addYourSkills,
                       ),
                     ],
                   ],
@@ -271,13 +160,13 @@ class HustlerProfilePage extends HookConsumerWidget {
 
                 // Statistics
                 _InfoSection(
-                  title: 'Statistics',
+                  title: l10n.statistics,
                   children: [
                     Row(
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: 'Jobs Completed',
+                            title: l10n.jobsCompleted,
                             value: '${profile.completedJobs ?? 0}',
                             icon: Icons.check_circle_outline,
                             color: Theme.of(context).colorScheme.primary,
@@ -286,7 +175,7 @@ class HustlerProfilePage extends HookConsumerWidget {
                         SizedBox(width: 4.w),
                         Expanded(
                           child: _StatCard(
-                            title: 'Rating',
+                            title: l10n.rating,
                             value: profile.rating != null
                                 ? '${profile.rating!.toStringAsFixed(1)}⭐'
                                 : 'N/A',
@@ -303,7 +192,7 @@ class HustlerProfilePage extends HookConsumerWidget {
 
                 // Experience
                 _InfoSection(
-                  title: 'Experience',
+                  title: l10n.experience,
                   children: [
                     if (profile.experience != null) ...[
                       Text(
@@ -322,7 +211,7 @@ class HustlerProfilePage extends HookConsumerWidget {
                             extra: profile.toJson(),
                           );
                         },
-                        message: 'Add your work experience and achievements',
+                        message: l10n.addYourWorkExperience,
                       ),
                     ],
                   ],
@@ -332,21 +221,26 @@ class HustlerProfilePage extends HookConsumerWidget {
 
                 // Account Information
                 _InfoSection(
-                  title: 'Account Information',
+                  title: l10n.account,
                   children: [
                     _InfoRow(
                       icon: Icons.calendar_today_outlined,
-                      label: 'Member Since',
+                      label: l10n.memberSince,
                       value:
                           '${profile.createdAt.day}/${profile.createdAt.month}/${profile.createdAt.year}',
                     ),
                     _InfoRow(
                       icon: Icons.badge_outlined,
-                      label: 'Account Type',
-                      value: 'Hustler',
+                      label: l10n.accountType,
+                      value: l10n.hustler,
                     ),
                   ],
                 ),
+
+                SizedBox(height: 4.h),
+
+                // Support and Logout Section
+                _buildSupportSection(context, ref),
 
                 SizedBox(height: 6.h),
               ],
@@ -355,25 +249,206 @@ class HustlerProfilePage extends HookConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) =>
-            Center(child: Text('Error loading profile: $error')),
+            Center(child: Text(l10n.errorLoadingProfile(error.toString()))),
       ),
-      floatingActionButton: hustlerProfile.when(
-        data: (profile) {
-          if (profile == null) return null;
+    );
+  }
 
-          return FloatingActionButton(
-            onPressed: () {
-              context.pushNamed(
-                AppRoutes.hustlerEditProfileRoute,
-                extra: profile.toJson(),
-              );
+  Widget _buildSupportSection(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final currentLocale = ref.watch(localeNotifierProvider);
+    final localeNotifier = ref.read(localeNotifierProvider.notifier);
+
+    return _InfoSection(
+      title: l10n.supportAndActions,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.subscriptions),
+          title: Text(l10n.subscriptions),
+          onTap: () => context.push(AppRoutes.subscription),
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.language),
+          title: Text(l10n.language),
+          trailing: DropdownButton<Locale>(
+            value: currentLocale,
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                localeNotifier.setLocale(newLocale);
+              }
             },
-            tooltip: 'Edit Profile',
-            child: const Icon(Icons.edit),
-          );
-        },
-        loading: () => null,
-        error: (error, stack) => null,
+            items: [
+              DropdownMenuItem(
+                value: const Locale('en'),
+                child: Text(l10n.english),
+              ),
+              DropdownMenuItem(
+                value: const Locale('st'),
+                child: Text(l10n.setswana),
+              ),
+            ],
+          ),
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.support_agent),
+          title: Text(l10n.contactSupport),
+          subtitle: Text(l10n.getHelpAndSendFeedback),
+          onTap: () async {
+            final Uri emailLaunchUri = Uri(
+              scheme: 'mailto',
+              path: 'hustlelink05@gmail.com',
+              queryParameters: {
+                'subject': 'Support Request - HustleLink App',
+              },
+            );
+
+            if (await canLaunchUrl(emailLaunchUri)) {
+              await launchUrl(emailLaunchUri);
+            } else {
+              // Fallback for web or if no email client is available
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                      'Could not open email client. Please email hustlelink05@gmail.com'),
+                ),
+              );
+            }
+          },
+        ),
+        const Divider(),
+        ListTile(
+          leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+          title: Text(
+            l10n.logout,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+          onTap: () async {
+            await ref.read(authControllerProvider.notifier).signOut();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  final Hustler profile;
+  const _ProfileHeader({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(6.w),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          // Profile Picture Placeholder
+          CircleAvatar(
+            radius: 40.sp,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: profile.photoUrl != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(40.sp),
+                    child: Image.network(
+                      profile.photoUrl!,
+                      width: 80.sp,
+                      height: 80.sp,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Text(
+                    profile.name.isNotEmpty
+                        ? profile.name[0].toUpperCase()
+                        : 'H',
+                    style: TextStyle(
+                      fontSize: 32.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onPrimary,
+                    ),
+                  ),
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            profile.name,
+            style: TextStyle(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(
+                context,
+              ).colorScheme.onPrimaryContainer,
+            ),
+          ),
+          if (profile.bio != null) ...[
+            SizedBox(height: 0.5.h),
+            Text(
+              profile.bio!,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ] else ...[
+            SizedBox(height: 0.5.h),
+            InkWell(
+              onTap: () {
+                context.pushNamed(
+                  AppRoutes.hustlerEditProfileRoute,
+                  extra: profile.toJson(),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 4.w,
+                  vertical: 1.h,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.add,
+                      size: 16.sp,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    SizedBox(width: 1.w),
+                    Text(
+                      l10n.addBio,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -578,7 +653,7 @@ class _ProfileCompletionCard extends StatelessWidget {
 
   const _ProfileCompletionCard({required this.profile});
 
-  double _calculateCompletionPercentage() {
+  double _calculateCompletionPercentage(AppLocalizations l10n) {
     int totalFields = 6; // name, bio, phone, location, skills, experience
     int completedFields = 1; // name is always present
 
@@ -594,17 +669,18 @@ class _ProfileCompletionCard extends StatelessWidget {
     return completedFields / totalFields;
   }
 
-  String _getCompletionMessage() {
-    final percentage = _calculateCompletionPercentage();
-    if (percentage == 1.0) return 'Your profile is complete! 🎉';
-    if (percentage >= 0.8) return 'Almost there! Just a few more details.';
-    if (percentage >= 0.5) return 'Good progress! Add more info to stand out.';
-    return 'Complete your profile to attract more opportunities.';
+  String _getCompletionMessage(AppLocalizations l10n) {
+    final percentage = _calculateCompletionPercentage(l10n);
+    if (percentage == 1.0) return l10n.yourProfileIsComplete;
+    if (percentage >= 0.8) return l10n.almostThere;
+    if (percentage >= 0.5) return l10n.goodProgress;
+    return l10n.completeYourProfileToAttractMoreOpportunities;
   }
 
   @override
   Widget build(BuildContext context) {
-    final percentage = _calculateCompletionPercentage();
+    final l10n = AppLocalizations.of(context)!;
+    final percentage = _calculateCompletionPercentage(l10n);
 
     if (percentage >= 1.0) {
       return Container(
@@ -621,7 +697,7 @@ class _ProfileCompletionCard extends StatelessWidget {
             SizedBox(width: 3.w),
             Expanded(
               child: Text(
-                _getCompletionMessage(),
+                _getCompletionMessage(l10n),
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.green.shade700,
@@ -657,7 +733,7 @@ class _ProfileCompletionCard extends StatelessWidget {
               SizedBox(width: 3.w),
               Expanded(
                 child: Text(
-                  'Profile Completion',
+                  l10n.profileCompletion,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -687,7 +763,7 @@ class _ProfileCompletionCard extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
           Text(
-            _getCompletionMessage(),
+            _getCompletionMessage(l10n),
             style: TextStyle(
               fontSize: 14.sp,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
@@ -717,7 +793,7 @@ class _ProfileCompletionCard extends StatelessWidget {
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    'Complete Profile',
+                    l10n.completeProfile,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Theme.of(context).colorScheme.onPrimary,

@@ -97,6 +97,29 @@ class PostJobPage extends HookConsumerWidget {
             return const Center(child: Text(PostJobStrings.profileNotFound));
           }
 
+          final isSubscribed = profile.subscription?.isActive ?? false;
+          final canPostJob = isSubscribed || (profile.postedJobs ?? 0) < 3;
+
+          if (editJobId == null && !canPostJob) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.lock, size: 48),
+                  SizedBox(height: 2.h),
+                  const Text('You have reached your free job posting limit.'),
+                  SizedBox(height: 1.h),
+                  const Text('Subscribe to post unlimited jobs.'),
+                  SizedBox(height: 2.h),
+                  ElevatedButton(
+                    onPressed: () => context.push(AppRoutes.subscription),
+                    child: const Text('View Subscriptions'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           return SafeArea(
             child: Form(
               key: formKey,

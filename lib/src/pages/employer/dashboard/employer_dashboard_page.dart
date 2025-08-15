@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,13 +32,14 @@ class EmployerDashboardPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final employerProfile = ref.watch(currentEmployerProfileProvider);
     final jobsStream = ref.watch(employerJobsProvider);
     final authController = ref.read(authControllerProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Jobs'),
+        title: Text(l10n.myJobs),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           IconButton(
@@ -63,7 +65,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
         child: employerProfile.when(
           data: (profile) {
             if (profile == null) {
-              return const Center(child: Text('Profile not found'));
+              return Center(child: Text(l10n.profileNotFound));
             }
 
             return Column(
@@ -78,7 +80,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Welcome, ${profile.name}!',
+                        l10n.welcome(profile.name),
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
@@ -108,7 +110,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                     children: [
                       Expanded(
                         child: _StatCard(
-                          title: 'Posted Jobs',
+                          title: l10n.postedJobs,
                           value: '${profile.postedJobs ?? 0}',
                           icon: Icons.work_outline,
                           color: Theme.of(context).colorScheme.primary,
@@ -117,7 +119,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                       SizedBox(width: 4.w),
                       Expanded(
                         child: _StatCard(
-                          title: 'Rating',
+                          title: l10n.rating,
                           value: profile.rating != null
                               ? '${profile.rating!.toStringAsFixed(1)}⭐'
                               : 'N/A',
@@ -147,7 +149,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                               ),
                               SizedBox(height: 2.h),
                               Text(
-                                'No jobs posted yet',
+                                l10n.noJobsPostedYet,
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w600,
@@ -158,7 +160,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                               ),
                               SizedBox(height: 1.h),
                               Text(
-                                'Create your first job posting to find talent',
+                                l10n.createYourFirstJobPosting,
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: Theme.of(
@@ -174,7 +176,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                                   context.push(AppRoutes.employerPostJob);
                                 },
                                 icon: const Icon(Icons.add),
-                                label: const Text('Post a Job'),
+                                label: Text(l10n.postAJob),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Theme.of(
                                     context,
@@ -204,12 +206,12 @@ class EmployerDashboardPage extends HookConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Error loading jobs: $error'),
+                          Text(l10n.errorLoadingJobs(error.toString())),
                           ElevatedButton(
                             onPressed: () {
                               ref.invalidate(employerJobsProvider);
                             },
-                            child: const Text('Retry'),
+                            child: Text(l10n.retry),
                           ),
                         ],
                       ),
@@ -221,7 +223,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
           },
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) =>
-              Center(child: Text('Error loading profile: $error')),
+              Center(child: Text(l10n.errorLoadingProfile(error.toString()))),
         ),
       ),
     );
@@ -289,6 +291,7 @@ class EmployerJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: EdgeInsets.only(bottom: 3.h),
       elevation: 2,
@@ -331,7 +334,7 @@ class EmployerJobCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      job.status.value.toUpperCase(),
+                      _getStatusText(job.status, l10n),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
@@ -371,7 +374,7 @@ class EmployerJobCard extends StatelessWidget {
                   ),
                   SizedBox(width: 1.w),
                   Text(
-                    '${job.applicationsCount ?? 0} applicants',
+                    l10n.applicants(job.applicationsCount?.toString() ?? '0'),
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Theme.of(
@@ -397,7 +400,7 @@ class EmployerJobCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    _formatDate(job.createdAt),
+                    _formatDate(job.createdAt, l10n),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Theme.of(
@@ -426,19 +429,30 @@ class EmployerJobCard extends StatelessWidget {
     }
   }
 
+  String _getStatusText(JobStatus status, AppLocalizations l10n) {
+    switch (status) {
+      case JobStatus.active:
+        return l10n.active;
+      case JobStatus.closed:
+        return l10n.closed;
+      case JobStatus.draft:
+        return l10n.draft;
+    }
+  }
+
   /// Formats a [DateTime] object into a user-friendly string.
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime date, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(date);
 
     if (difference.inDays > 7) {
       return '${date.day}/${date.month}/${date.year}';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return l10n.ago('${difference.inDays}d');
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return l10n.ago('${difference.inHours}h');
     } else {
-      return 'Just now';
+      return l10n.justNow;
     }
   }
 }

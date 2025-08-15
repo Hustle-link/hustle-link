@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,12 +17,13 @@ class JobManagementPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Watches the provider that fetches the jobs for the current employer.
     final employerJobs = ref.watch(employerJobsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Jobs'),
+        title: Text(l10n.myJobs),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           IconButton(
@@ -30,7 +32,7 @@ class JobManagementPage extends HookConsumerWidget {
               context.push(AppRoutes.employerPostJob);
             },
             icon: const Icon(Icons.add),
-            tooltip: 'Post New Job',
+            tooltip: l10n.postNewJob,
           ),
         ],
       ),
@@ -50,7 +52,7 @@ class JobManagementPage extends HookConsumerWidget {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    'No Jobs Posted Yet',
+                    l10n.noJobsPostedYet,
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
@@ -59,7 +61,7 @@ class JobManagementPage extends HookConsumerWidget {
                   ),
                   SizedBox(height: 1.h),
                   Text(
-                    'Post your first job to start finding hustlers',
+                    l10n.postYourFirstJob,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Theme.of(
@@ -74,7 +76,7 @@ class JobManagementPage extends HookConsumerWidget {
                       context.push(AppRoutes.employerPostJob);
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('Post a Job'),
+                    label: Text(l10n.postAJob),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
                         horizontal: 8.w,
@@ -114,7 +116,7 @@ class JobManagementPage extends HookConsumerWidget {
               ),
               SizedBox(height: 2.h),
               Text(
-                'Error loading jobs',
+                l10n.errorLoadingJobs(error.toString()),
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 1.h),
@@ -144,6 +146,7 @@ class _JobManagementCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -214,7 +217,7 @@ class _JobManagementCard extends ConsumerWidget {
                     ),
                   _JobDetailChip(
                     icon: Icons.schedule_outlined,
-                    label: _getTimeAgo(job.createdAt),
+                    label: _getTimeAgo(job.createdAt, l10n),
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ],
@@ -266,8 +269,7 @@ class _JobManagementCard extends ConsumerWidget {
                         ),
                         SizedBox(width: 1.w),
                         Text(
-                          // TODO(feature): Fetch and display the actual application count.
-                          '${job.applicationsCount ?? 0} applications',
+                          l10n.applicants(job.applicationsCount?.toString() ?? '0'),
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Theme.of(
@@ -288,7 +290,7 @@ class _JobManagementCard extends ConsumerWidget {
                           _showApplicationsBottomSheet(context, ref, job);
                         },
                         icon: const Icon(Icons.visibility_outlined),
-                        tooltip: 'View Applications',
+                        tooltip: l10n.viewApplications,
                       ),
                       IconButton(
                         onPressed: () {
@@ -299,7 +301,7 @@ class _JobManagementCard extends ConsumerWidget {
                           );
                         },
                         icon: const Icon(Icons.edit_outlined),
-                        tooltip: 'Edit Job',
+                        tooltip: l10n.editJob,
                       ),
                       PopupMenuButton<String>(
                         onSelected: (value) {
@@ -323,8 +325,8 @@ class _JobManagementCard extends ConsumerWidget {
                                 SizedBox(width: 2.w),
                                 Text(
                                   job.status == JobStatus.active
-                                      ? 'Close Job'
-                                      : 'Reopen Job',
+                                      ? l10n.closeJob
+                                      : l10n.reopenJob,
                                 ),
                               ],
                             ),
@@ -340,7 +342,7 @@ class _JobManagementCard extends ConsumerWidget {
                                 ),
                                 SizedBox(width: 2.w),
                                 Text(
-                                  'Delete Job',
+                                  l10n.deleteJob,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -395,17 +397,18 @@ class _JobManagementCard extends ConsumerWidget {
     WidgetRef ref,
     JobPosting job,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Job'),
+        title: Text(l10n.deleteJob),
         content: Text(
-          'Are you sure you want to delete "${job.title}"? This action cannot be undone.',
+          l10n.areYouSureYouWantToDelete(job.title),
         ),
         actions: [
           TextButton(
             onPressed: () => context.pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -416,13 +419,13 @@ class _JobManagementCard extends ConsumerWidget {
                 await jobService.deleteJobPosting(job.id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Job deleted successfully')),
+                    SnackBar(content: Text(l10n.jobDeletedSuccessfully)),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error deleting job: $e')),
+                    SnackBar(content: Text(l10n.errorDeletingJob(e.toString()))),
                   );
                 }
               }
@@ -430,7 +433,7 @@ class _JobManagementCard extends ConsumerWidget {
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -453,18 +456,18 @@ class _JobManagementCard extends ConsumerWidget {
   }
 
   /// Converts a [DateTime] object to a human-readable time-ago string.
-  String _getTimeAgo(DateTime dateTime) {
+  String _getTimeAgo(DateTime dateTime, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return l10n.ago('${difference.inDays}d');
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return l10n.ago('${difference.inHours}h');
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return l10n.ago('${difference.inMinutes}m');
     } else {
-      return 'Just now';
+      return l10n.justNow;
     }
   }
 }
@@ -479,6 +482,7 @@ class _JobStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     /// Returns a color based on the job status.
     Color getStatusColor() {
       switch (status) {
@@ -495,11 +499,11 @@ class _JobStatusChip extends StatelessWidget {
     String getStatusText() {
       switch (status) {
         case JobStatus.active:
-          return 'Active';
+          return l10n.active;
         case JobStatus.closed:
-          return 'Closed';
+          return l10n.closed;
         case JobStatus.draft:
-          return 'Draft';
+          return l10n.draft;
       }
     }
 
@@ -577,6 +581,7 @@ class _JobApplicationsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // TODO(feature): Implement a real application list.
     // This would use a provider to get applications for the job.
     // For now, we'll show a placeholder.
@@ -597,7 +602,7 @@ class _JobApplicationsView extends ConsumerWidget {
 
           // Title
           Text(
-            'Job Applications',
+            l10n.jobApplications,
             style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 3.h),
@@ -615,7 +620,7 @@ class _JobApplicationsView extends ConsumerWidget {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    'No applications yet',
+                    l10n.noApplicationsYet,
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: Theme.of(

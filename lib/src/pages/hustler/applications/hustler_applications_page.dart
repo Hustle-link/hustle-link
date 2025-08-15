@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// A [StreamProvider] that provides a list of job applications for the current hustler.
@@ -29,12 +30,13 @@ class HustlerApplicationsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Watch the provider to get the list of applications.
     final applications = ref.watch(hustlerApplicationsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Applications'),
+        title: Text(l10n.myApplications),
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: applications.when(
@@ -53,7 +55,7 @@ class HustlerApplicationsPage extends HookConsumerWidget {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    'No Applications Yet',
+                    l10n.noApplicationsYet,
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
@@ -62,7 +64,7 @@ class HustlerApplicationsPage extends HookConsumerWidget {
                   ),
                   SizedBox(height: 1.h),
                   Text(
-                    'Start applying for jobs to see them here',
+                    l10n.startApplyingForJobs,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Theme.of(
@@ -103,7 +105,7 @@ class HustlerApplicationsPage extends HookConsumerWidget {
               ),
               SizedBox(height: 2.h),
               Text(
-                'Error loading applications',
+                l10n.errorLoadingApplications,
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 1.h),
@@ -130,6 +132,7 @@ class _ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -146,7 +149,7 @@ class _ApplicationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        application.jobTitle ?? 'Job Title',
+                        application.jobTitle ?? l10n.jobTitle,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -156,7 +159,7 @@ class _ApplicationCard extends StatelessWidget {
                       if (application.hustlerName != null) ...[
                         SizedBox(height: 0.5.h),
                         Text(
-                          'Applied as ${application.hustlerName}',
+                          l10n.appliedAs(application.hustlerName!),
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Theme.of(
@@ -177,7 +180,7 @@ class _ApplicationCard extends StatelessWidget {
             // Display the cover letter if it exists.
             if (application.coverLetter != null) ...[
               Text(
-                'Cover Letter:',
+                l10n.coverLetter,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
@@ -218,7 +221,7 @@ class _ApplicationCard extends StatelessWidget {
                 ),
                 SizedBox(width: 2.w),
                 Text(
-                  'Applied ${_getTimeAgo(application.appliedAt)}',
+                  l10n.applied(_getTimeAgo(application.appliedAt, l10n)),
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(
@@ -233,7 +236,7 @@ class _ApplicationCard extends StatelessWidget {
                       // TODO(feature): Implement navigation to job details page.
                       // TODO(feature): Implement logic to withdraw an application.
                     },
-                    child: const Text('View Job'),
+                    child: Text(l10n.viewJob),
                   ),
                 ],
               ],
@@ -245,18 +248,18 @@ class _ApplicationCard extends StatelessWidget {
   }
 
   /// Converts a [DateTime] object to a human-readable time-ago string.
-  String _getTimeAgo(DateTime dateTime) {
+  String _getTimeAgo(DateTime dateTime, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return l10n.ago('${difference.inDays}d');
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return l10n.ago('${difference.inHours}h');
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return l10n.ago('${difference.inMinutes}m');
     } else {
-      return 'just now';
+      return l10n.justNow;
     }
   }
 }
@@ -272,6 +275,7 @@ class _ApplicationStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     /// Returns a color based on the application status.
     Color getStatusColor() {
       switch (status) {
@@ -290,13 +294,13 @@ class _ApplicationStatusChip extends StatelessWidget {
     String getStatusText() {
       switch (status) {
         case ApplicationStatus.pending:
-          return 'Pending';
+          return l10n.pending;
         case ApplicationStatus.reviewed:
-          return 'Reviewed';
+          return l10n.reviewed;
         case ApplicationStatus.accepted:
-          return 'Accepted';
+          return l10n.accepted;
         case ApplicationStatus.rejected:
-          return 'Rejected';
+          return l10n.rejected;
       }
     }
 

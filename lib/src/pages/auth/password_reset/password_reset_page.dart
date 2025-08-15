@@ -7,7 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hustle_link/src/pages/auth/controllers/auth_controller.dart';
-import 'package:hustle_link/src/shared/utils/strings/reset_password_strings.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import '../../../shared/routing/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +17,7 @@ class PasswordResetPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Controllers & state via hooks
+    final l10n = AppLocalizations.of(context)!;
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final emailController = useTextEditingController();
 
@@ -28,7 +28,6 @@ class PasswordResetPage extends HookConsumerWidget {
     final timerRef = useRef<Timer?>(null);
     final successIconCtrl = useAnimationController(duration: 400.ms);
 
-    // Helper to normalize error messages from controller
     String friendlyError(Object err) {
       if (err is UserFriendlyException) return err.message;
       if (err is FirebaseAuthException) {
@@ -40,31 +39,25 @@ class PasswordResetPage extends HookConsumerWidget {
           : s;
     }
 
-    // Listen to auth controller updates
     ref.listen(authControllerProvider, (prev, state) {
       state.when(
         loading: () {
           isLoading.value = true;
           errorText.value = null;
-          return null;
         },
         data: (_) {
           isLoading.value = false;
           sent.value = true;
           errorText.value = null;
-          resendIn.value = 30; // start cooldown
-          return null;
+          resendIn.value = 30;
         },
         error: (error, __) {
           isLoading.value = false;
-          debugPrint('Password reset error: ${friendlyError(error)}');
           errorText.value = friendlyError(error);
-          return null;
         },
       );
     });
 
-    // Cooldown timer lifecycle
     useEffect(() {
       if (sent.value && resendIn.value > 0 && timerRef.value == null) {
         timerRef.value = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -77,14 +70,9 @@ class PasswordResetPage extends HookConsumerWidget {
           }
         });
       }
-      return () {
-        timerRef.value?.cancel();
-        timerRef.value = null;
-      };
-      // Trigger when sent/resendIn changes
+      return () => timerRef.value?.cancel();
     }, [sent.value, resendIn.value]);
 
-    // Kick success icon animation when sent becomes true
     useEffect(() {
       if (sent.value) {
         successIconCtrl.forward(from: 0);
@@ -94,7 +82,6 @@ class PasswordResetPage extends HookConsumerWidget {
       return null;
     }, [sent.value]);
 
-    // Rebuild when email text changes, then compute validity
     useListenable(emailController);
     final isEmailValid = RegExp(
       r'^[^@]+@[^@]+\.[^@]+',
@@ -111,50 +98,46 @@ class PasswordResetPage extends HookConsumerWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text(ResetPasswordStrings.title),
+        title: Text(l10n.passwordResetTitle),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-          child:
-              AnimatedSwitcher(
-                    duration: 400.ms,
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    child: sent.value
-                        ? _SuccessView(
-                            email: emailController.text.trim(),
-                            resendIn: resendIn.value,
-                            onBackToLogin: () =>
-                                context.goNamed(AppRoutes.loginRoute),
-                            onResend: resendIn.value == 0
-                                ? () async {
-                                    await ref
-                                        .read(authControllerProvider.notifier)
-                                        .resetPassword(
-                                          emailController.text.trim(),
-                                        );
-                                  }
-                                : null,
-                            iconController: successIconCtrl,
-                          )
-                        : _FormView(
-                            formKey: formKey,
-                            emailController: emailController,
-                            isLoading: isLoading.value,
-                            errorText: errorText.value,
-                            isEmailValid: isEmailValid,
-                            onSubmit: onSubmit,
-                            onBackToLogin: isLoading.value
-                                ? null
-                                : () => context.goNamed(AppRoutes.loginRoute),
-                          ),
+          child: AnimatedSwitcher(
+            duration: 400.ms,
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            child: sent.value
+                ? _SuccessView(
+                    email: emailController.text.trim(),
+                    resendIn: resendIn.value,
+                    onBackToLogin: () =>
+                        context.goNamed(AppRoutes.loginRoute),
+                    onResend: resendIn.value == 0
+                        ? () async {
+                            await ref
+                                .read(authControllerProvider.notifier)
+                                .resetPassword(
+                                  emailController.text.trim(),
+                                );
+                          }
+                        : null,
+                    iconController: successIconCtrl,
                   )
-                  .animate()
-                  .fadeIn(duration: 300.ms)
-                  .moveY(begin: 12, end: 0, curve: Curves.easeOutCubic),
+                : _FormView(
+                    formKey: formKey,
+                    emailController: emailController,
+                    isLoading: isLoading.value,
+                    errorText: errorText.value,
+                    isEmailValid: isEmailValid,
+                    onSubmit: onSubmit,
+                    onBackToLogin: isLoading.value
+                        ? null
+                        : () => context.goNamed(AppRoutes.loginRoute),
+                  ),
+          ).animate().fadeIn(duration: 300.ms).moveY(begin: 12, end: 0, curve: Curves.easeOutCubic),
         ),
       ),
     );
@@ -182,6 +165,7 @@ class _FormView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ConstrainedBox(
       key: const ValueKey('form'),
       constraints: const BoxConstraints(maxWidth: 520),
@@ -194,7 +178,7 @@ class _FormView extends StatelessWidget {
           ).animate().fadeIn(duration: 500.ms).moveY(begin: 16, end: 0),
           SizedBox(height: 3.h),
           Text(
-            ResetPasswordStrings.subTitle,
+            l10n.passwordResetSubTitle,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
@@ -208,18 +192,17 @@ class _FormView extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(
-                    labelText: ResetPasswordStrings.emailHint,
-                    prefixIcon: Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(),
-                    helperText:
-                        'We\'ll send a link if an account exists for this email.',
+                  decoration: InputDecoration(
+                    labelText: l10n.emailHint,
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    border: const OutlineInputBorder(),
+                    helperText: l10n.didNotGetEmail,
                   ),
                   validator: (value) {
                     final v = (value ?? '').trim();
-                    if (v.isEmpty) return 'Please enter your email';
+                    if (v.isEmpty) return l10n.emailRequired;
                     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
-                      return 'Please enter a valid email';
+                      return l10n.invalidEmail;
                     }
                     return null;
                   },
@@ -230,9 +213,7 @@ class _FormView extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.error.withOpacity(0.08),
+                      color: Theme.of(context).colorScheme.error.withOpacity(0.08),
                       border: Border.all(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -268,7 +249,7 @@ class _FormView extends StatelessWidget {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.send_outlined),
-                    label: const Text(ResetPasswordStrings.sendButtonText),
+                    label: Text(l10n.sendButtonText),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
@@ -277,7 +258,7 @@ class _FormView extends StatelessWidget {
                 SizedBox(height: 1.h),
                 TextButton(
                   onPressed: onBackToLogin,
-                  child: const Text(ResetPasswordStrings.backToLogin),
+                  child: Text(l10n.backToLogin),
                 ),
               ],
             ),
@@ -305,6 +286,7 @@ class _SuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ConstrainedBox(
       key: const ValueKey('success'),
       constraints: const BoxConstraints(maxWidth: 520),
@@ -313,30 +295,26 @@ class _SuccessView extends StatelessWidget {
         children: [
           SizedBox(height: 2.h),
           Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.mark_email_read_outlined,
-                  size: 48,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-              )
-              .animate(controller: iconController)
-              .scale(duration: 400.ms, curve: Curves.easeOutBack),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.mark_email_read_outlined,
+              size: 48,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+          ).animate(controller: iconController).scale(duration: 400.ms, curve: Curves.easeOutBack),
           SizedBox(height: 2.h),
           Text(
-            'Check your email',
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            l10n.checkYourEmail,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 1.h),
           Text(
-            'We\'ve sent a password reset link to:\n$email',
+            l10n.passwordResetLinkSent(email),
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
@@ -345,7 +323,7 @@ class _SuccessView extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: onBackToLogin,
-              child: const Text('Back to Login'),
+              child: Text(l10n.backToLogin),
             ),
           ),
           SizedBox(height: 1.h),
@@ -357,18 +335,16 @@ class _SuccessView extends StatelessWidget {
                 icon: const Icon(Icons.refresh),
                 label: Text(
                   resendIn == 0
-                      ? 'Resend link'
-                      : 'Resend available in $resendIn s',
+                      ? l10n.resendLink
+                      : l10n.resendAvailableIn(resendIn.toString()),
                 ),
               ),
             ],
           ),
           SizedBox(height: 2.h),
           Text(
-            'Didn\'t get the email? Check your spam folder or try again.',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
+            l10n.didNotGetEmail,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
             textAlign: TextAlign.center,
           ),
         ],

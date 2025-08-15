@@ -70,26 +70,31 @@ class FirestoreJobService {
   /// The jobs are filtered to be active and are sorted by their creation date in descending order.
   /// Returns a stream of [JobPosting] lists.
   // TODO(optimization): Consider using a more efficient querying method, like array-contains-any, if Firestore supports it well for this use case.
-  Stream<List<JobPosting>> getJobsForHustler(List<String> hustlerSkills) {
+  Stream<List<JobPosting>> getJobsForHustler(List<String> hustlerSkills,
+      {int? limit}) {
     try {
-      return _jobsCollection
+      Query query = _jobsCollection
           .where('status', isEqualTo: JobStatus.active.value)
-          .orderBy('createdAt', descending: true)
-          .snapshots()
-          .map((snapshot) {
-            return snapshot.docs
-                .map(
-                  (doc) =>
-                      JobPosting.fromJson(doc.data() as Map<String, dynamic>),
-                )
-                .where((job) {
-                  // Filter jobs that require at least one skill the hustler has
-                  return job.skillsRequired.any(
-                    (skill) => hustlerSkills.contains(skill),
-                  );
-                })
-                .toList();
-          });
+          .orderBy('createdAt', descending: true);
+
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+
+      return query.snapshots().map((snapshot) {
+        return snapshot.docs
+            .map(
+              (doc) =>
+                  JobPosting.fromJson(doc.data() as Map<String, dynamic>),
+            )
+            .where((job) {
+              // Filter jobs that require at least one skill the hustler has
+              return job.skillsRequired.any(
+                (skill) => hustlerSkills.contains(skill),
+              );
+            })
+            .toList();
+      });
     } catch (e) {
       debugPrint('Error getting jobs for hustler: $e');
       throw Exception('Failed to get jobs: $e');

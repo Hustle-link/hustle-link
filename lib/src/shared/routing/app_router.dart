@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hustle_link/src/pages/subscribe/subscription_page.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -273,6 +274,11 @@ final appRouteProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      GoRoute(
+        path: AppRoutes.subscription,
+        name: AppRoutes.subscriptionRoute,
+        builder: (context, state) => const SubscriptionPage(),
+      ),
     ],
   );
 });
@@ -312,6 +318,7 @@ class AppRoutes {
   static const String employerJobs = '/employer/jobs';
   static const String employerPostJob = '/employer/post-job';
   static const String employerJobDetails = '/employer/job';
+  static const String subscription = '/subscribe';
 
   // route names
   static const String loginRoute = 'login';
@@ -339,6 +346,7 @@ class AppRoutes {
   static const String employerJobsRoute = 'employer_jobs';
   static const String employerPostJobRoute = 'employer_post_job';
   static const String employerJobDetailsRoute = 'employer_job_details';
+  static const String subscriptionRoute = 'subscription';
 
   // add more routes as needed
 }
