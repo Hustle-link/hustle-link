@@ -137,16 +137,16 @@ class RoleSelectionPageNew extends HookConsumerWidget {
               ),
             ),
             child: authState.when(
-              idle: () => const Text(
-                'Get Started',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              loading: () => const CircularProgressIndicator(),
-              error: (error, _) => const Text('Try Again'),
               data: (_) => const Text(
                 'Get Started',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
+              loading: () => const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              error: (error, _) => const Text('Try Again'),
             ),
           ),
         ),
