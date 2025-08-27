@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for Southern Sotho (`st`).
-class AppLocalizationsSt extends AppLocalizations {
-  AppLocalizationsSt([String locale = 'st']) : super(locale);
+/// The translations for Tswana (`tn`).
+class AppLocalizationsTn extends AppLocalizations {
+  AppLocalizationsTn([String locale = 'tn']) : super(locale);
 
   @override
   String get loginTitle => 'O boa gape!';

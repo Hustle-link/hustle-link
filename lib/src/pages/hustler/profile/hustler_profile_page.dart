@@ -11,7 +11,7 @@ class HustlerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final hustlerProfile = ref.watch(currentHustlerProfileProvider);
     final authController = ref.read(authControllerProvider.notifier);
 
@@ -258,7 +258,7 @@ class HustlerProfilePage extends HookConsumerWidget {
   }
 
   Widget _buildSupportSection(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final currentLocale = ref.watch(localeNotifierProvider);
     final localeNotifier = ref.read(localeNotifierProvider.notifier);
 
@@ -288,6 +288,10 @@ class HustlerProfilePage extends HookConsumerWidget {
               ),
               DropdownMenuItem(
                 value: const Locale('st'),
+                child: const Text('Sesotho'),
+              ),
+              DropdownMenuItem(
+                value: const Locale('tn'),
                 child: Text(l10n.setswana),
               ),
             ],
@@ -344,7 +348,7 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(6.w),
@@ -681,7 +685,7 @@ class _ProfileCompletionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final percentage = _calculateCompletionPercentage(l10n);
 
     if (percentage >= 1.0) {

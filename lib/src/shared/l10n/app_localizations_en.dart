@@ -1,5 +1,8 @@
-import 'app_localizations.dart';
+// ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
 
 /// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
@@ -33,7 +36,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerTitle => 'Join Hustle Link Today!';
 
   @override
-  String get registerSubtitle => 'Create your free account and start connecting with amazing side hustles today!.';
+  String get registerSubtitle =>
+      'Create your free account and start connecting with amazing side hustles today!.';
 
   @override
   String get confirmPasswordLabel => 'Confirm Password';
@@ -45,7 +49,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetPassword => 'Reset Password';
 
   @override
-  String get resetPasswordSubtitle => 'Enter your email to receive a password reset link.';
+  String get resetPasswordSubtitle =>
+      'Enter your email to receive a password reset link.';
 
   @override
   String get resetPasswordButton => 'Send Reset Link';
@@ -66,13 +71,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutError => 'Sign out failed. Please try again.';
 
   @override
-  String get registrationSuccess => 'Registration successful! Please log in to continue.';
+  String get registrationSuccess =>
+      'Registration successful! Please log in to continue.';
 
   @override
   String get registrationError => 'Registration failed. Please try again.';
 
   @override
-  String get loginError => 'Login failed. Please check your credentials and try again.';
+  String get loginError =>
+      'Login failed. Please check your credentials and try again.';
 
   @override
   String get emailRequired => 'Email is required.';
@@ -108,7 +115,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordResetTitle => 'Password Reset';
 
   @override
-  String get passwordResetSubTitle => 'Enter your email address below to receive a password reset link.';
+  String get passwordResetSubTitle =>
+      'Enter your email address below to receive a password reset link.';
 
   @override
   String get emailHint => 'Enter your email';
@@ -123,26 +131,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkYourEmail => 'Check your email';
 
   @override
-  String passwordResetLinkSent(String email) {
-    return 'We\\\'ve sent a password reset link to:\\n$email';
+  String passwordResetLinkSent(Object email) {
+    return 'We\'ve sent a password reset link to:\n$email';
   }
 
   @override
   String get resendLink => 'Resend link';
 
   @override
-  String resendAvailableIn(String seconds) {
-    return 'Resend available in $seconds' 's';
+  String resendAvailableIn(Object seconds) {
+    return 'Resend available in ${seconds}s';
   }
 
   @override
-  String get didNotGetEmail => 'Didn\\\'t get the email? Check your spam folder or try again.';
+  String get didNotGetEmail =>
+      'Didn\'t get the email? Check your spam folder or try again.';
 
   @override
   String get completeYourProfile => 'Complete Your Profile';
 
   @override
-  String get whatsYourName => 'What\\\'s your name?';
+  String get whatsYourName => 'What\'s your name?';
 
   @override
   String get fullName => 'Full Name';
@@ -157,13 +166,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseYourRole => 'Choose your role to get started';
 
   @override
-  String get imAHustler => 'I\\\'m a Hustler';
+  String get imAHustler => 'I\'m a Hustler';
 
   @override
   String get lookingForFreelanceWork => 'Looking for freelance work and gigs';
 
   @override
-  String get imAnEmployer => 'I\\\'m an Employer';
+  String get imAnEmployer => 'I\'m an Employer';
 
   @override
   String get lookingToHireTalent => 'Looking to hire talented freelancers';
@@ -178,15 +187,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get findJobs => 'Find Jobs';
 
   @override
-  String welcomeBack(String name) {
+  String welcomeBack(Object name) {
     return 'Welcome back, $name!';
   }
 
   @override
-  String get addSkillsToProfile => 'Add skills to your profile to see relevant jobs';
+  String get addSkillsToProfile =>
+      'Add skills to your profile to see relevant jobs';
 
   @override
-  String jobsMatchingYourSkills(String skills) {
+  String jobsMatchingYourSkills(Object skills) {
     return 'Jobs matching your skills: $skills';
   }
 
@@ -197,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkBackLater => 'Check back later for new opportunities';
 
   @override
-  String errorLoadingJobs(String error) {
+  String errorLoadingJobs(Object error) {
     return 'Error loading jobs: $error';
   }
 
@@ -208,17 +218,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileNotFound => 'Profile not found';
 
   @override
-  String errorLoadingProfile(String error) {
+  String errorLoadingProfile(Object error) {
     return 'Error loading profile: $error';
   }
 
   @override
-  String moreSkills(String count) {
+  String moreSkills(Object count) {
     return '+$count more skills';
   }
 
   @override
-  String applicants(String count) {
+  String applicants(Object count) {
     return '$count applicants';
   }
 
@@ -226,7 +236,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get justNow => 'Just now';
 
   @override
-  String ago(String time) {
+  String ago(Object time) {
     return '$time ago';
   }
 
@@ -246,7 +256,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobTitle => 'Job Title';
 
   @override
-  String appliedAs(String name) {
+  String appliedAs(Object name) {
     return 'Applied as $name';
   }
 
@@ -254,7 +264,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coverLetter => 'Cover Letter:';
 
   @override
-  String applied(String timeAgo) {
+  String applied(Object timeAgo) {
     return 'Applied $timeAgo';
   }
 
@@ -319,7 +329,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get experience => 'Experience';
 
   @override
-  String get addYourWorkExperience => 'Add your work experience and achievements';
+  String get addYourWorkExperience =>
+      'Add your work experience and achievements';
 
   @override
   String get account => 'Account';
@@ -367,7 +378,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goodProgress => 'Good progress! Add more info to stand out.';
 
   @override
-  String get completeYourProfileToAttractMoreOpportunities => 'Complete your profile to attract more opportunities.';
+  String get completeYourProfileToAttractMoreOpportunities =>
+      'Complete your profile to attract more opportunities.';
 
   @override
   String get completeProfile => 'Complete Profile';
@@ -376,12 +388,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get save => 'Save';
 
   @override
-  String failedToPickImage(String error) {
+  String failedToPickImage(Object error) {
     return 'Failed to pick image: $error';
   }
 
   @override
-  String failedToPickFiles(String error) {
+  String failedToPickFiles(Object error) {
     return 'Failed to pick files: $error';
   }
 
@@ -389,7 +401,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileUpdatedSuccessfully => 'Profile updated successfully!';
 
   @override
-  String failedToUpdateProfile(String error) {
+  String failedToUpdateProfile(Object error) {
     return 'Failed to update profile: $error';
   }
 
@@ -430,13 +442,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get separateSkillsWithCommas => 'Separate skills with commas';
 
   @override
-  String get experienceHint => 'Describe your work experience, projects, or achievements...';
+  String get experienceHint =>
+      'Describe your work experience, projects, or achievements...';
 
   @override
   String get certifications => 'Certifications';
 
   @override
-  String get uploadCertificates => 'Upload your certificates, diplomas, or other qualification documents (PDF, DOC, DOCX)';
+  String get uploadCertificates =>
+      'Upload your certificates, diplomas, or other qualification documents (PDF, DOC, DOCX)';
 
   @override
   String get uploaded => 'Uploaded';
@@ -454,7 +468,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobNotFound => 'Job not found';
 
   @override
-  String get applicationSubmittedSuccessfully => 'Application submitted successfully!';
+  String get applicationSubmittedSuccessfully =>
+      'Application submitted successfully!';
 
   @override
   String get aboutThisJob => 'About this job';
@@ -487,7 +502,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myJobs => 'My Jobs';
 
   @override
-  String welcome(String name) {
+  String welcome(Object name) {
     return 'Welcome, $name!';
   }
 
@@ -498,7 +513,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noJobsPostedYet => 'No jobs posted yet';
 
   @override
-  String get createYourFirstJobPosting => 'Create your first job posting to find talent';
+  String get createYourFirstJobPosting =>
+      'Create your first job posting to find talent';
 
   @override
   String get postAJob => 'Post a Job';
@@ -516,7 +532,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postNewJob => 'Post New Job';
 
   @override
-  String get postYourFirstJob => 'Post your first job to start finding hustlers';
+  String get postYourFirstJob =>
+      'Post your first job to start finding hustlers';
 
   @override
   String get viewApplications => 'View Applications';
@@ -534,8 +551,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteJob => 'Delete Job';
 
   @override
-  String areYouSureYouWantToDelete(String jobTitle) {
-    return 'Are you sure you want to delete "$jobTitle"? This action cannot be undone.';
+  String areYouSureYouWantToDelete(Object jobTitle) {
+    return 'Are you sure you want to delete \"$jobTitle\"? This action cannot be undone.';
   }
 
   @override
@@ -548,7 +565,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobDeletedSuccessfully => 'Job deleted successfully';
 
   @override
-  String errorDeletingJob(String error) {
+  String errorDeletingJob(Object error) {
     return 'Error deleting job: $error';
   }
 
@@ -562,7 +579,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updatePostingTitle => 'Update your job posting';
 
   @override
-  String get createPostingSubtitle => 'Fill in the details to attract the right talent';
+  String get createPostingSubtitle =>
+      'Fill in the details to attract the right talent';
 
   @override
   String get updatePostingSubtitle => 'Modify the fields you want to update';
@@ -586,7 +604,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locationHint => 'Remote, New York, etc.';
 
   @override
-  String get descriptionSubtitle => 'Describe the role, responsibilities, and requirements';
+  String get descriptionSubtitle =>
+      'Describe the role, responsibilities, and requirements';
 
   @override
   String get jobTitleRequired => 'Please enter a job title';
@@ -595,7 +614,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobDescriptionRequired => 'Please enter a job description';
 
   @override
-  String get jobDescriptionTooShort => 'Description should be at least 50 characters';
+  String get jobDescriptionTooShort =>
+      'Description should be at least 50 characters';
 
   @override
   String get skillsRequired => 'Please enter required skills';
@@ -625,13 +645,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutCompany => 'About Company';
 
   @override
-  String get addAShortDescriptionAboutYourCompany => 'Add a short description about your company';
+  String get addAShortDescriptionAboutYourCompany =>
+      'Add a short description about your company';
 
   @override
   String get employer => 'Employer';
 
   @override
-  String get yourCompanyProfileIsComplete => 'Your company profile is complete!';
+  String get yourCompanyProfileIsComplete =>
+      'Your company profile is complete!';
 
   @override
   String get almostThereCompany => 'Almost there! Add the remaining details.';
@@ -640,7 +662,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goodProgressCompany => 'Good progress! Add more company info.';
 
   @override
-  String get completeYourCompanyProfileToBuildTrust => 'Complete your company profile to build trust with hustlers.';
+  String get completeYourCompanyProfileToBuildTrust =>
+      'Complete your company profile to build trust with hustlers.';
 
   @override
   String get personalInformation => 'Personal Information';
@@ -655,10 +678,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get companyDescription => 'Company Description';
 
   @override
-  String get describeYourCompany => 'Describe your company, mission, and values...';
+  String get describeYourCompany =>
+      'Describe your company, mission, and values...';
 
   @override
-  String total(String count) {
+  String total(Object count) {
     return '$count total';
   }
 
@@ -669,7 +693,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseYourPlan => 'Choose Your Plan';
 
   @override
-  String get unlockFullPotential => 'Unlock your full potential with our premium features.';
+  String get unlockFullPotential =>
+      'Unlock your full potential with our premium features.';
 
   @override
   String get freePlan => 'Free Plan';

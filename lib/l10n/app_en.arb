@@ -177,7 +177,7 @@
     "createPostingSubtitle": "Fill in the details to attract the right talent",
     "updatePostingSubtitle": "Modify the fields you want to update",
     "jobDescription": "Job Description",
-    "compensation": "Compensation (\$A)",
+    "compensation": "Compensation ($A)",
     "jobTitleHint": "e.g. Senior Flutter Developer",
     "jobDescriptionHint": "Tell us about this job...",
     "compensationHint": "5000",

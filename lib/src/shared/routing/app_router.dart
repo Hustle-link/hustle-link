@@ -22,33 +22,31 @@ class GoRouterRefreshStream extends ChangeNotifier {
   /// shared preferences.
   GoRouterRefreshStream(
     Stream<dynamic> authStream,
-    ValueNotifier<dynamic>? welcomeNotifier,
+    List<Listenable> listenables,
   ) {
     // Listen to auth state changes
     authSubscription = authStream.asBroadcastStream().listen((_) {
       notifyListeners();
     });
 
-    // Listen to welcome page shared preferences changes via ValueNotifier
-    if (welcomeNotifier != null) {
-      _welcomeNotifier = welcomeNotifier;
-      _welcomeNotifier!.addListener(_welcomeListener);
+    // Listen to provided listenables (e.g., welcome & language pref notifiers)
+    for (final l in listenables) {
+      l.addListener(_otherListener);
+      _others.add(l);
     }
   }
 
   /// The subscription to the authentication state stream.
   late StreamSubscription<dynamic> authSubscription;
-  ValueNotifier<dynamic>? _welcomeNotifier;
+  final List<Listenable> _others = [];
 
-  void _welcomeListener() {
-    notifyListeners();
-  }
+  void _otherListener() => notifyListeners();
 
   @override
   void dispose() {
     authSubscription.cancel();
-    if (_welcomeNotifier != null) {
-      _welcomeNotifier!.removeListener(_welcomeListener);
+    for (final l in _others) {
+      l.removeListener(_otherListener);
     }
     super.dispose();
   }
@@ -63,25 +61,29 @@ final appRouteProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(firebaseAuthServiceProvider);
   // welcome page shared preferences
   final sharedPrefs = ref.watch(welcomePageSharedPreferencesProvider);
+  // language selection shared preferences
+  final languagePrefs = ref.watch(languageSelectionSharedPreferencesProvider);
 
   // allow navigation to register page
   final allowNavToRegister = ref.watch(allowNavToRegisterProvider);
 
   // else show the main app
   return GoRouter(
-    refreshListenable: GoRouterRefreshStream(
-      auth.authStateChanges,
-      ValueNotifier(sharedPrefs.firstTimeOpenApp),
-    ),
+    refreshListenable: GoRouterRefreshStream(auth.authStateChanges, [
+      sharedPrefs,
+      languagePrefs,
+    ]),
     observers: [FlutterSmartDialog.observer],
     // TODO(security): Enhance redirection logic to handle more edge cases and roles.
     redirect: (context, state) async {
       // listen to first time open app state
       final firstTimeOpenApp = sharedPrefs;
+      final languageSelected = languagePrefs.languageSelected;
       // debug print statements for auth state changes
       //todo: remove debug print statements in production
       final location = state.uri.path; // Use uri.path for reliable matching
       debugPrint('First time open app: ${firstTimeOpenApp.firstTimeOpenApp}');
+      debugPrint('Language selected: $languageSelected');
       debugPrint('Auth state changed: ${auth.currentUser?.uid}');
       debugPrint('Redirecting: $location');
       // Check if the user is logged in
@@ -93,9 +95,15 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       // debug print statements for allowNavToRegister
       debugPrint('Allow navigation to register: $allowNavToRegister');
 
+      // If language not selected yet, redirect to select language page
+      if (languageSelected != true && location != AppRoutes.selectLanguage) {
+        return AppRoutes.selectLanguage;
+      }
+
       // If first time opening the app, redirect to welcome page
       if (firstTimeOpenApp.firstTimeOpenApp == true &&
-          location != AppRoutes.welcome) {
+          location != AppRoutes.welcome &&
+          location != AppRoutes.selectLanguage) {
         return AppRoutes.welcome;
       }
 
@@ -123,6 +131,11 @@ final appRouteProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: AppRoutes.selectLanguage,
+        name: AppRoutes.selectLanguageRoute,
+        builder: (context, state) => const LanguageSelectionPage(),
+      ),
       GoRoute(
         path: AppRoutes.welcome,
         name: AppRoutes.welcomeRoute,
@@ -296,6 +309,8 @@ class AppRoutes {
   static const String home = '/';
   // welcome page
   static const String welcome = '/welcome';
+  // language selection page
+  static const String selectLanguage = '/select-language';
   // error initial page
   static const String errorInitial = '/error_initial';
   // initial loading page
@@ -326,6 +341,7 @@ class AppRoutes {
   static const String resetPasswordRoute = 'reset_password';
   static const String homeRoute = 'home';
   static const String welcomeRoute = 'welcome';
+  static const String selectLanguageRoute = 'select_language';
   static const String errorInitialRoute = 'error_initial';
   static const String initialLoadingRoute = 'initial_loading';
 
@@ -457,6 +473,50 @@ class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
 final welcomePageSharedPreferencesProvider =
     ChangeNotifierProvider<WelcomePageSharedPreferencesNotifier>(
       (ref) => WelcomePageSharedPreferencesNotifier(ref),
+    );
+
+/// A [ChangeNotifier] for tracking whether the user has selected an app language.
+/// This is used to ensure we prompt for language on the very first launch.
+class LanguageSelectionSharedPreferencesNotifier extends ChangeNotifier {
+  bool _languageSelected = false;
+  final Ref ref;
+
+  LanguageSelectionSharedPreferencesNotifier(this.ref) {
+    _init();
+  }
+
+  bool get languageSelected => _languageSelected;
+
+  Future<void> _init() async {
+    final prefs = await ref.read(sharedPrefsFutureProvider.future);
+    final storedFlag = prefs.getBool('language_selected');
+    if (storedFlag == null) {
+      // If user already has a language code stored by LocaleService, respect it.
+      final existingLanguage = prefs.getString('languageCode');
+      if (existingLanguage != null) {
+        await prefs.setBool('language_selected', true);
+        _languageSelected = true;
+      } else {
+        _languageSelected = false;
+      }
+    } else {
+      _languageSelected = storedFlag;
+    }
+    notifyListeners();
+  }
+
+  Future<void> setLanguageSelected(bool value) async {
+    final prefs = await ref.read(sharedPrefsFutureProvider.future);
+    await prefs.setBool('language_selected', value);
+    _languageSelected = value;
+    notifyListeners();
+  }
+}
+
+/// Provider for the [LanguageSelectionSharedPreferencesNotifier].
+final languageSelectionSharedPreferencesProvider =
+    ChangeNotifierProvider<LanguageSelectionSharedPreferencesNotifier>(
+      (ref) => LanguageSelectionSharedPreferencesNotifier(ref),
     );
 
 /// A shell widget for the Hustler user role, providing a bottom navigation bar.

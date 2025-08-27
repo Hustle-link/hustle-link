@@ -277,7 +277,7 @@ class EmployerProfilePage extends HookConsumerWidget {
                 child: Text(l10n.english),
               ),
               DropdownMenuItem(
-                value: const Locale('st'),
+                value: const Locale('tn'),
                 child: Text(l10n.setswana),
               ),
             ],
