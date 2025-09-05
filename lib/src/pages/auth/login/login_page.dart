@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+// Removed unused flutter_smart_dialog import after refactor
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
+import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
+import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
+import 'package:hustle_link/src/shared/analytics/auth_error_logger.dart';
 
 /// A screen for users to log in to their account.
 ///
@@ -19,7 +22,7 @@ class LoginPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
@@ -34,57 +37,81 @@ class LoginPage extends HookConsumerWidget {
 
     // Listen to the authentication state to handle loading, errors, and success.
     ref.listen<AsyncValue<void>>(authControllerProvider, (prev, next) {
-      next.when(
+      next.whenOrNull(
         data: (_) {
-          SmartDialog.dismiss();
           authError.value = null;
           context.goNamed(AppRoutes.homeRoute);
         },
-        loading: () => SmartDialog.showLoading(msg: 'Signing in...'),
         error: (e, _) {
-          SmartDialog.dismiss();
-          authError.value = e.toString().replaceFirst('Exception: ', '');
+          if (e is UserFriendlyException) {
+            final key = e.code ?? e.message;
+            authError.value = localizeAuthError(context, key);
+            _logAuthError(ref, key);
+          } else {
+            final key = mapAuthErrorKey(e);
+            authError.value = localizeAuthError(context, key);
+            _logAuthError(ref, key);
+          }
         },
       );
     });
 
+    final authState = ref.watch(authControllerProvider);
+    final isLoading = authState.isLoading;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(context),
-              SizedBox(height: 5.h),
-              Text(
-                l10n.loginTitle,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeader(context),
+                    SizedBox(height: 5.h),
+                    Text(
+                      l10n.loginTitle,
+                      style: textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
+                    Text(
+                      l10n.loginSubtitle,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    _buildLoginForm(
+                      context: context,
+                      ref: ref,
+                      emailController: emailController,
+                      passwordController: passwordController,
+                      emailError: emailError,
+                      passwordError: passwordError,
+                      authError: authError,
+                      isLoading: isLoading,
+                    ),
+                    SizedBox(height: 2.h),
+                    _buildFooter(context, ref),
+                  ],
                 ),
               ),
-              SizedBox(height: 1.h),
-              Text(
-                l10n.loginSubtitle,
-                style: textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+            if (isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withAlpha(120),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
               ),
-              SizedBox(height: 4.h),
-              _buildLoginForm(
-                context: context,
-                ref: ref,
-                emailController: emailController,
-                passwordController: passwordController,
-                emailError: emailError,
-                passwordError: passwordError,
-                authError: authError,
-              ),
-              SizedBox(height: 2.h),
-              _buildFooter(context, ref),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -108,9 +135,8 @@ class LoginPage extends HookConsumerWidget {
     required ValueNotifier<String?> emailError,
     required ValueNotifier<String?> passwordError,
     required ValueNotifier<String?> authError,
+    required bool isLoading,
   }) {
-    final authState = ref.watch(authControllerProvider);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -118,8 +144,9 @@ class LoginPage extends HookConsumerWidget {
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
+          enabled: !isLoading,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.emailLabel,
+            labelText: AppLocalizations.of(context).emailLabel,
             errorText: emailError.value,
           ),
           onChanged: (_) => emailError.value = null,
@@ -129,8 +156,9 @@ class LoginPage extends HookConsumerWidget {
           controller: passwordController,
           obscureText: true,
           textInputAction: TextInputAction.done,
+          enabled: !isLoading,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.passwordLabel,
+            labelText: AppLocalizations.of(context).passwordLabel,
             errorText: passwordError.value,
           ),
           onChanged: (_) => passwordError.value = null,
@@ -140,7 +168,7 @@ class LoginPage extends HookConsumerWidget {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () => context.pushNamed(AppRoutes.resetPasswordRoute),
-            child: Text(AppLocalizations.of(context)!.forgotPassword),
+            child: Text(AppLocalizations.of(context).forgotPassword),
           ),
         ),
         if (authError.value != null)
@@ -153,7 +181,7 @@ class LoginPage extends HookConsumerWidget {
           ),
         SizedBox(height: 2.h),
         ElevatedButton(
-          onPressed: authState.isLoading
+          onPressed: isLoading
               ? null
               : () {
                   // Clear previous errors
@@ -180,7 +208,7 @@ class LoginPage extends HookConsumerWidget {
                       .signIn(email, password);
                 },
           child: Text(
-            AppLocalizations.of(context)!.signIn,
+            AppLocalizations.of(context).signIn,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Theme.of(context).colorScheme.onPrimary,
             ),
@@ -192,14 +220,14 @@ class LoginPage extends HookConsumerWidget {
 
   /// Builds the footer section with the link to the registration page.
   Widget _buildFooter(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(l10n.noAccount),
         TextButton(
           onPressed: () {
-            ref.read(allowNavToRegisterProvider.notifier).allowNavigation();
+            // Direct navigation (removed obsolete allowNavToRegisterProvider usage).
             context.goNamed(AppRoutes.registerRoute);
           },
           child: Text(l10n.createAccount),
@@ -207,4 +235,8 @@ class LoginPage extends HookConsumerWidget {
       ],
     );
   }
+}
+
+void _logAuthError(WidgetRef ref, String code) {
+  ref.read(authErrorAnalyticsLoggerProvider).log(code);
 }

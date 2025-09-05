@@ -219,5 +219,13 @@
     "prioritySupport": "Priority support",
     "currentPlan": "Current Plan",
     "subscribe": "Subscribe",
-    "subscriptionSuccessful": "Subscription successful!"
+    "subscriptionSuccessful": "Subscription successful!",
+    "authUserDisabled": "This account has been disabled.",
+    "authWrongPassword": "Incorrect password.",
+    "authEmailInUse": "Email already in use.",
+    "authNetworkError": "Network error. Please check your connection.",
+    "authTooManyRequests": "Too many attempts. Please try again later.",
+    "authOpNotAllowed": "This sign-in method is not enabled.",
+    "authGeneric": "Authentication failed. Please try again.",
+    "authPasswordResetFailed": "Password reset failed. Please try again."
 }

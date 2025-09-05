@@ -1,15 +1,10 @@
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
 
-/// Exception type used to carry user-friendly messages to the UI.
-class UserFriendlyException implements Exception {
-  final String message;
-  UserFriendlyException(this.message);
-  @override
-  String toString() => message;
-}
+// (Moved UserFriendlyException to shared/utils/user_friendly_exception.dart)
 
 /// An authentication controller that manages the user's authentication state.
 ///

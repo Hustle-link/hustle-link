@@ -10,14 +10,17 @@ import 'package:hustle_link/src/pages/auth/controllers/auth_controller.dart';
 import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import '../../../shared/routing/app_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Removed direct FirebaseAuth import (handled via auth service mapping)
+import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
+import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
+import 'package:hustle_link/src/shared/analytics/auth_error_logger.dart';
 
 class PasswordResetPage extends HookConsumerWidget {
   const PasswordResetPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final emailController = useTextEditingController();
 
@@ -29,14 +32,11 @@ class PasswordResetPage extends HookConsumerWidget {
     final successIconCtrl = useAnimationController(duration: 400.ms);
 
     String friendlyError(Object err) {
-      if (err is UserFriendlyException) return err.message;
-      if (err is FirebaseAuthException) {
-        return err.message ?? 'Authentication error';
+      if (err is UserFriendlyException) {
+        final key = err.code ?? err.message;
+        return localizeAuthError(context, key);
       }
-      final s = err.toString();
-      return s.startsWith('Exception: ')
-          ? s.substring('Exception: '.length)
-          : s;
+      return localizeAuthError(context, err);
     }
 
     ref.listen(authControllerProvider, (prev, state) {
@@ -54,6 +54,10 @@ class PasswordResetPage extends HookConsumerWidget {
         error: (error, __) {
           isLoading.value = false;
           errorText.value = friendlyError(error);
+          final code = error is UserFriendlyException
+              ? (error.code ?? error.message)
+              : mapAuthErrorKey(error);
+          _logAuthError(ref, code);
         },
       );
     });
@@ -105,43 +109,51 @@ class PasswordResetPage extends HookConsumerWidget {
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-          child: AnimatedSwitcher(
-            duration: 400.ms,
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            child: sent.value
-                ? _SuccessView(
-                    email: emailController.text.trim(),
-                    resendIn: resendIn.value,
-                    onBackToLogin: () =>
-                        context.goNamed(AppRoutes.loginRoute),
-                    onResend: resendIn.value == 0
-                        ? () async {
-                            await ref
-                                .read(authControllerProvider.notifier)
-                                .resetPassword(
-                                  emailController.text.trim(),
-                                );
-                          }
-                        : null,
-                    iconController: successIconCtrl,
+          child:
+              AnimatedSwitcher(
+                    duration: 400.ms,
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    child: sent.value
+                        ? _SuccessView(
+                            email: emailController.text.trim(),
+                            resendIn: resendIn.value,
+                            onBackToLogin: () =>
+                                context.goNamed(AppRoutes.loginRoute),
+                            onResend: resendIn.value == 0
+                                ? () async {
+                                    await ref
+                                        .read(authControllerProvider.notifier)
+                                        .resetPassword(
+                                          emailController.text.trim(),
+                                        );
+                                  }
+                                : null,
+                            iconController: successIconCtrl,
+                          )
+                        : _FormView(
+                            formKey: formKey,
+                            emailController: emailController,
+                            isLoading: isLoading.value,
+                            errorText: errorText.value,
+                            isEmailValid: isEmailValid,
+                            onSubmit: onSubmit,
+                            onBackToLogin: isLoading.value
+                                ? null
+                                : () => context.goNamed(AppRoutes.loginRoute),
+                          ),
                   )
-                : _FormView(
-                    formKey: formKey,
-                    emailController: emailController,
-                    isLoading: isLoading.value,
-                    errorText: errorText.value,
-                    isEmailValid: isEmailValid,
-                    onSubmit: onSubmit,
-                    onBackToLogin: isLoading.value
-                        ? null
-                        : () => context.goNamed(AppRoutes.loginRoute),
-                  ),
-          ).animate().fadeIn(duration: 300.ms).moveY(begin: 12, end: 0, curve: Curves.easeOutCubic),
+                  .animate()
+                  .fadeIn(duration: 300.ms)
+                  .moveY(begin: 12, end: 0, curve: Curves.easeOutCubic),
         ),
       ),
     );
   }
+}
+
+void _logAuthError(WidgetRef ref, String code) {
+  ref.read(authErrorAnalyticsLoggerProvider).log(code);
 }
 
 class _FormView extends StatelessWidget {
@@ -165,7 +177,7 @@ class _FormView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return ConstrainedBox(
       key: const ValueKey('form'),
       constraints: const BoxConstraints(maxWidth: 520),
@@ -213,7 +225,9 @@ class _FormView extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error.withOpacity(0.08),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.error.withOpacity(0.08),
                       border: Border.all(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -286,7 +300,7 @@ class _SuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return ConstrainedBox(
       key: const ValueKey('success'),
       constraints: const BoxConstraints(maxWidth: 520),
@@ -295,21 +309,25 @@ class _SuccessView extends StatelessWidget {
         children: [
           SizedBox(height: 2.h),
           Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.mark_email_read_outlined,
-              size: 48,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
-          ).animate(controller: iconController).scale(duration: 400.ms, curve: Curves.easeOutBack),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.mark_email_read_outlined,
+                  size: 48,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              )
+              .animate(controller: iconController)
+              .scale(duration: 400.ms, curve: Curves.easeOutBack),
           SizedBox(height: 2.h),
           Text(
             l10n.checkYourEmail,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 1.h),
@@ -344,7 +362,9 @@ class _SuccessView extends StatelessWidget {
           SizedBox(height: 2.h),
           Text(
             l10n.didNotGetEmail,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
             textAlign: TextAlign.center,
           ),
         ],

@@ -739,4 +739,31 @@ class AppLocalizationsTn extends AppLocalizations {
 
   @override
   String get subscriptionSuccessful => 'Peeletso e atlegile!';
+
+  @override
+  String get authUserDisabled => 'Akhaonto e e thibetswe.';
+
+  @override
+  String get authWrongPassword => 'Lephoko la sephiri le phoso.';
+
+  @override
+  String get authEmailInUse => 'Email e setse e dirisiwa.';
+
+  @override
+  String get authNetworkError =>
+      'Phoso ya kgolagano ya inthanete. Lekola kgolagano.';
+
+  @override
+  String get authTooManyRequests =>
+      'Dikgopelo di dintsi. Leka gape morago ga sebakanyana.';
+
+  @override
+  String get authOpNotAllowed => 'Mokgwa ono wa go tsena ga o a dumelwa.';
+
+  @override
+  String get authGeneric => 'Go tsena go paletswe. Lekola gape.';
+
+  @override
+  String get authPasswordResetFailed =>
+      'Go seta lephoko la sephiri go paletswe. Lekola gape.';
 }

@@ -1,42 +1,49 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
-    function isSubscribed(userId) {
-      let user = get(/databases/$(database)/documents/users/$(userId)).data;
-      return user.subscription != null && user.subscription.isActive == true;
+
+    // Helper function to check for user roles
+    function isRole(role) {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
     }
 
-    function getJobsCount(userId) {
-      return firestore.get(/databases/$(database)/documents/users/$(userId)).data.postedJobs;
-    }
-
-    // Users can read and write their own user document
+    // Users can read their own data, and update it (but not their role).
+    // Public read access to some fields.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null;
+      allow create: if request.auth.uid == userId;
+      allow update: if request.auth.uid == userId && request.resource.data.role == resource.data.role;
     }
-    
-    // Jobs collection rules
+
+    // Businesses (employers) collection
+    match /businesses/{businessId} {
+      allow read: if request.auth != null;
+      allow create: if isRole('employer') && request.auth.uid == request.resource.data.ownerId;
+      allow update: if isRole('employer') && get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerId == request.auth.uid;
+    }
+
+    // Job listings can be read by anyone, but only created/updated by employers.
     match /jobs/{jobId} {
-      // Anyone can read jobs
-      allow read: if true;
-      // Only authenticated users can create jobs
-      allow create: if request.auth != null &&
-                      (isSubscribed(request.auth.uid) || getJobsCount(request.auth.uid) < 3);
-      // Only the job creator can update/delete their jobs
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.employerId;
+      allow read: if request.auth != null;
+      allow create: if isRole('employer');
+      allow update, delete: if isRole('employer') && get(/databases/$(database)/documents/jobs/$(jobId)).data.employerId == request.auth.uid;
     }
-    
-    // Job applications
-    match /jobApplications/{applicationId} {
-      // Users can read applications they created or for jobs they posted
-      allow read: if request.auth != null && 
-        (request.auth.uid == resource.data.applicantId || 
-         request.auth.uid == resource.data.employerId);
-      // Only authenticated users can create applications
+
+    // Job applications can be created by any authenticated user.
+    // They can only be read by the applicant or the employer who posted the job.
+    match /applications/{applicationId} {
       allow create: if request.auth != null;
-      // Users can update their own applications
-      allow update: if request.auth != null && request.auth.uid == resource.data.applicantId;
+      allow read: if request.auth.uid == resource.data.applicantId || 
+                   (isRole('employer') && get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.employerId == request.auth.uid);
+    }
+
+    // Reviews can be read by anyone.
+    // Can only be created by authenticated users who have completed a job with the business.
+    // (This logic is simplified, a real implementation would need a better way to verify job completion)
+    match /businesses/{businessId}/reviews/{reviewId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null; // Simplified for now
     }
   }
 }

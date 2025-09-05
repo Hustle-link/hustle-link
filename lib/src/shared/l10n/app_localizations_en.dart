@@ -725,4 +725,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionSuccessful => 'Subscription successful!';
+
+  @override
+  String get authUserDisabled => 'This account has been disabled.';
+
+  @override
+  String get authWrongPassword => 'Incorrect password.';
+
+  @override
+  String get authEmailInUse => 'Email already in use.';
+
+  @override
+  String get authNetworkError => 'Network error. Please check your connection.';
+
+  @override
+  String get authTooManyRequests =>
+      'Too many attempts. Please try again later.';
+
+  @override
+  String get authOpNotAllowed => 'This sign-in method is not enabled.';
+
+  @override
+  String get authGeneric => 'Authentication failed. Please try again.';
+
+  @override
+  String get authPasswordResetFailed =>
+      'Password reset failed. Please try again.';
 }

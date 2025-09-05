@@ -6,9 +6,9 @@ const String _languageCodeKey = 'languageCode';
 
 /// A service for managing the application's locale.
 ///
-/// It uses [SharedPreferencesWithCache] to persist the user's selected language.
+/// It uses [SharedPreferences] to persist the user's selected language.
 class LocaleService {
-  final SharedPreferencesWithCache _prefs;
+  final SharedPreferences _prefs;
 
   LocaleService(this._prefs);
 
@@ -28,19 +28,18 @@ class LocaleService {
 
   /// Updates the application's locale.
   ///
-  /// The new locale is persisted to [SharedPreferencesWithCache].
+  /// The new locale is persisted to [SharedPreferences].
   Future<void> setLocale(Locale locale) async {
     await _prefs.setString(_languageCodeKey, locale.languageCode);
   }
 }
 
-/// Provider for a cached [SharedPreferences] instance.
-final cachedSharedPreferencesProvider =
-    FutureProvider<SharedPreferencesWithCache>((ref) async {
-      return await SharedPreferencesWithCache.create(
-        cacheOptions: SharedPreferencesWithCacheOptions(),
-      );
-    });
+/// Provider for [SharedPreferences].
+final sharedPreferencesProvider = FutureProvider<SharedPreferences>((
+  ref,
+) async {
+  return await SharedPreferences.getInstance();
+});
 
 /// A notifier for the application's locale.
 ///
@@ -48,24 +47,21 @@ final cachedSharedPreferencesProvider =
 /// to update it.
 class LocaleNotifier extends StateNotifier<Locale> {
   final Ref ref;
-  SharedPreferencesWithCache? _prefs;
 
   LocaleNotifier(this.ref) : super(LocaleService.defaultLocale) {
     _init();
   }
 
   Future<void> _init() async {
-    // Wait for SharedPreferencesWithCache to be ready, then set initial locale.
-    final prefs = await ref.read(cachedSharedPreferencesProvider.future);
-    _prefs = prefs;
+    // Wait for SharedPreferences to be ready, then set initial locale.
+    final prefs = await ref.read(sharedPreferencesProvider.future);
     state = LocaleService(prefs).locale;
   }
 
   /// Updates the application's locale.
   Future<void> setLocale(Locale locale) async {
-    final prefs =
-        _prefs ?? await ref.read(cachedSharedPreferencesProvider.future);
-    await LocaleService(prefs!).setLocale(locale);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await LocaleService(prefs).setLocale(locale);
     state = locale;
   }
 }

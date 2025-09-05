@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/firebase_options.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
 import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
+import 'package:hustle_link/src/shared/l10n/fallback_localizations.dart';
 
 /// The entry point of the application.
 Future<void> main() async {
@@ -50,8 +52,27 @@ class MyApp extends HookConsumerWidget {
           // Set the current locale
           locale: locale,
           // Localization setup
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: const [
+            // App generated localizations.
+            ...AppLocalizations.localizationsDelegates,
+            // Fallback delegates (provide English strings for unsupported locales like 'tn').
+            FallbackMaterialLocalizationsDelegate(),
+            FallbackCupertinoLocalizationsDelegate(),
+            // Global delegates (kept after fallback so fallback wins for targeted locales).
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           supportedLocales: AppLocalizations.supportedLocales,
+          localeResolutionCallback: (locale, supportedLocales) {
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == locale?.languageCode &&
+                  supportedLocale.countryCode == locale?.countryCode) {
+                return supportedLocale;
+              }
+            }
+            return supportedLocales.first;
+          },
           // Initialize FlutterSmartDialog for displaying custom dialogs, toasts, and loading indicators.
           builder: FlutterSmartDialog.init(
             builder: (context, child) {

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hustle_link/src/pages/language_selection/language_selection_page.dart'
+    as lang_select;
 import 'package:hustle_link/src/pages/subscribe/subscription_page.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// removed unused shared_preferences import (accessed via provider elsewhere)
 
 // part 'app_router.g.dart';
 
@@ -64,8 +66,8 @@ final appRouteProvider = Provider<GoRouter>((ref) {
   // language selection shared preferences
   final languagePrefs = ref.watch(languageSelectionSharedPreferencesProvider);
 
-  // allow navigation to register page
-  final allowNavToRegister = ref.watch(allowNavToRegisterProvider);
+  // NOTE: Removed dependency on allowNavToRegisterProvider (not used in redirect logic)
+  // to avoid rebuilding the entire GoRouter on simple button taps.
 
   // else show the main app
   return GoRouter(
@@ -76,65 +78,53 @@ final appRouteProvider = Provider<GoRouter>((ref) {
     observers: [FlutterSmartDialog.observer],
     // TODO(security): Enhance redirection logic to handle more edge cases and roles.
     redirect: (context, state) async {
-      // listen to first time open app state
-      final firstTimeOpenApp = sharedPrefs;
-      final languageSelected = languagePrefs.languageSelected;
-      // debug print statements for auth state changes
-      //todo: remove debug print statements in production
-      final location = state.uri.path; // Use uri.path for reliable matching
-      debugPrint('First time open app: ${firstTimeOpenApp.firstTimeOpenApp}');
-      debugPrint('Language selected: $languageSelected');
-      debugPrint('Auth state changed: ${auth.currentUser?.uid}');
-      debugPrint('Redirecting: $location');
-      // Check if the user is logged in
-      final loggedIn = auth.currentUser?.uid != null;
-      final isLoginPage = location == AppRoutes.login;
-      final isRegisterPage = location == AppRoutes.register;
-      final isResetPasswordPage = location == AppRoutes.resetPassword;
+      if (languagePrefs.isLoading) {
+        return null; // Don't redirect while loading preferences
+      }
 
-      // debug print statements for allowNavToRegister
-      debugPrint('Allow navigation to register: $allowNavToRegister');
+      final location = state.uri.path;
+      final languageSelected = languagePrefs.languageSelected;
+
+      // If we are on the language selection page, don't redirect further.
+      if (location == AppRoutes.selectLanguage) {
+        return languageSelected ? AppRoutes.welcome : null;
+      }
 
       // If language not selected yet, redirect to select language page
-      if (languageSelected != true && location != AppRoutes.selectLanguage) {
+      if (!languageSelected) {
         return AppRoutes.selectLanguage;
       }
 
-      // If first time opening the app, redirect to welcome page
-      if (firstTimeOpenApp.firstTimeOpenApp == true &&
-          location != AppRoutes.welcome &&
-          location != AppRoutes.selectLanguage) {
+      final firstTimeOpenApp = sharedPrefs.firstTimeOpenApp ?? true;
+      if (firstTimeOpenApp && location != AppRoutes.welcome) {
         return AppRoutes.welcome;
       }
 
-      // If the user is logged in, redirect to home
-      if (loggedIn && (isLoginPage || isRegisterPage || isResetPasswordPage)) {
-        // If logged in, don't allow access to login/register/reset-password
+      if (location == AppRoutes.welcome) {
+        return null;
+      }
+
+      final loggedIn = auth.currentUser?.uid != null;
+      final isAuthPage =
+          location == AppRoutes.login ||
+          location == AppRoutes.register ||
+          location == AppRoutes.resetPassword;
+
+      if (loggedIn && isAuthPage) {
         return AppRoutes.home;
       }
-      if (!loggedIn &&
-          !(isLoginPage || isRegisterPage || isResetPasswordPage) &&
-          !allowNavToRegister) {
-        // If not logged in and not on auth pages, redirect to login
+
+      if (!loggedIn && !isAuthPage) {
         return AppRoutes.login;
-      } else if (!loggedIn && isRegisterPage && !allowNavToRegister) {
-        // If not logged in and on register page without permission, redirect to login
-        return AppRoutes.login;
-      } else if (!loggedIn &&
-          !isRegisterPage &&
-          !isResetPasswordPage &&
-          allowNavToRegister) {
-        // If not logged in and not on register/reset pages, allow navigation to register
-        return AppRoutes.register;
       }
-      // Otherwise, allow navigation
+
       return null;
     },
     routes: [
       GoRoute(
         path: AppRoutes.selectLanguage,
         name: AppRoutes.selectLanguageRoute,
-        builder: (context, state) => const LanguageSelectionPage(),
+        builder: (context, state) => const lang_select.LanguageSelectionPage(),
       ),
       GoRoute(
         path: AppRoutes.welcome,
@@ -367,31 +357,7 @@ class AppRoutes {
   // add more routes as needed
 }
 
-/// A [Notifier] to control whether navigation to the register page is allowed.
-/// This is used to manage the flow between the login and register pages.
-class AllowNavToRegisterNotifier extends Notifier<bool> {
-  @override
-  bool build() {
-    // Initially disallow navigation to register page
-    return false;
-  }
-
-  /// Allows navigation to the register page.
-  void allowNavigation() {
-    state = true;
-  }
-
-  /// Disallows navigation to the register page.
-  void disallowNavigation() {
-    state = false;
-  }
-}
-
-/// Provider for the [AllowNavToRegisterNotifier].
-final allowNavToRegisterProvider =
-    NotifierProvider<AllowNavToRegisterNotifier, bool>(
-      AllowNavToRegisterNotifier.new,
-    );
+// (Deprecated) Removed AllowNavToRegisterNotifier – navigation gating no longer required.
 
 /// A [Notifier] to control whether navigation to the reset password page is allowed.
 /// This is used to manage the flow between the login and reset password pages.
@@ -419,17 +385,6 @@ final allowNavToResetPasswordProvider =
       AllowNavToResetPasswordNotifier.new,
     );
 
-/// Provider for a [SharedPreferencesWithCache] instance.
-/// This is used to cache shared preferences for performance.
-// TODO(optimization): Evaluate if a future provider is the best approach here.
-final sharedPrefsFutureProvider = FutureProvider<SharedPreferencesWithCache>((
-  ref,
-) async {
-  return await SharedPreferencesWithCache.create(
-    cacheOptions: SharedPreferencesWithCacheOptions(),
-  );
-});
-
 /// A [ChangeNotifier] for managing the 'first time open app' state using SharedPreferences.
 /// It provides methods to get and set this value.
 class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
@@ -454,7 +409,7 @@ class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
   ///
   /// [value] The new boolean value to set.
   Future<void> setFirstTimeOpenApp(bool value) async {
-    final prefs = await ref.read(sharedPrefsFutureProvider.future);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
     await prefs.setBool('first_time_open_app', value);
     _firstTimeOpenApp = value;
     notifyListeners();
@@ -464,7 +419,7 @@ class WelcomePageSharedPreferencesNotifier extends ChangeNotifier {
   ///
   /// Returns `true` if the flag is not set, indicating it's the first time.
   Future<bool> getFirstTimeOpenApp() async {
-    final prefs = await ref.read(sharedPrefsFutureProvider.future);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
     return prefs.getBool('first_time_open_app') ?? true;
   }
 }
@@ -479,6 +434,7 @@ final welcomePageSharedPreferencesProvider =
 /// This is used to ensure we prompt for language on the very first launch.
 class LanguageSelectionSharedPreferencesNotifier extends ChangeNotifier {
   bool _languageSelected = false;
+  bool _isLoading = true;
   final Ref ref;
 
   LanguageSelectionSharedPreferencesNotifier(this.ref) {
@@ -486,9 +442,10 @@ class LanguageSelectionSharedPreferencesNotifier extends ChangeNotifier {
   }
 
   bool get languageSelected => _languageSelected;
+  bool get isLoading => _isLoading;
 
   Future<void> _init() async {
-    final prefs = await ref.read(sharedPrefsFutureProvider.future);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
     final storedFlag = prefs.getBool('language_selected');
     if (storedFlag == null) {
       // If user already has a language code stored by LocaleService, respect it.
@@ -502,11 +459,12 @@ class LanguageSelectionSharedPreferencesNotifier extends ChangeNotifier {
     } else {
       _languageSelected = storedFlag;
     }
+    _isLoading = false;
     notifyListeners();
   }
 
   Future<void> setLanguageSelected(bool value) async {
-    final prefs = await ref.read(sharedPrefsFutureProvider.future);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
     await prefs.setBool('language_selected', value);
     _languageSelected = value;
     notifyListeners();

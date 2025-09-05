@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
+import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
 
 part 'firebase_auth.g.dart';
 
@@ -33,10 +35,11 @@ class FirebaseAuthService {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       debugPrint('Registration failed: $e');
-      throw Exception('Registration failed: ${e.message}');
+      final key = mapAuthErrorKey(e);
+      throw UserFriendlyException(key, code: key);
     } on Exception catch (e) {
       debugPrint('Registration failed: $e');
-      throw Exception('An unexpected error occurred during registration.');
+      throw UserFriendlyException('authGeneric', code: 'authGeneric');
     }
   }
 
@@ -56,10 +59,11 @@ class FirebaseAuthService {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       debugPrint('Sign in failed: $e');
-      throw Exception('Sign in failed: ${e.message}');
+      final key = mapAuthErrorKey(e);
+      throw UserFriendlyException(key, code: key);
     } on Exception catch (e) {
       debugPrint('Sign in failed: $e');
-      throw Exception('An unexpected error occurred during sign in.');
+      throw UserFriendlyException('authGeneric', code: 'authGeneric');
     }
   }
 
@@ -71,10 +75,11 @@ class FirebaseAuthService {
       await instance.signOut();
     } on FirebaseAuthException catch (e) {
       debugPrint('Sign out failed: $e');
-      throw Exception('Sign out failed: ${e.message}');
+      final key = mapAuthErrorKey(e);
+      throw UserFriendlyException(key, code: key);
     } on Exception catch (e) {
       debugPrint('Sign out failed: $e');
-      throw Exception('An unexpected error occurred during sign out.');
+      throw UserFriendlyException('authGeneric', code: 'authGeneric');
     }
   }
 
@@ -87,10 +92,14 @@ class FirebaseAuthService {
       debugPrint('Password reset email sent to: $email');
     } on FirebaseAuthException catch (e) {
       debugPrint('Password reset failed: $e');
-      throw Exception('Password reset failed: ${e.message}');
+      final key = mapAuthErrorKey(e);
+      throw UserFriendlyException(key, code: key);
     } on Exception catch (e) {
       debugPrint('Password reset failed: $e');
-      throw Exception('An unexpected error occurred during password reset.');
+      throw UserFriendlyException(
+        'authPasswordResetFailed',
+        code: 'authPasswordResetFailed',
+      );
     }
   }
 

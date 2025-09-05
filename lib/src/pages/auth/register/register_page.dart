@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+// Removed unused flutter_smart_dialog import after refactor
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
+import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
+import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
+import 'package:hustle_link/src/shared/analytics/auth_error_logger.dart';
 import 'package:sizer/sizer.dart';
 
 /// A screen for new users to create an account.
@@ -15,7 +18,7 @@ class RegisterPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
@@ -74,7 +77,7 @@ class RegisterPage extends HookConsumerWidget {
         Text(l10n.alreadyHaveAccount),
         TextButton(
           onPressed: () {
-            ref.read(allowNavToRegisterProvider.notifier).disallowNavigation();
+            // Direct navigation back to login (removed obsolete allowNavToRegisterProvider usage).
             context.goNamed(AppRoutes.loginRoute);
           },
           child: Text(l10n.signIn),
@@ -88,7 +91,7 @@ class RegisterPage extends HookConsumerWidget {
 class _RegisterForm extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
@@ -100,19 +103,21 @@ class _RegisterForm extends HookConsumerWidget {
     final authError = useState<String?>(null);
 
     final authState = ref.watch(authControllerProvider);
+    final isLoading = authState.isLoading;
 
     ref.listen<AsyncValue<void>>(authControllerProvider, (prev, next) {
-      next.when(
-        data: (_) {
-          SmartDialog.dismiss();
-          context.goNamed(AppRoutes.roleSelection);
-        },
-        loading: () => SmartDialog.showLoading(
-          msg: AppLocalizations.of(context)!.registrationLoadingMessage,
-        ),
+      next.whenOrNull(
+        data: (_) => context.goNamed(AppRoutes.roleSelection),
         error: (e, _) {
-          SmartDialog.dismiss();
-          authError.value = e.toString().replaceFirst('Exception: ', '');
+          if (e is UserFriendlyException) {
+            final key = e.code ?? e.message;
+            authError.value = localizeAuthError(context, key);
+            _logAuthError(ref, key);
+          } else {
+            final key = mapAuthErrorKey(e);
+            authError.value = localizeAuthError(context, key);
+            _logAuthError(ref, key);
+          }
         },
       );
     });
@@ -137,8 +142,9 @@ class _RegisterForm extends HookConsumerWidget {
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
+          enabled: !isLoading,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.emailLabel,
+            labelText: AppLocalizations.of(context).emailLabel,
             errorText: emailError.value,
           ),
           onChanged: (_) => validate(),
@@ -148,8 +154,9 @@ class _RegisterForm extends HookConsumerWidget {
           controller: passwordController,
           obscureText: true,
           textInputAction: TextInputAction.next,
+          enabled: !isLoading,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.passwordLabel,
+            labelText: AppLocalizations.of(context).passwordLabel,
             errorText: passwordError.value,
           ),
           onChanged: (_) => validate(),
@@ -159,8 +166,9 @@ class _RegisterForm extends HookConsumerWidget {
           controller: confirmPasswordController,
           obscureText: true,
           textInputAction: TextInputAction.done,
+          enabled: !isLoading,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.confirmPasswordLabel,
+            labelText: AppLocalizations.of(context).confirmPasswordLabel,
             errorText: confirmPasswordError.value,
           ),
           onChanged: (_) => validate(),
@@ -175,7 +183,7 @@ class _RegisterForm extends HookConsumerWidget {
           ),
         SizedBox(height: 4.h),
         ElevatedButton(
-          onPressed: authState.isLoading
+          onPressed: isLoading
               ? null
               : () {
                   validate();
@@ -198,7 +206,16 @@ class _RegisterForm extends HookConsumerWidget {
             ),
           ),
         ),
+        if (isLoading)
+          Padding(
+            padding: EdgeInsets.only(top: 2.h),
+            child: const Center(child: CircularProgressIndicator()),
+          ),
       ],
     );
   }
+}
+
+void _logAuthError(WidgetRef ref, String code) {
+  ref.read(authErrorAnalyticsLoggerProvider).log(code);
 }

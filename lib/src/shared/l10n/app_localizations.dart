@@ -1419,6 +1419,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subscription successful!'**
   String get subscriptionSuccessful;
+
+  /// No description provided for @authUserDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled.'**
+  String get authUserDisabled;
+
+  /// No description provided for @authWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password.'**
+  String get authWrongPassword;
+
+  /// No description provided for @authEmailInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Email already in use.'**
+  String get authEmailInUse;
+
+  /// No description provided for @authNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your connection.'**
+  String get authNetworkError;
+
+  /// No description provided for @authTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please try again later.'**
+  String get authTooManyRequests;
+
+  /// No description provided for @authOpNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'This sign-in method is not enabled.'**
+  String get authOpNotAllowed;
+
+  /// No description provided for @authGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please try again.'**
+  String get authGeneric;
+
+  /// No description provided for @authPasswordResetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset failed. Please try again.'**
+  String get authPasswordResetFailed;
 }
 
 class _AppLocalizationsDelegate

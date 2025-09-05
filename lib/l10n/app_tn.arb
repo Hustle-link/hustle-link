@@ -219,5 +219,13 @@
     "prioritySupport": "Kemonokeng e e kwa pele",
     "currentPlan": "Leano la Gago",
     "subscribe": "Peeletsa",
-    "subscriptionSuccessful": "Peeletso e atlegile!"
+    "subscriptionSuccessful": "Peeletso e atlegile!",
+    "authUserDisabled": "Akhaonto e e thibetswe.",
+    "authWrongPassword": "Lephoko la sephiri le phoso.",
+    "authEmailInUse": "Email e setse e dirisiwa.",
+    "authNetworkError": "Phoso ya kgolagano ya inthanete. Lekola kgolagano.",
+    "authTooManyRequests": "Dikgopelo di dintsi. Leka gape morago ga sebakanyana.",
+    "authOpNotAllowed": "Mokgwa ono wa go tsena ga o a dumelwa.",
+    "authGeneric": "Go tsena go paletswe. Lekola gape.",
+    "authPasswordResetFailed": "Go seta lephoko la sephiri go paletswe. Lekola gape."
 }
