@@ -31,36 +31,14 @@ class PasswordResetPage extends HookConsumerWidget {
     final timerRef = useRef<Timer?>(null);
     final successIconCtrl = useAnimationController(duration: 400.ms);
 
-    String friendlyError(Object err) {
-      if (err is UserFriendlyException) {
-        final key = err.code ?? err.message;
-        return localizeAuthError(context, key);
-      }
-      return localizeAuthError(context, err);
-    }
+    // Watch the auth controller state to show loading indicator
+    final authState = ref.watch(authControllerProvider);
 
-    ref.listen(authControllerProvider, (prev, state) {
-      state.when(
-        loading: () {
-          isLoading.value = true;
-          errorText.value = null;
-        },
-        data: (_) {
-          isLoading.value = false;
-          sent.value = true;
-          errorText.value = null;
-          resendIn.value = 30;
-        },
-        error: (error, __) {
-          isLoading.value = false;
-          errorText.value = friendlyError(error);
-          final code = error is UserFriendlyException
-              ? (error.code ?? error.message)
-              : mapAuthErrorKey(error);
-          _logAuthError(ref, code);
-        },
-      );
-    });
+    // Update loading state when auth state changes
+    useEffect(() {
+      isLoading.value = authState.isLoading;
+      return null;
+    }, [authState.isLoading]);
 
     useEffect(() {
       if (sent.value && resendIn.value > 0 && timerRef.value == null) {
@@ -93,9 +71,85 @@ class PasswordResetPage extends HookConsumerWidget {
 
     Future<void> onSubmit() async {
       if (formKey.currentState?.validate() != true) return;
+
       await ref
           .read(authControllerProvider.notifier)
-          .resetPassword(emailController.text.trim());
+          .resetPassword(
+            emailController.text.trim(),
+            onSuccess: (_) async {
+              // Show success state
+              sent.value = true;
+              errorText.value = null;
+              resendIn.value = 30;
+
+              // Show success snackbar
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(Icons.check_circle, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.passwordResetLinkSent(
+                              emailController.text.trim(),
+                            ),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Colors.green,
+                    duration: const Duration(seconds: 4),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            onError: (error) async {
+              // Handle errors with user-friendly messages
+              String friendlyMessage;
+              String code;
+
+              if (error is UserFriendlyException) {
+                code = error.code ?? error.message;
+                friendlyMessage = localizeAuthError(context, code);
+              } else if (error != null) {
+                code = mapAuthErrorKey(error);
+                friendlyMessage = localizeAuthError(context, code);
+              } else {
+                code = 'unknown_error';
+                friendlyMessage = 'An unexpected error occurred';
+              }
+
+              errorText.value = friendlyMessage;
+              _logAuthError(ref, code);
+
+              // Show error snackbar
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            friendlyMessage,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    duration: const Duration(seconds: 5),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+          );
     }
 
     return Scaffold(
@@ -126,6 +180,85 @@ class PasswordResetPage extends HookConsumerWidget {
                                         .read(authControllerProvider.notifier)
                                         .resetPassword(
                                           emailController.text.trim(),
+                                          onSuccess: (_) async {
+                                            resendIn.value = 30;
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.refresh,
+                                                        color: Colors.white,
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      const Expanded(
+                                                        child: Text(
+                                                          'Password reset link sent again!',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  backgroundColor: Colors.green,
+                                                  duration: const Duration(
+                                                    seconds: 3,
+                                                  ),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          onError: (error) async {
+                                            String friendlyMessage =
+                                                error is UserFriendlyException
+                                                ? localizeAuthError(
+                                                    context,
+                                                    error.code ?? error.message,
+                                                  )
+                                                : 'Failed to resend. Please try again.';
+
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.error_outline,
+                                                        color: Colors.white,
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Expanded(
+                                                        child: Text(
+                                                          friendlyMessage,
+                                                          style:
+                                                              const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  backgroundColor: Theme.of(
+                                                    context,
+                                                  ).colorScheme.error,
+                                                  duration: const Duration(
+                                                    seconds: 4,
+                                                  ),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                ),
+                                              );
+                                            }
+                                          },
                                         );
                                   }
                                 : null,

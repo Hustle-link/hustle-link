@@ -6,28 +6,33 @@ part of 'app_user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AppUserImpl _$$AppUserImplFromJson(Map<String, dynamic> json) =>
-    _$AppUserImpl(
-      uid: json['uid'] as String,
-      email: json['email'] as String,
-      role: json['role'] as String,
-      name: json['name'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      photoUrl: json['photoUrl'] as String?,
-      phoneNumber: json['phoneNumber'] as String?,
-      subscription: json['subscription'] == null
-          ? null
-          : Subscription.fromJson(json['subscription'] as Map<String, dynamic>),
-    );
+_AppUser _$AppUserFromJson(
+  Map<String, dynamic> json,
+) => $checkedCreate('_AppUser', json, ($checkedConvert) {
+  final val = _AppUser(
+    uid: $checkedConvert('uid', (v) => v as String),
+    email: $checkedConvert('email', (v) => v as String),
+    role: $checkedConvert('role', (v) => v as String),
+    name: $checkedConvert('name', (v) => v as String),
+    createdAt: $checkedConvert('createdAt', (v) => DateTime.parse(v as String)),
+    photoUrl: $checkedConvert('photoUrl', (v) => v as String?),
+    phoneNumber: $checkedConvert('phoneNumber', (v) => v as String?),
+    subscription: $checkedConvert(
+      'subscription',
+      (v) =>
+          v == null ? null : Subscription.fromJson(v as Map<String, dynamic>),
+    ),
+  );
+  return val;
+});
 
-Map<String, dynamic> _$$AppUserImplToJson(_$AppUserImpl instance) =>
-    <String, dynamic>{
-      'uid': instance.uid,
-      'email': instance.email,
-      'role': instance.role,
-      'name': instance.name,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'photoUrl': instance.photoUrl,
-      'phoneNumber': instance.phoneNumber,
-      'subscription': instance.subscription,
-    };
+Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
+  'uid': instance.uid,
+  'email': instance.email,
+  'role': instance.role,
+  'name': instance.name,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'photoUrl': instance.photoUrl,
+  'phoneNumber': instance.phoneNumber,
+  'subscription': instance.subscription?.toJson(),
+};

@@ -11,7 +11,7 @@ class RoleSelectionPageNew extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final selectedRole = useState<UserRole?>(null);
     final nameController = useTextEditingController();
     // Rebuild when name changes to update button enabled state
@@ -116,19 +116,53 @@ class RoleSelectionPageNew extends HookConsumerWidget {
           child: ElevatedButton(
             onPressed:
                 (selectedRole.value != null &&
-                    nameController.text.trim().isNotEmpty)
+                    nameController.text.trim().isNotEmpty &&
+                    !authState.isLoading)
                 ? () async {
-                    try {
-                      await authController.createUserProfile(
-                        name: nameController.text.trim(),
-                        role: selectedRole.value!,
-                      );
-                      if (context.mounted) {
-                        context.go('/');
-                      }
-                    } catch (e) {
-                      debugPrint('Profile creation failed: $e');
-                    }
+                    await authController.createUserProfile(
+                      name: nameController.text.trim(),
+                      role: selectedRole.value!,
+                      onSuccess: (_) async {
+                        if (context.mounted) {
+                          context.go('/');
+                        }
+                      },
+                      onError: (error) async {
+                        if (context.mounted) {
+                          final errorMsg = error.toString().replaceFirst(
+                            'Exception: ',
+                            '',
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Failed to create profile: $errorMsg',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.error,
+                              duration: const Duration(seconds: 4),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                        debugPrint('Profile creation failed: $error');
+                      },
+                    );
                   }
                 : null,
             style: ElevatedButton.styleFrom(
@@ -138,21 +172,19 @@ class RoleSelectionPageNew extends HookConsumerWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: authState.when(
-              data: (_) => Text(
-                l10n.getStarted,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              loading: () => const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              error: (error, _) => Text(l10n.tryAgain),
-            ),
+            child: authState.isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    l10n.getStarted,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
           ),
         ),
       ),

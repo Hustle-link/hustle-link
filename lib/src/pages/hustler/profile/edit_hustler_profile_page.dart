@@ -17,7 +17,7 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameController = useTextEditingController(text: profile.name);
     final bioController = useTextEditingController(text: profile.bio ?? '');
     final experienceController = useTextEditingController(
@@ -35,22 +35,9 @@ class EditHustlerProfilePage extends HookConsumerWidget {
 
     final controller = ref.read(editHustlerProfileControllerProvider.notifier);
     final mutation = ref.watch(editHustlerProfileControllerProvider);
-    ref.listen<AsyncValue<void>>(editHustlerProfileControllerProvider, (
-      prev,
-      next,
-    ) {
-      if (next.hasError) {
-        final msg = next.error.toString().replaceFirst('Exception: ', '');
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
-    });
+
+    // Use mutation state for UI feedback instead of ref.listen
+    // All error handling is now done through mutation callbacks for better separation of concerns
     final formKey = useRef(GlobalKey<FormState>());
     final selectedProfileImage = useState<File?>(null);
     final certifications = useState<List<String>>([...profile.certifications]);
@@ -137,74 +124,201 @@ class EditHustlerProfilePage extends HookConsumerWidget {
     Future<void> saveProfile() async {
       if (!formKey.value.currentState!.validate()) return;
 
-      try {
-        // Parse skills from comma-separated string
-        final skillsList = skillsController.text
-            .split(',')
-            .map((skill) => skill.trim())
-            .where((skill) => skill.isNotEmpty)
-            .toList();
+      // Parse skills from comma-separated string
+      final skillsList = skillsController.text
+          .split(',')
+          .map((skill) => skill.trim())
+          .where((skill) => skill.isNotEmpty)
+          .toList();
 
-        String? photoUrl = profile.photoUrl;
+      String? photoUrl = profile.photoUrl;
 
-        // Upload profile image if selected
-        if (selectedProfileImage.value != null) {
-          await controller.uploadProfileImage(
-            profile.uid,
-            selectedProfileImage.value!,
-          );
-          // Ideally we'd fetch the new URL from storage return; for now, keep existing until refreshed
-          photoUrl = profile.photoUrl;
-        }
-
-        // Upload new certification files
-        final allCertifications = [...certifications.value];
-        for (final certFile in newCertificationFiles.value) {
-          final fileName = certFile.path.split('/').last;
-          await controller.uploadCertification(profile.uid, certFile, fileName);
-          // Defer actual URLs to refreshed profile
-        }
-
-        final updatedProfile = profile.copyWith(
-          name: nameController.text.trim(),
-          bio: bioController.text.trim().isEmpty
-              ? null
-              : bioController.text.trim(),
-          experience: experienceController.text.trim().isEmpty
-              ? null
-              : experienceController.text.trim(),
-          location: locationController.text.trim().isEmpty
-              ? null
-              : locationController.text.trim(),
-          phoneNumber: phoneController.text.trim().isEmpty
-              ? null
-              : phoneController.text.trim(),
-          skills: skillsList,
-          photoUrl: photoUrl,
-          certifications: allCertifications,
+      // Upload profile image if selected
+      if (selectedProfileImage.value != null) {
+        await controller.uploadProfileImage(
+          profile.uid,
+          selectedProfileImage.value!,
+          onSuccess: (_) async {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Row(
+                    children: [
+                      Icon(Icons.cloud_upload, color: Colors.white),
+                      SizedBox(width: 12),
+                      Text(
+                        'Profile image uploaded successfully!',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Colors.green.shade600,
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          onError: (error) async {
+            if (context.mounted) {
+              final errorMsg = error.toString().replaceFirst('Exception: ', '');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.white),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Failed to upload image: $errorMsg',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  duration: const Duration(seconds: 4),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
         );
+        photoUrl = profile.photoUrl; // Keep existing until refreshed
+      }
 
-        await controller.saveProfile(profile, updatedProfile);
+      // Upload new certification files
+      final allCertifications = [...certifications.value];
+      for (final certFile in newCertificationFiles.value) {
+        final fileName = certFile.path.split('/').last;
+        await controller.uploadCertification(
+          profile.uid,
+          certFile,
+          fileName,
+          onSuccess: (_) async {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(Icons.description, color: Colors.white),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Certification "$fileName" uploaded!',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Colors.blue.shade600,
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          onError: (error) async {
+            if (context.mounted) {
+              final errorMsg = error.toString().replaceFirst('Exception: ', '');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.white),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Failed to upload "$fileName": $errorMsg',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  duration: const Duration(seconds: 4),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+        );
+      }
 
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.profileUpdatedSuccessfully),
-              backgroundColor: Colors.green,
-            ),
-          );
-          context.pop();
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.failedToUpdateProfile(e.toString())),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {}
+      final updatedProfile = profile.copyWith(
+        name: nameController.text.trim(),
+        bio: bioController.text.trim().isEmpty
+            ? null
+            : bioController.text.trim(),
+        experience: experienceController.text.trim().isEmpty
+            ? null
+            : experienceController.text.trim(),
+        location: locationController.text.trim().isEmpty
+            ? null
+            : locationController.text.trim(),
+        phoneNumber: phoneController.text.trim().isEmpty
+            ? null
+            : phoneController.text.trim(),
+        skills: skillsList,
+        photoUrl: photoUrl,
+        certifications: allCertifications,
+      );
+
+      await controller.saveProfile(
+        profile,
+        updatedProfile,
+        onSuccess: (_) async {
+          if (context.mounted) {
+            // Show success dialog
+            await showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                icon: Icon(
+                  Icons.check_circle,
+                  color: Colors.green.shade600,
+                  size: 48,
+                ),
+                title: const Text('Profile Updated'),
+                content: Text(l10n.profileUpdatedSuccessfully),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.pop(); // Go back to profile page
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        onError: (error) async {
+          if (context.mounted) {
+            final errorMsg = error.toString().replaceFirst('Exception: ', '');
+
+            // Show error dialog
+            showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                icon: Icon(
+                  Icons.error_outline,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 48,
+                ),
+                title: const Text('Update Failed'),
+                content: Text('Failed to update profile:\n$errorMsg'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      );
     }
 
     return Scaffold(
@@ -544,7 +658,7 @@ class _CertificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: EdgeInsets.only(bottom: 1.h),
       padding: EdgeInsets.all(3.w),

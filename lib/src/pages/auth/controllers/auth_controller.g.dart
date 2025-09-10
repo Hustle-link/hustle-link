@@ -6,18 +6,36 @@ part of 'auth_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authControllerHash() => r'03f10ae7b2247de248d223b755a69605b6f7096c';
+String _$authControllerHash() => r'85f094167234c9e3e8bf3e195dccc6d09c3df100';
 
-/// An authentication controller that manages the user's authentication state.
+/// An enhanced authentication controller with built-in effect handling.
 ///
 /// This controller provides methods for user registration, sign-in, sign-out,
 /// password reset, and profile creation. It uses the `riverpod_community_mutation`
 /// package to handle asynchronous operations and state management.
 ///
+/// The controller follows the proper mutation pattern with built-in onSuccess
+/// and onError callbacks, eliminating the need for `ref.listen` in UI components.
+///
+/// Usage pattern:
+/// ```dart
+/// await controller.signIn(
+///   email,
+///   password,
+///   onSuccess: (_) async => context.goNamed(AppRoutes.homeRoute),
+///   onError: (error) async => showErrorSnackbar(error.toString()),
+/// );
+/// ```
+///
+/// TODO(refactor): Consolidate the registration methods into a single, more robust method.
+/// TODO(enhancement): Add built-in analytics tracking for all authentication events.
+/// TODO(security): Implement rate limiting and account lockout for failed attempts.
+/// TODO(monitoring): Add comprehensive error logging and monitoring.
+///
 /// Copied from [AuthController].
 @ProviderFor(AuthController)
 final authControllerProvider =
-    AutoDisposeNotifierProvider<AuthController, AsyncValue<void>>.internal(
+    AutoDisposeNotifierProvider<AuthController, AsyncUpdate<void>>.internal(
       AuthController.new,
       name: r'authControllerProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -27,6 +45,6 @@ final authControllerProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$AuthController = AutoDisposeNotifier<AsyncValue<void>>;
+typedef _$AuthController = AutoDisposeNotifier<AsyncUpdate<void>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

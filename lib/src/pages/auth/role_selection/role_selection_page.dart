@@ -97,23 +97,56 @@ class RoleSelectionPage extends HookConsumerWidget {
               child: ElevatedButton(
                 onPressed:
                     (selectedRole.value != null &&
-                        nameController.text.trim().isNotEmpty)
+                        nameController.text.trim().isNotEmpty &&
+                        !authState.isLoading)
                     ? () async {
-                        try {
-                          await authController.createUserProfile(
-                            name: nameController.text.trim(),
-                            role: selectedRole.value!,
-                          );
-
-                          // Navigate to appropriate dashboard
-                          if (context.mounted) {
-                            context.go('/'); // Will redirect based on role
-                          }
-                        } catch (e) {
-                          debugPrint(
-                            '${RoleSelectionStrings.profileCreationFailure}$e',
-                          );
-                        }
+                        await authController.createUserProfile(
+                          name: nameController.text.trim(),
+                          role: selectedRole.value!,
+                          onSuccess: (_) async {
+                            // Navigate to appropriate dashboard
+                            if (context.mounted) {
+                              context.go('/'); // Will redirect based on role
+                            }
+                          },
+                          onError: (error) async {
+                            if (context.mounted) {
+                              final errorMsg = error.toString().replaceFirst(
+                                'Exception: ',
+                                '',
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.error_outline,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          'Failed to create profile: $errorMsg',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.error,
+                                  duration: const Duration(seconds: 4),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                            debugPrint(
+                              '${RoleSelectionStrings.profileCreationFailure}$error',
+                            );
+                          },
+                        );
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
@@ -123,15 +156,15 @@ class RoleSelectionPage extends HookConsumerWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: authState.when(
-                  data: (_) => const Text(
-                    RoleSelectionStrings.getStartedButton,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  loading: () => const CircularProgressIndicator(),
-                  error: (error, _) =>
-                      const Text(RoleSelectionStrings.tryAgainButton),
-                ),
+                child: authState.isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text(
+                        RoleSelectionStrings.getStartedButton,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
             SizedBox(height: 2.h),

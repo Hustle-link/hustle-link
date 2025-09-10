@@ -24,7 +24,7 @@ class EditEmployerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // Text editing controllers are initialized with existing profile data.
     final nameController = useTextEditingController(text: profile.name);
     final companyNameController = useTextEditingController(
@@ -46,22 +46,9 @@ class EditEmployerProfilePage extends HookConsumerWidget {
     // Access the controller and mutation state for saving the profile.
     final controller = ref.read(editEmployerProfileControllerProvider.notifier);
     final mutation = ref.watch(editEmployerProfileControllerProvider);
-    ref.listen<AsyncValue<void>>(editEmployerProfileControllerProvider, (
-      prev,
-      next,
-    ) {
-      if (next.hasError) {
-        final msg = next.error.toString().replaceFirst('Exception: ', '');
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
-    });
+
+    // Note: Error handling is now done via mutation callbacks instead of ref.listen
+    // for better separation of concerns and cleaner architecture
     // A key to manage the form's state.
     final formKey = useRef(GlobalKey<FormState>());
     // State to hold the new profile image file selected by the user.
@@ -99,63 +86,141 @@ class EditEmployerProfilePage extends HookConsumerWidget {
     Future<void> saveProfile() async {
       if (!formKey.value.currentState!.validate()) return;
 
-      try {
-        String? photoUrl = profile.photoUrl;
+      String? photoUrl = profile.photoUrl;
 
-        // If a new image is selected, upload it first.
-        // TODO(ux): Show a loading indicator specifically for the image upload.
-        if (selectedProfileImage.value != null) {
-          await controller.uploadProfileImage(
-            profile.uid,
-            selectedProfileImage.value!,
-          );
-          // Note: The photoUrl is updated via a listener on the profile provider,
-          // so we re-read it here. A more robust solution might be to get the URL
-          // directly from the upload function.
-          photoUrl = ref.read(currentEmployerProfileProvider).value?.photoUrl;
-        }
-
-        // Create an updated profile object with the new data.
-        final updatedProfile = profile.copyWith(
-          name: nameController.text.trim(),
-          companyName: companyNameController.text.trim(),
-          companyDescription: companyDescriptionController.text.trim().isEmpty
-              ? null
-              : companyDescriptionController.text.trim(),
-          location: locationController.text.trim().isEmpty
-              ? null
-              : locationController.text.trim(),
-          phoneNumber: phoneController.text.trim().isEmpty
-              ? null
-              : phoneController.text.trim(),
-          website: websiteController.text.trim().isEmpty
-              ? null
-              : websiteController.text.trim(),
-          photoUrl: photoUrl,
+      // If a new image is selected, upload it first with proper callback handling.
+      if (selectedProfileImage.value != null) {
+        await controller.uploadProfileImage(
+          profile.uid,
+          selectedProfileImage.value!,
+          onSuccess: (_) async {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Row(
+                    children: [
+                      Icon(Icons.cloud_upload, color: Colors.white),
+                      SizedBox(width: 12),
+                      Text(
+                        'Profile image uploaded successfully!',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Colors.green.shade600,
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          onError: (error) async {
+            if (context.mounted) {
+              final errorMsg = error.toString().replaceFirst('Exception: ', '');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.white),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Failed to upload image: $errorMsg',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  duration: const Duration(seconds: 4),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
         );
 
-        // Save the updated profile data to Firestore.
-        await controller.saveProfile(profile, updatedProfile);
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.profileUpdatedSuccessfully),
-              backgroundColor: Colors.green,
-            ),
-          );
-          context.pop(); // Go back to the previous screen on success.
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.failedToUpdateProfile(e.toString())),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        // Note: The photoUrl is updated via a listener on the profile provider,
+        // so we re-read it here. A more robust solution might be to get the URL
+        // directly from the upload function.
+        photoUrl = ref.read(currentEmployerProfileProvider).value?.photoUrl;
       }
+
+      // Create an updated profile object with the new data.
+      final updatedProfile = profile.copyWith(
+        name: nameController.text.trim(),
+        companyName: companyNameController.text.trim(),
+        companyDescription: companyDescriptionController.text.trim().isEmpty
+            ? null
+            : companyDescriptionController.text.trim(),
+        location: locationController.text.trim().isEmpty
+            ? null
+            : locationController.text.trim(),
+        phoneNumber: phoneController.text.trim().isEmpty
+            ? null
+            : phoneController.text.trim(),
+        website: websiteController.text.trim().isEmpty
+            ? null
+            : websiteController.text.trim(),
+        photoUrl: photoUrl,
+      );
+
+      // Save the updated profile data to Firestore with callback handling.
+      await controller.saveProfile(
+        profile,
+        updatedProfile,
+        onSuccess: (_) async {
+          if (context.mounted) {
+            // Show success dialog instead of just snackbar
+            await showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                icon: Icon(
+                  Icons.business,
+                  color: Colors.green.shade600,
+                  size: 48,
+                ),
+                title: const Text('Profile Updated'),
+                content: Text(l10n.profileUpdatedSuccessfully),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.pop(); // Go back to the previous screen
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        onError: (error) async {
+          if (context.mounted) {
+            final errorMsg = error.toString().replaceFirst('Exception: ', '');
+
+            // Show error dialog
+            showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                icon: Icon(
+                  Icons.error_outline,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 48,
+                ),
+                title: const Text('Update Failed'),
+                content: Text('Failed to update profile:\n$errorMsg'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      );
     }
 
     return Scaffold(

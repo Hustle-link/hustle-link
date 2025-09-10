@@ -6,14 +6,17 @@ part of 'subscription.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SubscriptionImpl _$$SubscriptionImplFromJson(Map<String, dynamic> json) =>
-    _$SubscriptionImpl(
-      plan: json['plan'] as String,
-      isActive: json['isActive'] as bool,
-      endDate: DateTime.parse(json['endDate'] as String),
-    );
+_Subscription _$SubscriptionFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('_Subscription', json, ($checkedConvert) {
+      final val = _Subscription(
+        plan: $checkedConvert('plan', (v) => v as String),
+        isActive: $checkedConvert('isActive', (v) => v as bool),
+        endDate: $checkedConvert('endDate', (v) => DateTime.parse(v as String)),
+      );
+      return val;
+    });
 
-Map<String, dynamic> _$$SubscriptionImplToJson(_$SubscriptionImpl instance) =>
+Map<String, dynamic> _$SubscriptionToJson(_Subscription instance) =>
     <String, dynamic>{
       'plan': instance.plan,
       'isActive': instance.isActive,

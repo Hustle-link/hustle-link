@@ -12,7 +12,7 @@ class JobDetailsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final jobAsync = ref.watch(jobByIdProvider(jobId));
     final appliedAsync = ref.watch(hasAppliedProvider(jobId));
     final mutation = ref.watch(jobDetailsControllerProvider);
@@ -21,32 +21,8 @@ class JobDetailsPage extends HookConsumerWidget {
     final coverLetterController = useTextEditingController();
     final coverFocus = useFocusNode();
 
-    // Listen for async state side effects (success/error)
-    ref.listen<AsyncValue<void>>(jobDetailsControllerProvider, (prev, next) {
-      // Show error snack when entering error state
-      if (next.hasError) {
-        final msg = next.error.toString().replaceFirst('Exception: ', '');
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-        return;
-      }
-      // On transition from loading -> data, treat as success
-      final wasLoading = prev?.isLoading == true;
-      if (wasLoading && next.hasValue) {
-        ref.invalidate(hasAppliedProvider(jobId));
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.applicationSubmittedSuccessfully)),
-          );
-        }
-      }
-    });
+    // Note: Side effects are now handled via mutation callbacks in the apply function
+    // instead of ref.listen for better separation of concerns and cleaner architecture
 
     // If data loaded but null, show not found state early
     if (jobAsync.hasValue && jobAsync.value == null) {
@@ -298,6 +274,7 @@ class JobDetailsPage extends HookConsumerWidget {
                         ? null
                         : () async {
                             FocusScope.of(context).unfocus();
+
                             await ref
                                 .read(jobDetailsControllerProvider.notifier)
                                 .apply(
@@ -306,6 +283,146 @@ class JobDetailsPage extends HookConsumerWidget {
                                       coverLetterController.text.trim().isEmpty
                                       ? null
                                       : coverLetterController.text.trim(),
+                                  onSuccess: (_) async {
+                                    // Refresh the application status
+                                    ref.invalidate(hasAppliedProvider(jobId));
+
+                                    if (context.mounted) {
+                                      // Show success dialog
+                                      await showDialog<void>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          icon: Icon(
+                                            Icons.check_circle,
+                                            color: Colors.green.shade600,
+                                            size: 56,
+                                          ),
+                                          title: const Text(
+                                            'Application Submitted',
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                l10n.applicationSubmittedSuccessfully,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  12,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.shade50,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.info_outline,
+                                                      color:
+                                                          Colors.blue.shade700,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        'The employer will review your application and contact you if interested.',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors
+                                                              .blue
+                                                              .shade700,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  onError: (error) async {
+                                    if (context.mounted) {
+                                      final errorMsg = error
+                                          .toString()
+                                          .replaceFirst('Exception: ', '');
+
+                                      // Show error dialog
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          icon: Icon(
+                                            Icons.error_outline,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.error,
+                                            size: 56,
+                                          ),
+                                          title: const Text(
+                                            'Application Failed',
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Failed to submit application:\n$errorMsg',
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  12,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.orange.shade50,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.lightbulb_outline,
+                                                      color: Colors
+                                                          .orange
+                                                          .shade700,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        'Please check your internet connection and try again.',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors
+                                                              .orange
+                                                              .shade700,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text('Try Again'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  },
                                 );
                           },
                     style: ElevatedButton.styleFrom(

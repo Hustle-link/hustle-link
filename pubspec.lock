@@ -1113,10 +1113,10 @@ packages:
     dependency: "direct main"
     description:
       name: riverpod_community_mutation
-      sha256: "3c0b511d14071a1032caff5606200bbe8ffff9d93a4a85628ef33148c1c4f594"
+      sha256: e6a666fae7cadcac403be00e6e6503db582d59e692456d979646cd5dd03a475a
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   riverpod_generator:
     dependency: "direct dev"
     description:

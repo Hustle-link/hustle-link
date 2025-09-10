@@ -35,19 +35,9 @@ class PostJobPage extends HookConsumerWidget {
     // Access the controller and mutation state for posting/updating a job.
     final controller = ref.read(postJobControllerProvider.notifier);
     final mutation = ref.watch(postJobControllerProvider);
-    ref.listen<AsyncValue<void>>(postJobControllerProvider, (prev, next) {
-      if (next.hasError) {
-        final msg = next.error.toString().replaceFirst('Exception: ', '');
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
-    });
+
+    // Note: Error handling is now done via mutation callbacks instead of ref.listen
+    // for better separation of concerns and cleaner architecture
     final jobService = ref.watch(firestoreJobServiceProvider);
 
     // Check if the page is in "edit mode" by looking for a 'editJobId' in the route extras.
@@ -319,57 +309,106 @@ class PostJobPage extends HookConsumerWidget {
                                 // Validate the form before proceeding.
                                 if (!formKey.currentState!.validate()) return;
                                 FocusScope.of(context).unfocus();
-                                try {
-                                  // Differentiate between creating a new job and updating an existing one.
-                                  if (editJobId == null) {
-                                    await controller.postJob(
-                                      title: titleController.text,
-                                      description: descriptionController.text,
-                                      skillsCsv: skillsController.text,
-                                      compensationText:
-                                          compensationController.text,
-                                      location: locationController.text,
-                                    );
-                                  } else {
-                                    await controller.updateJob(
-                                      jobId: editJobId,
-                                      title: titleController.text,
-                                      description: descriptionController.text,
-                                      skillsCsv: skillsController.text,
-                                      compensationText:
-                                          compensationController.text,
-                                      location: locationController.text,
-                                    );
-                                  }
-                                  // On success, show a confirmation and navigate back.
+
+                                // Common success callback for both create and update
+                                Future<void> onSuccess(_) async {
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          PostJobStrings.savedMessage,
+                                    // Show success dialog
+                                    await showDialog<void>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        icon: Icon(
+                                          Icons.work,
+                                          color: Colors.green.shade600,
+                                          size: 48,
                                         ),
-                                      ),
-                                    );
-                                    context.go(AppRoutes.employerDashboard);
-                                  }
-                                } catch (e) {
-                                  // On failure, show an error message.
-                                  // TODO(error-handling): Provide more specific error messages.
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                        title: Text(
+                                          editJobId == null
+                                              ? 'Job Posted!'
+                                              : 'Job Updated!',
+                                        ),
                                         content: Text(
-                                          e.toString().replaceFirst(
-                                            'Exception: ',
-                                            '',
+                                          editJobId == null
+                                              ? 'Your job posting has been published successfully. Hustlers can now view and apply for this position.'
+                                              : 'Your job posting has been updated successfully.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              context.go(
+                                                AppRoutes.employerDashboard,
+                                              );
+                                            },
+                                            child: const Text('OK'),
                                           ),
-                                        ),
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.error,
+                                        ],
                                       ),
                                     );
                                   }
+                                }
+
+                                // Common error callback
+                                Future<void> onError(Object? error) async {
+                                  if (context.mounted) {
+                                    final errorMsg = error
+                                        .toString()
+                                        .replaceFirst('Exception: ', '');
+
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        icon: Icon(
+                                          Icons.error_outline,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
+                                          size: 48,
+                                        ),
+                                        title: Text(
+                                          editJobId == null
+                                              ? 'Failed to Post Job'
+                                              : 'Failed to Update Job',
+                                        ),
+                                        content: Text(
+                                          'Error: $errorMsg\n\nPlease check all fields and try again.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('Try Again'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
+
+                                // Differentiate between creating a new job and updating an existing one.
+                                if (editJobId == null) {
+                                  await controller.postJob(
+                                    title: titleController.text,
+                                    description: descriptionController.text,
+                                    skillsCsv: skillsController.text,
+                                    compensationText:
+                                        compensationController.text,
+                                    location: locationController.text,
+                                    onSuccess: onSuccess,
+                                    onError: onError,
+                                  );
+                                } else {
+                                  await controller.updateJob(
+                                    jobId: editJobId,
+                                    title: titleController.text,
+                                    description: descriptionController.text,
+                                    skillsCsv: skillsController.text,
+                                    compensationText:
+                                        compensationController.text,
+                                    location: locationController.text,
+                                    onSuccess: onSuccess,
+                                    onError: onError,
+                                  );
                                 }
                               },
                         style: ElevatedButton.styleFrom(

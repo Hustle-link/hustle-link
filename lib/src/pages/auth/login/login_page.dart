@@ -35,26 +35,9 @@ class LoginPage extends HookConsumerWidget {
     final passwordError = useState<String?>(null);
     final authError = useState<String?>(null);
 
-    // Listen to the authentication state to handle loading, errors, and success.
-    ref.listen<AsyncValue<void>>(authControllerProvider, (prev, next) {
-      next.whenOrNull(
-        data: (_) {
-          authError.value = null;
-          context.goNamed(AppRoutes.homeRoute);
-        },
-        error: (e, _) {
-          if (e is UserFriendlyException) {
-            final key = e.code ?? e.message;
-            authError.value = localizeAuthError(context, key);
-            _logAuthError(ref, key);
-          } else {
-            final key = mapAuthErrorKey(e);
-            authError.value = localizeAuthError(context, key);
-            _logAuthError(ref, key);
-          }
-        },
-      );
-    });
+    // Note: Authentication state handling is now done via mutation callbacks
+    // instead of ref.listen to eliminate side effects in the UI component.
+    // The onSuccess and onError callbacks are passed to the signIn method.
 
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.isLoading;
@@ -203,9 +186,33 @@ class LoginPage extends HookConsumerWidget {
                   }
 
                   FocusScope.of(context).unfocus();
+
                   ref
                       .read(authControllerProvider.notifier)
-                      .signIn(email, password);
+                      .signIn(
+                        email,
+                        password,
+                        onSuccess: (_) async {
+                          authError.value = null;
+                          if (context.mounted) {
+                            context.goNamed(AppRoutes.homeRoute);
+                          }
+                        },
+                        onError: (error) async {
+                          if (error is UserFriendlyException) {
+                            final key = error.code ?? error.message;
+                            authError.value = localizeAuthError(context, key);
+                            _logAuthError(ref, key);
+                          } else if (error != null) {
+                            final key = mapAuthErrorKey(error);
+                            authError.value = localizeAuthError(context, key);
+                            _logAuthError(ref, key);
+                          } else {
+                            authError.value = 'An unexpected error occurred';
+                            _logAuthError(ref, 'unknown_error');
+                          }
+                        },
+                      );
                 },
           child: Text(
             AppLocalizations.of(context).signIn,
