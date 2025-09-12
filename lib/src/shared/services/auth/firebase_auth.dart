@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
 import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
+import 'package:hustle_link/src/shared/utils/debug_helper.dart';
 
 part 'firebase_auth.g.dart';
 
@@ -52,17 +53,31 @@ class FirebaseAuthService {
     required String password,
   }) async {
     try {
+      AuthDebugHelper.logSignInStart(email);
+
       final userCredential = await instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      if (userCredential.user == null) {
+        AuthDebugHelper.logSignInError('No user returned from Firebase');
+        throw UserFriendlyException(
+          'authSignInFailed',
+          code: 'authSignInFailed',
+        );
+      }
+
+      AuthDebugHelper.logSignInSuccess(userCredential.user!.uid);
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      debugPrint('Sign in failed: $e');
+      AuthDebugHelper.logSignInError(
+        'Firebase Auth Error: ${e.code} - ${e.message}',
+      );
       final key = mapAuthErrorKey(e);
       throw UserFriendlyException(key, code: key);
     } on Exception catch (e) {
-      debugPrint('Sign in failed: $e');
+      AuthDebugHelper.logSignInError('Generic Error: $e');
       throw UserFriendlyException('authGeneric', code: 'authGeneric');
     }
   }

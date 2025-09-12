@@ -1,5 +1,6 @@
 import 'package:hustle_link/src/src.dart';
 import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
+import 'package:hustle_link/src/shared/utils/debug_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_community_mutation/riverpod_community_mutation.dart';
 
@@ -146,17 +147,40 @@ class AuthController extends _$AuthController with Mutation<void> {
     String password, {
     Future<void> Function(void)? onSuccess,
     Future<void> Function(Object? error)? onError,
-  }) {
+  }) async {
     final firebaseAuthService = ref.watch(firebaseAuthServiceProvider);
 
-    return mutate(
-      () => firebaseAuthService.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      ),
-      onSuccess: onSuccess,
-      onError: onError,
-    );
+    try {
+      AuthDebugHelper.logMutationState('signIn', 'starting');
+
+      await mutate(
+        () async {
+          final userCredential = await firebaseAuthService
+              .signInWithEmailAndPassword(email: email, password: password);
+
+          // Verify that sign-in was successful
+          if (userCredential.user == null) {
+            throw UserFriendlyException(
+              'authSignInFailed',
+              code: 'authSignInFailed',
+            );
+          }
+
+          AuthDebugHelper.logMutationState('signIn', 'completed successfully');
+          // TODO(analytics): Track successful sign-ins with user metrics.
+          // TODO(session): Initialize user session and preferences.
+        },
+        onSuccess: onSuccess,
+        onError: onError,
+      );
+    } catch (e) {
+      AuthDebugHelper.logMutationState('signIn', 'failed with error: $e');
+      // Ensure errors are properly handled even if mutation fails
+      if (onError != null) {
+        await onError(e);
+      }
+      rethrow;
+    }
   }
 
   /// Signs out the currently authenticated user.

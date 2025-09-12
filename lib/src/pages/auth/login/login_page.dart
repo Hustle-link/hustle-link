@@ -166,7 +166,7 @@ class LoginPage extends HookConsumerWidget {
         ElevatedButton(
           onPressed: isLoading
               ? null
-              : () {
+              : () async {
                   // Clear previous errors
                   authError.value = null;
 
@@ -187,32 +187,42 @@ class LoginPage extends HookConsumerWidget {
 
                   FocusScope.of(context).unfocus();
 
-                  ref
-                      .read(authControllerProvider.notifier)
-                      .signIn(
-                        email,
-                        password,
-                        onSuccess: (_) async {
-                          authError.value = null;
-                          if (context.mounted) {
-                            context.goNamed(AppRoutes.homeRoute);
-                          }
-                        },
-                        onError: (error) async {
-                          if (error is UserFriendlyException) {
-                            final key = error.code ?? error.message;
-                            authError.value = localizeAuthError(context, key);
-                            _logAuthError(ref, key);
-                          } else if (error != null) {
-                            final key = mapAuthErrorKey(error);
-                            authError.value = localizeAuthError(context, key);
-                            _logAuthError(ref, key);
-                          } else {
-                            authError.value = 'An unexpected error occurred';
-                            _logAuthError(ref, 'unknown_error');
-                          }
-                        },
-                      );
+                  // Call the sign-in method with enhanced error handling
+                  try {
+                    await ref
+                        .read(authControllerProvider.notifier)
+                        .signIn(
+                          email,
+                          password,
+                          onSuccess: (_) async {
+                            authError.value = null;
+                            if (context.mounted) {
+                              context.goNamed(AppRoutes.homeRoute);
+                            }
+                          },
+                          onError: (error) async {
+                            debugPrint('Sign-in error: $error');
+                            if (error is UserFriendlyException) {
+                              final key = error.code ?? error.message;
+                              authError.value = localizeAuthError(context, key);
+                              _logAuthError(ref, key);
+                            } else if (error != null) {
+                              final key = mapAuthErrorKey(error);
+                              authError.value = localizeAuthError(context, key);
+                              _logAuthError(ref, key);
+                            } else {
+                              authError.value = 'An unexpected error occurred';
+                              _logAuthError(ref, 'unknown_error');
+                            }
+                          },
+                        );
+                  } catch (e) {
+                    // Fallback error handling if the mutation itself fails
+                    debugPrint('Sign-in mutation error: $e');
+                    authError.value =
+                        'An unexpected error occurred. Please try again.';
+                    _logAuthError(ref, 'mutation_error');
+                  }
                 },
           child: Text(
             AppLocalizations.of(context).signIn,
