@@ -741,6 +741,36 @@ class AppLocalizationsTn extends AppLocalizations {
   String get subscriptionSuccessful => 'Peeletso e atlegile!';
 
   @override
+  String get subscriptionStatus => 'Maemo a Peeletso';
+
+  @override
+  String get currentSubscription => 'Peeletso ya Gago';
+
+  @override
+  String get subscriptionActive => 'E a Dira';
+
+  @override
+  String get subscriptionInactive => 'E sa Dire';
+
+  @override
+  String get freeAccount => 'Akhaonto ya Mahala';
+
+  @override
+  String get manageSubscription => 'Laola Peeletso';
+
+  @override
+  String get upgradeNow => 'Tlhatlosa Jaanong';
+
+  @override
+  String get viewPlans => 'Lebelela Mananeo';
+
+  @override
+  String get subscriptionExpires => 'E fedile';
+
+  @override
+  String get subscriptionRenews => 'Tefo e e latelang';
+
+  @override
   String get authUserDisabled => 'Akhaonto e e thibetswe.';
 
   @override
@@ -766,4 +796,50 @@ class AppLocalizationsTn extends AppLocalizations {
   @override
   String get authPasswordResetFailed =>
       'Go seta lephoko la sephiri go paletswe. Lekola gape.';
+
+  @override
+  String get welcomeScreen1Title => 'O amogelwa mo Hustle Link!';
+
+  @override
+  String get welcomeScreen1Subtitle =>
+      'Sethala sa gago se segolo sa go batla ditiro tse di fetogang le go golagana le ditšhono tse dišwa. A re simololeng!';
+
+  @override
+  String get welcomeScreen1Button => 'Simolola';
+
+  @override
+  String get welcomeScreen2Title => 'Bula Bokgoni jwa Gago';
+
+  @override
+  String get welcomeScreen2Subtitle =>
+      'Feta ka ntle ga 9-go-5 ya gago. Batla ditšhono tse di susumetsang maikutlo a gago le go potlakisa dineelo tsa gago tsa madi.';
+
+  @override
+  String get welcomeScreen2Button => 'Tswelela';
+
+  @override
+  String get welcomeScreen3Title => 'Mogopolo wa Gago o Mogolo o Emetse';
+
+  @override
+  String get welcomeScreen3Subtitle =>
+      'O lapile go batla tiro ka tsela ya setšo? Batla ditiro tse di fetogang le diporojeke tse di tshwanetseng botshelo jwa gago, e seng ka tsela e nngwe.';
+
+  @override
+  String get welcomeScreen3Button => 'Tswelela';
+
+  @override
+  String get welcomeScreen4Title => 'Humana go Feta, Tshela go Feta';
+
+  @override
+  String get welcomeScreen4Subtitle =>
+      'Tlaleletsa lotseno lwa gago le go humana bokgoni jo boša. Fetola nako ya gago e e sa dirisiwang gore e nne madi a a oketsegileng le maitemogelo a a kgatlhang.';
+
+  @override
+  String get welcomeScreen4Button => 'Simolola Jaanong';
+
+  @override
+  String get skip => 'Tlola';
+
+  @override
+  String get next => 'Tswelela';
 }

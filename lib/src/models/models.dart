@@ -4,5 +4,6 @@ export 'employer.dart';
 export 'hustler.dart';
 export 'job_application.dart';
 export 'job_posting.dart';
-export 'user.dart';
+export 'orange_money_payment.dart';
 export 'subscription.dart';
+export 'user.dart';

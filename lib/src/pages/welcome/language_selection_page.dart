@@ -33,13 +33,6 @@ class LanguageSelectionPage extends HookConsumerWidget {
             ),
             const SizedBox(height: 12),
             _LanguageTile(
-              title: 'Sesotho',
-              // Note: localizations for 'st' exist in l10n, keep option hidden if needed.
-              locale: const Locale('st'),
-              selected: currentLocale.languageCode == 'st',
-            ),
-            const SizedBox(height: 12),
-            _LanguageTile(
               title: l10n.setswana,
               locale: const Locale('tn'),
               selected: currentLocale.languageCode == 'tn',

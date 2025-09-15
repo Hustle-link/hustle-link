@@ -287,10 +287,6 @@ class HustlerProfilePage extends HookConsumerWidget {
                 child: Text(l10n.english),
               ),
               DropdownMenuItem(
-                value: const Locale('st'),
-                child: const Text('Sesotho'),
-              ),
-              DropdownMenuItem(
                 value: const Locale('tn'),
                 child: Text(l10n.setswana),
               ),

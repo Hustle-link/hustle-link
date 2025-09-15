@@ -6,7 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
-import 'app_localizations_st.dart';
 import 'app_localizations_tn.dart';
 
 // ignore_for_file: type=lint
@@ -96,7 +95,6 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('st'),
     Locale('tn'),
   ];
 
@@ -1420,6 +1418,66 @@ abstract class AppLocalizations {
   /// **'Subscription successful!'**
   String get subscriptionSuccessful;
 
+  /// No description provided for @subscriptionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Status'**
+  String get subscriptionStatus;
+
+  /// No description provided for @currentSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Subscription'**
+  String get currentSubscription;
+
+  /// No description provided for @subscriptionActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get subscriptionActive;
+
+  /// No description provided for @subscriptionInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get subscriptionInactive;
+
+  /// No description provided for @freeAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Account'**
+  String get freeAccount;
+
+  /// No description provided for @manageSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subscription'**
+  String get manageSubscription;
+
+  /// No description provided for @upgradeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Now'**
+  String get upgradeNow;
+
+  /// No description provided for @viewPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'View Plans'**
+  String get viewPlans;
+
+  /// No description provided for @subscriptionExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get subscriptionExpires;
+
+  /// No description provided for @subscriptionRenews.
+  ///
+  /// In en, this message translates to:
+  /// **'Next billing'**
+  String get subscriptionRenews;
+
   /// No description provided for @authUserDisabled.
   ///
   /// In en, this message translates to:
@@ -1467,6 +1525,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password reset failed. Please try again.'**
   String get authPasswordResetFailed;
+
+  /// No description provided for @welcomeScreen1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Hustle Link!'**
+  String get welcomeScreen1Title;
+
+  /// No description provided for @welcomeScreen1Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ultimate platform for discovering flexible side hustles and connecting with new opportunities. Let\'s get started!'**
+  String get welcomeScreen1Subtitle;
+
+  /// No description provided for @welcomeScreen1Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get welcomeScreen1Button;
+
+  /// No description provided for @welcomeScreen2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Your Potential'**
+  String get welcomeScreen2Title;
+
+  /// No description provided for @welcomeScreen2Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go beyond your 9-to-5. Discover opportunities that fuel your passions and accelerate your financial goals.'**
+  String get welcomeScreen2Subtitle;
+
+  /// No description provided for @welcomeScreen2Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get welcomeScreen2Button;
+
+  /// No description provided for @welcomeScreen3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Next Big Idea Awaits'**
+  String get welcomeScreen3Title;
+
+  /// No description provided for @welcomeScreen3Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tired of the traditional job search? Find flexible gigs and projects that fit your life, not the other way around.'**
+  String get welcomeScreen3Subtitle;
+
+  /// No description provided for @welcomeScreen3Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get welcomeScreen3Button;
+
+  /// No description provided for @welcomeScreen4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn More, Live More'**
+  String get welcomeScreen4Title;
+
+  /// No description provided for @welcomeScreen4Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplement your income and gain new skills. Transform your spare time into extra cash and exciting experiences.'**
+  String get welcomeScreen4Subtitle;
+
+  /// No description provided for @welcomeScreen4Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Now'**
+  String get welcomeScreen4Button;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _AppLocalizationsDelegate
@@ -1480,7 +1622,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'st', 'tn'].contains(locale.languageCode);
+      <String>['en', 'tn'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1491,8 +1633,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
-    case 'st':
-      return AppLocalizationsSt();
     case 'tn':
       return AppLocalizationsTn();
   }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Subscription {
 
- String get plan; bool get isActive; DateTime get endDate;
+ String get plan; bool get isActive; DateTime get startDate; DateTime get endDate; double get priceInPula; String get paymentMethod; String? get orangeMoneyReference; bool get autoRenew; List<String> get features; String? get cancellationReason; DateTime? get lastPaymentDate;
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SubscriptionCopyWith<Subscription> get copyWith => _$SubscriptionCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Subscription&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.endDate, endDate) || other.endDate == endDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Subscription&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.priceInPula, priceInPula) || other.priceInPula == priceInPula)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.orangeMoneyReference, orangeMoneyReference) || other.orangeMoneyReference == orangeMoneyReference)&&(identical(other.autoRenew, autoRenew) || other.autoRenew == autoRenew)&&const DeepCollectionEquality().equals(other.features, features)&&(identical(other.cancellationReason, cancellationReason) || other.cancellationReason == cancellationReason)&&(identical(other.lastPaymentDate, lastPaymentDate) || other.lastPaymentDate == lastPaymentDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,plan,isActive,endDate);
+int get hashCode => Object.hash(runtimeType,plan,isActive,startDate,endDate,priceInPula,paymentMethod,orangeMoneyReference,autoRenew,const DeepCollectionEquality().hash(features),cancellationReason,lastPaymentDate);
 
 @override
 String toString() {
-  return 'Subscription(plan: $plan, isActive: $isActive, endDate: $endDate)';
+  return 'Subscription(plan: $plan, isActive: $isActive, startDate: $startDate, endDate: $endDate, priceInPula: $priceInPula, paymentMethod: $paymentMethod, orangeMoneyReference: $orangeMoneyReference, autoRenew: $autoRenew, features: $features, cancellationReason: $cancellationReason, lastPaymentDate: $lastPaymentDate)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SubscriptionCopyWith<$Res>  {
   factory $SubscriptionCopyWith(Subscription value, $Res Function(Subscription) _then) = _$SubscriptionCopyWithImpl;
 @useResult
 $Res call({
- String plan, bool isActive, DateTime endDate
+ String plan, bool isActive, DateTime startDate, DateTime endDate, double priceInPula, String paymentMethod, String? orangeMoneyReference, bool autoRenew, List<String> features, String? cancellationReason, DateTime? lastPaymentDate
 });
 
 
@@ -65,12 +65,20 @@ class _$SubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? plan = null,Object? isActive = null,Object? endDate = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? plan = null,Object? isActive = null,Object? startDate = null,Object? endDate = null,Object? priceInPula = null,Object? paymentMethod = null,Object? orangeMoneyReference = freezed,Object? autoRenew = null,Object? features = null,Object? cancellationReason = freezed,Object? lastPaymentDate = freezed,}) {
   return _then(_self.copyWith(
 plan: null == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
 as String,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as bool,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime,priceInPula: null == priceInPula ? _self.priceInPula : priceInPula // ignore: cast_nullable_to_non_nullable
+as double,paymentMethod: null == paymentMethod ? _self.paymentMethod : paymentMethod // ignore: cast_nullable_to_non_nullable
+as String,orangeMoneyReference: freezed == orangeMoneyReference ? _self.orangeMoneyReference : orangeMoneyReference // ignore: cast_nullable_to_non_nullable
+as String?,autoRenew: null == autoRenew ? _self.autoRenew : autoRenew // ignore: cast_nullable_to_non_nullable
+as bool,features: null == features ? _self.features : features // ignore: cast_nullable_to_non_nullable
+as List<String>,cancellationReason: freezed == cancellationReason ? _self.cancellationReason : cancellationReason // ignore: cast_nullable_to_non_nullable
+as String?,lastPaymentDate: freezed == lastPaymentDate ? _self.lastPaymentDate : lastPaymentDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -155,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String plan,  bool isActive,  DateTime endDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String plan,  bool isActive,  DateTime startDate,  DateTime endDate,  double priceInPula,  String paymentMethod,  String? orangeMoneyReference,  bool autoRenew,  List<String> features,  String? cancellationReason,  DateTime? lastPaymentDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Subscription() when $default != null:
-return $default(_that.plan,_that.isActive,_that.endDate);case _:
+return $default(_that.plan,_that.isActive,_that.startDate,_that.endDate,_that.priceInPula,_that.paymentMethod,_that.orangeMoneyReference,_that.autoRenew,_that.features,_that.cancellationReason,_that.lastPaymentDate);case _:
   return orElse();
 
 }
@@ -176,10 +184,10 @@ return $default(_that.plan,_that.isActive,_that.endDate);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String plan,  bool isActive,  DateTime endDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String plan,  bool isActive,  DateTime startDate,  DateTime endDate,  double priceInPula,  String paymentMethod,  String? orangeMoneyReference,  bool autoRenew,  List<String> features,  String? cancellationReason,  DateTime? lastPaymentDate)  $default,) {final _that = this;
 switch (_that) {
 case _Subscription():
-return $default(_that.plan,_that.isActive,_that.endDate);case _:
+return $default(_that.plan,_that.isActive,_that.startDate,_that.endDate,_that.priceInPula,_that.paymentMethod,_that.orangeMoneyReference,_that.autoRenew,_that.features,_that.cancellationReason,_that.lastPaymentDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +204,10 @@ return $default(_that.plan,_that.isActive,_that.endDate);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String plan,  bool isActive,  DateTime endDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String plan,  bool isActive,  DateTime startDate,  DateTime endDate,  double priceInPula,  String paymentMethod,  String? orangeMoneyReference,  bool autoRenew,  List<String> features,  String? cancellationReason,  DateTime? lastPaymentDate)?  $default,) {final _that = this;
 switch (_that) {
 case _Subscription() when $default != null:
-return $default(_that.plan,_that.isActive,_that.endDate);case _:
+return $default(_that.plan,_that.isActive,_that.startDate,_that.endDate,_that.priceInPula,_that.paymentMethod,_that.orangeMoneyReference,_that.autoRenew,_that.features,_that.cancellationReason,_that.lastPaymentDate);case _:
   return null;
 
 }
@@ -211,12 +219,26 @@ return $default(_that.plan,_that.isActive,_that.endDate);case _:
 @JsonSerializable()
 
 class _Subscription implements Subscription {
-  const _Subscription({required this.plan, required this.isActive, required this.endDate});
+  const _Subscription({required this.plan, required this.isActive, required this.startDate, required this.endDate, this.priceInPula = 0.0, this.paymentMethod = 'orange_money', this.orangeMoneyReference, this.autoRenew = false, final  List<String> features = const [], this.cancellationReason, this.lastPaymentDate}): _features = features;
   factory _Subscription.fromJson(Map<String, dynamic> json) => _$SubscriptionFromJson(json);
 
 @override final  String plan;
 @override final  bool isActive;
+@override final  DateTime startDate;
 @override final  DateTime endDate;
+@override@JsonKey() final  double priceInPula;
+@override@JsonKey() final  String paymentMethod;
+@override final  String? orangeMoneyReference;
+@override@JsonKey() final  bool autoRenew;
+ final  List<String> _features;
+@override@JsonKey() List<String> get features {
+  if (_features is EqualUnmodifiableListView) return _features;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_features);
+}
+
+@override final  String? cancellationReason;
+@override final  DateTime? lastPaymentDate;
 
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Subscription&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.endDate, endDate) || other.endDate == endDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Subscription&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.priceInPula, priceInPula) || other.priceInPula == priceInPula)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.orangeMoneyReference, orangeMoneyReference) || other.orangeMoneyReference == orangeMoneyReference)&&(identical(other.autoRenew, autoRenew) || other.autoRenew == autoRenew)&&const DeepCollectionEquality().equals(other._features, _features)&&(identical(other.cancellationReason, cancellationReason) || other.cancellationReason == cancellationReason)&&(identical(other.lastPaymentDate, lastPaymentDate) || other.lastPaymentDate == lastPaymentDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,plan,isActive,endDate);
+int get hashCode => Object.hash(runtimeType,plan,isActive,startDate,endDate,priceInPula,paymentMethod,orangeMoneyReference,autoRenew,const DeepCollectionEquality().hash(_features),cancellationReason,lastPaymentDate);
 
 @override
 String toString() {
-  return 'Subscription(plan: $plan, isActive: $isActive, endDate: $endDate)';
+  return 'Subscription(plan: $plan, isActive: $isActive, startDate: $startDate, endDate: $endDate, priceInPula: $priceInPula, paymentMethod: $paymentMethod, orangeMoneyReference: $orangeMoneyReference, autoRenew: $autoRenew, features: $features, cancellationReason: $cancellationReason, lastPaymentDate: $lastPaymentDate)';
 }
 
 
@@ -251,7 +273,7 @@ abstract mixin class _$SubscriptionCopyWith<$Res> implements $SubscriptionCopyWi
   factory _$SubscriptionCopyWith(_Subscription value, $Res Function(_Subscription) _then) = __$SubscriptionCopyWithImpl;
 @override @useResult
 $Res call({
- String plan, bool isActive, DateTime endDate
+ String plan, bool isActive, DateTime startDate, DateTime endDate, double priceInPula, String paymentMethod, String? orangeMoneyReference, bool autoRenew, List<String> features, String? cancellationReason, DateTime? lastPaymentDate
 });
 
 
@@ -268,12 +290,20 @@ class __$SubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? plan = null,Object? isActive = null,Object? endDate = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? plan = null,Object? isActive = null,Object? startDate = null,Object? endDate = null,Object? priceInPula = null,Object? paymentMethod = null,Object? orangeMoneyReference = freezed,Object? autoRenew = null,Object? features = null,Object? cancellationReason = freezed,Object? lastPaymentDate = freezed,}) {
   return _then(_Subscription(
 plan: null == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
 as String,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as bool,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime,priceInPula: null == priceInPula ? _self.priceInPula : priceInPula // ignore: cast_nullable_to_non_nullable
+as double,paymentMethod: null == paymentMethod ? _self.paymentMethod : paymentMethod // ignore: cast_nullable_to_non_nullable
+as String,orangeMoneyReference: freezed == orangeMoneyReference ? _self.orangeMoneyReference : orangeMoneyReference // ignore: cast_nullable_to_non_nullable
+as String?,autoRenew: null == autoRenew ? _self.autoRenew : autoRenew // ignore: cast_nullable_to_non_nullable
+as bool,features: null == features ? _self._features : features // ignore: cast_nullable_to_non_nullable
+as List<String>,cancellationReason: freezed == cancellationReason ? _self.cancellationReason : cancellationReason // ignore: cast_nullable_to_non_nullable
+as String?,lastPaymentDate: freezed == lastPaymentDate ? _self.lastPaymentDate : lastPaymentDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

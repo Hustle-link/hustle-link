@@ -727,6 +727,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionSuccessful => 'Subscription successful!';
 
   @override
+  String get subscriptionStatus => 'Subscription Status';
+
+  @override
+  String get currentSubscription => 'Current Subscription';
+
+  @override
+  String get subscriptionActive => 'Active';
+
+  @override
+  String get subscriptionInactive => 'Inactive';
+
+  @override
+  String get freeAccount => 'Free Account';
+
+  @override
+  String get manageSubscription => 'Manage Subscription';
+
+  @override
+  String get upgradeNow => 'Upgrade Now';
+
+  @override
+  String get viewPlans => 'View Plans';
+
+  @override
+  String get subscriptionExpires => 'Expires';
+
+  @override
+  String get subscriptionRenews => 'Next billing';
+
+  @override
   String get authUserDisabled => 'This account has been disabled.';
 
   @override
@@ -751,4 +781,50 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authPasswordResetFailed =>
       'Password reset failed. Please try again.';
+
+  @override
+  String get welcomeScreen1Title => 'Welcome to Hustle Link!';
+
+  @override
+  String get welcomeScreen1Subtitle =>
+      'Your ultimate platform for discovering flexible side hustles and connecting with new opportunities. Let\'s get started!';
+
+  @override
+  String get welcomeScreen1Button => 'Get Started';
+
+  @override
+  String get welcomeScreen2Title => 'Unlock Your Potential';
+
+  @override
+  String get welcomeScreen2Subtitle =>
+      'Go beyond your 9-to-5. Discover opportunities that fuel your passions and accelerate your financial goals.';
+
+  @override
+  String get welcomeScreen2Button => 'Next';
+
+  @override
+  String get welcomeScreen3Title => 'Your Next Big Idea Awaits';
+
+  @override
+  String get welcomeScreen3Subtitle =>
+      'Tired of the traditional job search? Find flexible gigs and projects that fit your life, not the other way around.';
+
+  @override
+  String get welcomeScreen3Button => 'Next';
+
+  @override
+  String get welcomeScreen4Title => 'Earn More, Live More';
+
+  @override
+  String get welcomeScreen4Subtitle =>
+      'Supplement your income and gain new skills. Transform your spare time into extra cash and exciting experiences.';
+
+  @override
+  String get welcomeScreen4Button => 'Start Now';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get next => 'Next';
 }

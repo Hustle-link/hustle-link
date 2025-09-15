@@ -19,6 +19,8 @@ class WelcomePage extends HookConsumerWidget {
   const WelcomePage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     // Controller for the PageView.
     final pageController = usePageController();
 
@@ -43,15 +45,15 @@ class WelcomePage extends HookConsumerWidget {
     String? nextButtonText() {
       switch (currentPage.value) {
         case 0:
-          return AppStringsWelcome.welcomeScreen1.buttonText;
+          return l10n.welcomeScreen1Button;
         case 1:
-          return AppStringsWelcome.welcomeScreen2.buttonText;
+          return l10n.welcomeScreen2Button;
         case 2:
-          return AppStringsWelcome.welcomeScreen3.buttonText;
+          return l10n.welcomeScreen3Button;
         case 3:
-          return AppStringsWelcome.welcomeScreen4.buttonText;
+          return l10n.welcomeScreen4Button;
         default:
-          return GeneralStrings.welcome;
+          return l10n.next;
       }
     }
 
@@ -117,7 +119,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: Offset(0, 0.5),
                       slideDelay: Duration(milliseconds: 100),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen1.title,
+                        l10n.welcomeScreen1Title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -133,7 +135,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideDelay: Duration(milliseconds: 200),
                       child: Text(
                         textAlign: TextAlign.center,
-                        AppStringsWelcome.welcomeScreen1.subtitle,
+                        l10n.welcomeScreen1Subtitle,
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
@@ -165,7 +167,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: const Offset(0, 0.5),
                       slideDelay: const Duration(milliseconds: 100),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen2.title,
+                        l10n.welcomeScreen2Title,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
@@ -180,7 +182,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: const Offset(0, 0.7),
                       slideDelay: const Duration(milliseconds: 200),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen2.subtitle,
+                        l10n.welcomeScreen2Subtitle,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
@@ -215,7 +217,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: const Offset(0, 0.5),
                       slideDelay: const Duration(milliseconds: 100),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen3.title,
+                        l10n.welcomeScreen3Title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onTertiary,
@@ -230,7 +232,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: const Offset(0, 0.7),
                       slideDelay: const Duration(milliseconds: 200),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen3.subtitle,
+                        l10n.welcomeScreen3Subtitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onTertiary,
@@ -265,7 +267,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: const Offset(0, 0.5),
                       slideDelay: const Duration(milliseconds: 100),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen4.title,
+                        l10n.welcomeScreen4Title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(
@@ -282,7 +284,7 @@ class WelcomePage extends HookConsumerWidget {
                       slideBeginOffset: const Offset(0, 0.7),
                       slideDelay: const Duration(milliseconds: 200),
                       child: Text(
-                        AppStringsWelcome.welcomeScreen4.subtitle,
+                        l10n.welcomeScreen4Subtitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(
@@ -327,7 +329,7 @@ class WelcomePage extends HookConsumerWidget {
                   iconAlignment: IconAlignment.end,
                   label: Text(
                     // TODO(ux): Consider hiding the skip button on the last page.
-                    GeneralStrings.skip,
+                    l10n.skip,
                     style: TextStyle(color: buttonColor()),
                   ),
                 ),
@@ -350,7 +352,7 @@ class WelcomePage extends HookConsumerWidget {
                     }
                   },
                   child: Text(
-                    nextButtonText() ?? GeneralStrings.next,
+                    nextButtonText() ?? l10n.next,
                     style: TextStyle(color: buttonColor()),
                   ),
                 ),

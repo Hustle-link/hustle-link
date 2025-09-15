@@ -19,7 +19,6 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   final List<Language> _languages = [
     const Language(name: 'English', code: 'en'),
     const Language(name: 'Setswana', code: 'tn'),
-    const Language(name: 'Sesotho', code: 'st'),
   ];
 
   Language? _selectedLanguage;
