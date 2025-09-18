@@ -19,9 +19,11 @@ class EmployerProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // Watch the provider that supplies the current employer's profile data.
     final employerProfile = ref.watch(currentEmployerProfileProvider);
+    // Watch the current user profile to get subscription information
+    final userProfile = ref.watch(currentUserProfileProvider);
     // Read the auth controller to handle sign-out actions.
     final authController = ref.read(authControllerProvider.notifier);
 
@@ -125,11 +127,7 @@ class EmployerProfilePage extends HookConsumerWidget {
                         },
                         // Dynamically generates the prompt message.
                         message:
-                            'Add ${[
-                          if (profile.phoneNumber == null) l10n.addPhoneNumber,
-                          if (profile.location == null) l10n.addLocation,
-                          if (profile.website == null) l10n.addWebsite
-                        ].join(', ')}',
+                            'Add ${[if (profile.phoneNumber == null) l10n.addPhoneNumber, if (profile.location == null) l10n.addLocation, if (profile.website == null) l10n.addWebsite].join(', ')}',
                       ),
                   ],
                 ),
@@ -220,6 +218,16 @@ class EmployerProfilePage extends HookConsumerWidget {
 
                 SizedBox(height: 4.h),
 
+                // Subscription Status
+                userProfile.when(
+                  data: (user) =>
+                      SubscriptionStatusCard(subscription: user?.subscription),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
+
+                SizedBox(height: 4.h),
+
                 // Support and Logout Section
                 _buildSupportSection(context, ref),
 
@@ -249,7 +257,7 @@ class EmployerProfilePage extends HookConsumerWidget {
   }
 
   Widget _buildSupportSection(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final currentLocale = ref.watch(localeNotifierProvider);
     final localeNotifier = ref.read(localeNotifierProvider.notifier);
     return _InfoSection(
@@ -292,9 +300,7 @@ class EmployerProfilePage extends HookConsumerWidget {
             final Uri emailLaunchUri = Uri(
               scheme: 'mailto',
               path: 'hustlelink05@gmail.com',
-              queryParameters: {
-                'subject': 'Support Request - HustleLink App',
-              },
+              queryParameters: {'subject': 'Support Request - HustleLink App'},
             );
 
             if (await canLaunchUrl(emailLaunchUri)) {
@@ -304,7 +310,8 @@ class EmployerProfilePage extends HookConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
-                      'Could not open email client. Please email hustlelink05@gmail.com'),
+                    'Could not open email client. Please email hustlelink05@gmail.com',
+                  ),
                 ),
               );
             }
@@ -312,7 +319,10 @@ class EmployerProfilePage extends HookConsumerWidget {
         ),
         const Divider(),
         ListTile(
-          leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+          leading: Icon(
+            Icons.logout,
+            color: Theme.of(context).colorScheme.error,
+          ),
           title: Text(
             l10n.logout,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
@@ -363,9 +373,7 @@ class _ProfileHeader extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 32.sp,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onPrimary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
           ),
@@ -375,9 +383,7 @@ class _ProfileHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.bold,
-              color: Theme.of(
-                context,
-              ).colorScheme.onPrimaryContainer,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
           SizedBox(height: 0.5.h),
@@ -652,7 +658,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final p = _calculateCompletionPercentage();
     // If the profile is complete, show a simple success message.
     if (p >= 1.0) {

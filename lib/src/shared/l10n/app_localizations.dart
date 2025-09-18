@@ -1609,6 +1609,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @upgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get upgrade;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @proceedWithPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed with Payment'**
+  String get proceedWithPayment;
+
+  /// No description provided for @upgradeToPostMoreJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Post More Jobs'**
+  String get upgradeToPostMoreJobs;
+
+  /// No description provided for @downgradeToFreePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Downgrade to Free Plan'**
+  String get downgradeToFreePlan;
+
+  /// No description provided for @downgradeConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to downgrade to the free plan? You will lose access to premium features at the end of your current billing period.'**
+  String get downgradeConfirmation;
+
+  /// No description provided for @downgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Downgrade'**
+  String get downgrade;
+
+  /// No description provided for @subscriptionCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription cancelled. You still have access until the end of your billing period.'**
+  String get subscriptionCancelled;
+
+  /// No description provided for @agreeToTermsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms and Conditions'**
+  String get agreeToTermsAndConditions;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @viewTermsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'View Terms and Conditions'**
+  String get viewTermsAndConditions;
+
+  /// No description provided for @termsAndConditionsContent.
+  ///
+  /// In en, this message translates to:
+  /// **'By subscribing, you agree to our terms of service and privacy policy. Your subscription will automatically renew monthly unless cancelled.'**
+  String get termsAndConditionsContent;
+
+  /// No description provided for @continueText.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueText;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @subscriptionUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get subscriptionUpgrade;
+
+  /// No description provided for @subscriptionDowngrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Downgrade'**
+  String get subscriptionDowngrade;
+
+  /// No description provided for @subscriptionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get subscriptionCancel;
+
+  /// No description provided for @subscriptionOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get subscriptionOk;
+
+  /// No description provided for @subscriptionTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get subscriptionTryAgain;
+
+  /// No description provided for @subscriptionTermsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to our terms of service and privacy policy.'**
+  String get subscriptionTermsAndConditions;
+
+  /// No description provided for @subscriptionPaymentProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing payment...'**
+  String get subscriptionPaymentProcessing;
+
+  /// No description provided for @subscriptionPaymentConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your next payment of'**
+  String get subscriptionPaymentConfirmation;
+
+  /// No description provided for @subscriptionMonthlySubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'monthly'**
+  String get subscriptionMonthlySubscription;
+
+  /// No description provided for @subscriptionAnnualSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'annually'**
+  String get subscriptionAnnualSubscription;
+
+  /// No description provided for @billedMonthlyCancelAnytime.
+  ///
+  /// In en, this message translates to:
+  /// **'Billed monthly • Cancel anytime'**
+  String get billedMonthlyCancelAnytime;
 }
 
 class _AppLocalizationsDelegate

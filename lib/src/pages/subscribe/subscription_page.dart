@@ -25,9 +25,10 @@ class SubscriptionPage extends HookConsumerWidget {
     /// Available subscription plans for Botswana market
     final availablePlans = [
       SubscriptionPlan.free,
-      SubscriptionPlan.basic,
-      SubscriptionPlan.premium,
-      SubscriptionPlan.professional,
+      SubscriptionPlan.starter,
+      SubscriptionPlan.growth,
+      SubscriptionPlan.pro,
+      SubscriptionPlan.businessPremium,
     ];
 
     /// Gets the current user's subscription plan
@@ -43,7 +44,7 @@ class SubscriptionPage extends HookConsumerWidget {
     void handlePlanSelection(SubscriptionPlan plan) {
       if (plan == SubscriptionPlan.free) {
         // Handle downgrade to free plan
-        _handleDowngradeToFree(context, ref, user.asData?.value);
+        _handleDowngradeToFree(context, ref, user.asData?.value, l10n);
         return;
       }
 
@@ -153,6 +154,7 @@ class SubscriptionPage extends HookConsumerWidget {
                       plan: plan,
                       isCurrentPlan: plan == getCurrentPlan(),
                       onSelect: () => handlePlanSelection(plan),
+                      l10n: l10n,
                     ),
                   ),
                 ),
@@ -335,18 +337,17 @@ class SubscriptionPage extends HookConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AppUser? user,
+    AppLocalizations l10n,
   ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Downgrade to Free Plan'),
-        content: const Text(
-          'Are you sure you want to downgrade to the free plan? You will lose access to premium features at the end of your current billing period.',
-        ),
+        title: Text(l10n.downgradeToFreePlan),
+        content: Text(l10n.downgradeConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.subscriptionCancel),
           ),
           TextButton(
             onPressed: () async {
@@ -359,16 +360,12 @@ class SubscriptionPage extends HookConsumerWidget {
 
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Subscription cancelled. You still have access until the end of your billing period.',
-                      ),
-                    ),
+                    SnackBar(content: Text(l10n.subscriptionCancelled)),
                   );
                 }
               }
             },
-            child: const Text('Downgrade'),
+            child: Text(l10n.subscriptionDowngrade),
           ),
         ],
       ),
@@ -384,35 +381,37 @@ class _SubscriptionPlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final bool isCurrentPlan;
   final VoidCallback onSelect;
+  final AppLocalizations l10n;
 
   const _SubscriptionPlanCard({
     required this.plan,
     required this.isCurrentPlan,
     required this.onSelect,
+    required this.l10n,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Premium plan gets special styling
-    final isPremiumPlan = plan == SubscriptionPlan.premium;
+    // Growth plan gets special styling as the "recommended" plan
+    final isRecommendedPlan = plan == SubscriptionPlan.growth;
 
     return Card(
-      elevation: isCurrentPlan ? 8 : (isPremiumPlan ? 6 : 2),
+      elevation: isCurrentPlan ? 8 : (isRecommendedPlan ? 6 : 2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
           color: isCurrentPlan
               ? theme.colorScheme.primary
-              : (isPremiumPlan ? Colors.orange : Colors.transparent),
-          width: isCurrentPlan ? 3 : (isPremiumPlan ? 2 : 0),
+              : (isRecommendedPlan ? Colors.orange : Colors.transparent),
+          width: isCurrentPlan ? 3 : (isRecommendedPlan ? 2 : 0),
         ),
       ),
       child: Stack(
         children: [
-          // Recommended badge for premium plan
-          if (isPremiumPlan && !isCurrentPlan)
+          // Recommended badge for growth plan
+          if (isRecommendedPlan && !isCurrentPlan)
             Positioned(
               top: 0,
               right: 0,
@@ -498,7 +497,7 @@ class _SubscriptionPlanCard extends StatelessWidget {
                 if (plan != SubscriptionPlan.free) ...[
                   SizedBox(height: 2.h),
                   Text(
-                    'Billed monthly • Cancel anytime',
+                    l10n.billedMonthlyCancelAnytime,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -514,9 +513,9 @@ class _SubscriptionPlanCard extends StatelessWidget {
   }
 
   String _getButtonText(bool isCurrentPlan, SubscriptionPlan plan) {
-    if (isCurrentPlan) return 'Current Plan';
-    if (plan == SubscriptionPlan.free) return 'Downgrade';
-    return 'Upgrade to ${plan.displayName}';
+    if (isCurrentPlan) return 'Current Plan'; // TODO: Add to localization
+    if (plan == SubscriptionPlan.free) return l10n.subscriptionDowngrade;
+    return 'Upgrade to ${plan.displayName}'; // TODO: Add to localization
   }
 }
 

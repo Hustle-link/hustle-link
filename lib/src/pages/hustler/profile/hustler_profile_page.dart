@@ -13,6 +13,8 @@ class HustlerProfilePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final hustlerProfile = ref.watch(currentHustlerProfileProvider);
+    // Watch the current user profile to get subscription information
+    final userProfile = ref.watch(currentUserProfileProvider);
     final authController = ref.read(authControllerProvider.notifier);
 
     return Scaffold(
@@ -238,6 +240,16 @@ class HustlerProfilePage extends HookConsumerWidget {
                       value: l10n.hustler,
                     ),
                   ],
+                ),
+
+                SizedBox(height: 4.h),
+
+                // Subscription Status
+                userProfile.when(
+                  data: (user) =>
+                      SubscriptionStatusCard(subscription: user?.subscription),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
                 ),
 
                 SizedBox(height: 4.h),

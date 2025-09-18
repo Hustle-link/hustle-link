@@ -226,17 +226,15 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
               CheckboxListTile(
                 value: agreedToTerms.value,
                 onChanged: (value) => agreedToTerms.value = value ?? false,
-                title: const Text('I agree to the Terms and Conditions'),
+                title: Text(l10n.agreeToTermsAndConditions),
                 subtitle: GestureDetector(
                   onTap: () {
                     // TODO(legal): Implement terms and conditions view
                     showDialog(
                       context: context,
-                      builder: (context) => const AlertDialog(
-                        title: Text('Terms and Conditions'),
-                        content: Text(
-                          'By subscribing, you agree to our terms of service and privacy policy. Your subscription will automatically renew monthly unless cancelled.',
-                        ),
+                      builder: (context) => AlertDialog(
+                        title: Text(l10n.termsAndConditions),
+                        content: Text(l10n.termsAndConditionsContent),
                         actions: [
                           TextButton(
                             onPressed:
@@ -248,7 +246,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
                     );
                   },
                   child: Text(
-                    'View Terms and Conditions',
+                    l10n.viewTermsAndConditions,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.primary,
                       decoration: TextDecoration.underline,

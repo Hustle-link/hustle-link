@@ -841,5 +841,89 @@ class AppLocalizationsTn extends AppLocalizations {
   String get skip => 'Tlola';
 
   @override
-  String get next => 'Tswelela';
+  String get next => 'Next';
+
+  @override
+  String get upgrade => 'Upgrade';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get proceedWithPayment => 'Proceed with Payment';
+
+  @override
+  String get upgradeToPostMoreJobs => 'Upgrade to Post More Jobs';
+
+  @override
+  String get downgradeToFreePlan => 'Downgrade to Free Plan';
+
+  @override
+  String get downgradeConfirmation =>
+      'Are you sure you want to downgrade to the free plan? You will lose access to premium features at the end of your current billing period.';
+
+  @override
+  String get downgrade => 'Downgrade';
+
+  @override
+  String get subscriptionCancelled =>
+      'Subscription cancelled. You still have access until the end of your billing period.';
+
+  @override
+  String get agreeToTermsAndConditions => 'I agree to the Terms and Conditions';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get viewTermsAndConditions => 'View Terms and Conditions';
+
+  @override
+  String get termsAndConditionsContent =>
+      'By subscribing, you agree to our terms of service and privacy policy. Your subscription will automatically renew monthly unless cancelled.';
+
+  @override
+  String get continueText => 'Tswelela';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get subscriptionUpgrade => 'Tlhatlhoba';
+
+  @override
+  String get subscriptionDowngrade => 'Theola';
+
+  @override
+  String get subscriptionCancel => 'Khansela';
+
+  @override
+  String get subscriptionOk => 'Siame';
+
+  @override
+  String get subscriptionTryAgain => 'Leka Gape';
+
+  @override
+  String get subscriptionTermsAndConditions =>
+      'Ka go tswelela, o dumalana le melao ya rona ya tiriso le polelo ya lekunutu.';
+
+  @override
+  String get subscriptionPaymentProcessing => 'Go baakanyetsa tefo...';
+
+  @override
+  String get subscriptionPaymentConfirmation =>
+      'Netefatsa tefo ya gago e e latelang ya';
+
+  @override
+  String get subscriptionMonthlySubscription => 'kgwedi le kgwedi';
+
+  @override
+  String get subscriptionAnnualSubscription => 'ngwaga le ngwaga';
+
+  @override
+  String get billedMonthlyCancelAnytime =>
+      'Tefo ya kgwedi le kgwedi • Khansela nako nngwe le nngwe';
 }

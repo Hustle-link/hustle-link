@@ -251,5 +251,16 @@
     "welcomeScreen4Subtitle": "Tlaleletsa lotseno lwa gago le go humana bokgoni jo boša. Fetola nako ya gago e e sa dirisiwang gore e nne madi a a oketsegileng le maitemogelo a a kgatlhang.",
     "welcomeScreen4Button": "Simolola Jaanong",
     "skip": "Tlola",
-    "next": "Tswelela"
+    "continueText": "Tswelela",
+    "subscriptionUpgrade": "Tlhatlhoba",
+    "subscriptionDowngrade": "Theola",
+    "subscriptionCancel": "Khansela",
+    "subscriptionOk": "Siame",
+    "subscriptionTryAgain": "Leka Gape",
+    "subscriptionTermsAndConditions": "Ka go tswelela, o dumalana le melao ya rona ya tiriso le polelo ya lekunutu.",
+    "subscriptionPaymentProcessing": "Go baakanyetsa tefo...",
+    "subscriptionPaymentConfirmation": "Netefatsa tefo ya gago e e latelang ya",
+    "subscriptionMonthlySubscription": "kgwedi le kgwedi",
+    "subscriptionAnnualSubscription": "ngwaga le ngwaga",
+    "billedMonthlyCancelAnytime": "Tefo ya kgwedi le kgwedi • Khansela nako nngwe le nngwe"
 }

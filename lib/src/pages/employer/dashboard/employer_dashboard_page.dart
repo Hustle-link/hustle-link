@@ -32,7 +32,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final employerProfile = ref.watch(currentEmployerProfileProvider);
     final jobsStream = ref.watch(employerJobsProvider);
     final authController = ref.read(authControllerProvider.notifier);
@@ -101,6 +101,14 @@ class EmployerDashboardPage extends HookConsumerWidget {
                       ),
                     ],
                   ),
+                ),
+
+                // Subscription status
+                Consumer(
+                  builder: (context, ref, child) {
+                    final usageSummary = ref.watch(usageSummaryProvider);
+                    return SubscriptionStatusBanner(usageSummary: usageSummary);
+                  },
                 ),
 
                 // Stats section
@@ -291,7 +299,7 @@ class EmployerJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: EdgeInsets.only(bottom: 3.h),
       elevation: 2,

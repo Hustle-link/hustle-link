@@ -7,13 +7,13 @@ import 'package:sizer/sizer.dart';
 
 /// A [StreamProvider] that fetches a list of job postings relevant to the current hustler.
 ///
-/// It first fetches the hustler's profile to get their skills. Then, it uses
-/// these skills to query for matching jobs from the [FirestoreJobService].
-/// If the hustler has no skills, it defaults to a 'general' category to show all jobs.
+/// Now uses the subscription access service to enforce proper plan limits
+/// for job viewing based on the user's current subscription plan.
 final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
   // Depend on the future of the profile provider to ensure profile is loaded.
   final hustlerProfile = await ref.watch(currentHustlerProfileProvider.future);
   final jobService = ref.watch(firestoreJobServiceProvider);
+  final subscriptionService = ref.watch(subscriptionAccessServiceProvider);
 
   if (hustlerProfile == null) {
     yield [];
@@ -26,11 +26,10 @@ final hustlerJobsProvider = StreamProvider<List<JobPosting>>((ref) async* {
       ? ['general']
       : hustlerProfile.skills;
 
-  // Subscription is stored on AppUser, not Hustler profile.
-  final appUser = await ref.watch(currentUserProfileProvider.future);
-  final isSubscribed = appUser?.subscription?.isActive ?? false;
+  // Use subscription service to determine job view limits
+  final jobViewLimit = subscriptionService.getJobViewLimit();
 
-  yield* jobService.getJobsForHustler(skills, limit: isSubscribed ? null : 5);
+  yield* jobService.getJobsForHustler(skills, limit: jobViewLimit);
 });
 
 /// The main dashboard page for a "hustler" user.
@@ -43,11 +42,12 @@ class HustlerDashboardPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // Watch the hustler's profile and the stream of jobs.
     final hustlerProfile = ref.watch(currentHustlerProfileProvider);
     final jobsStream = ref.watch(hustlerJobsProvider);
     final authController = ref.read(authControllerProvider.notifier);
+    final usageSummary = ref.watch(usageSummaryProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -68,135 +68,153 @@ class HustlerDashboardPage extends HookConsumerWidget {
         onRefresh: () async {
           ref.invalidate(hustlerJobsProvider);
         },
-        child: hustlerProfile.when(
-          data: (profile) {
-            // TODO(ux): Provide a way to create a profile if it's missing.
-            if (profile == null) {
-              return Center(child: Text(l10n.profileNotFound));
-            }
+        child: Column(
+          children: [
+            // Subscription status banner
+            SubscriptionStatusBanner(
+              usageSummary: usageSummary,
+              showDetails: true,
+            ),
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header section with a welcome message.
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(4.w),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: Column(
+            // Main content
+            Expanded(
+              child: hustlerProfile.when(
+                data: (profile) {
+                  // TODO(ux): Provide a way to create a profile if it's missing.
+                  if (profile == null) {
+                    return Center(child: Text(l10n.profileNotFound));
+                  }
+
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        l10n.welcomeBack(profile.name),
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
+                      // Header section with a welcome message.
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(4.w),
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.welcomeBack(profile.name),
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                              ),
+                            ),
+                            SizedBox(height: 1.h),
+                            Text(
+                              profile.skills.isEmpty
+                                  ? l10n.addSkillsToProfile
+                                  : l10n.jobsMatchingYourSkills(
+                                      profile.skills.join(', '),
+                                    ),
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer
+                                    .withAlpha((0.8 * 255).toInt()),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 1.h),
-                      Text(
-                        profile.skills.isEmpty
-                            ? l10n.addSkillsToProfile
-                            : l10n.jobsMatchingYourSkills(
-                                profile.skills.join(', '),
-                              ),
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimaryContainer
-                              .withAlpha((0.8 * 255).toInt()),
+
+                      // Jobs list section.
+                      Expanded(
+                        child: jobsStream.when(
+                          data: (jobs) {
+                            // If no jobs are found, display a message.
+                            if (jobs.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.work_off,
+                                      size: 64.sp,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withAlpha((0.5 * 255).toInt()),
+                                    ),
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      l10n.noJobsAvailable,
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                    ),
+                                    SizedBox(height: 1.h),
+                                    Text(
+                                      profile.skills.isEmpty
+                                          ? l10n.addSkillsToProfile
+                                          : l10n.checkBackLater,
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withAlpha((0.7 * 255).toInt()),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            // Display the list of jobs.
+                            return ListView.builder(
+                              padding: EdgeInsets.all(4.w),
+                              itemCount: jobs.length,
+                              itemBuilder: (context, index) {
+                                final job = jobs[index];
+                                return JobCard(job: job);
+                              },
+                            );
+                          },
+                          // Show a loading indicator while jobs are being fetched.
+                          loading: () =>
+                              const Center(child: CircularProgressIndicator()),
+                          // Show an error message if fetching jobs fails.
+                          error: (error, stack) => Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(l10n.errorLoadingJobs(error.toString())),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    ref.invalidate(hustlerJobsProvider);
+                                  },
+                                  child: Text(l10n.retry),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                  ),
+                  );
+                },
+                // Show a loading indicator while the profile is being fetched.
+                loading: () => const Center(child: CircularProgressIndicator()),
+                // Show an error message if fetching the profile fails.
+                error: (error, stack) => Center(
+                  child: Text(l10n.errorLoadingProfile(error.toString())),
                 ),
-
-                // Jobs list section.
-                Expanded(
-                  child: jobsStream.when(
-                    data: (jobs) {
-                      // If no jobs are found, display a message.
-                      if (jobs.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.work_off,
-                                size: 64.sp,
-                                color: Theme.of(context).colorScheme.onSurface
-                                    .withAlpha((0.5 * 255).toInt()),
-                              ),
-                              SizedBox(height: 2.h),
-                              Text(
-                                l10n.noJobsAvailable,
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                              ),
-                              SizedBox(height: 1.h),
-                              Text(
-                                profile.skills.isEmpty
-                                    ? l10n.addSkillsToProfile
-                                    : l10n.checkBackLater,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withAlpha((0.7 * 255).toInt()),
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      // Display the list of jobs.
-                      return ListView.builder(
-                        padding: EdgeInsets.all(4.w),
-                        itemCount: jobs.length,
-                        itemBuilder: (context, index) {
-                          final job = jobs[index];
-                          return JobCard(job: job);
-                        },
-                      );
-                    },
-                    // Show a loading indicator while jobs are being fetched.
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    // Show an error message if fetching jobs fails.
-                    error: (error, stack) => Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(l10n.errorLoadingJobs(error.toString())),
-                          ElevatedButton(
-                            onPressed: () {
-                              ref.invalidate(hustlerJobsProvider);
-                            },
-                            child: Text(l10n.retry),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-          // Show a loading indicator while the profile is being fetched.
-          loading: () => const Center(child: CircularProgressIndicator()),
-          // Show an error message if fetching the profile fails.
-          error: (error, stack) =>
-              Center(child: Text(l10n.errorLoadingProfile(error.toString()))),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -213,7 +231,7 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: EdgeInsets.only(bottom: 3.h),
       elevation: 2,

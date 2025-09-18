@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AnimatedSlideWidget extends HookConsumerWidget {
+class AnimatedSlideWidget extends StatelessWidget {
   const AnimatedSlideWidget({
     super.key,
     this.slideBeginOffset = const Offset(0, -0.5),
@@ -23,7 +22,7 @@ class AnimatedSlideWidget extends HookConsumerWidget {
   final Curve curve;
   final Widget child;
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Animate(
       effects: [
         FadeEffect(

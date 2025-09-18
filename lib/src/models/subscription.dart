@@ -45,42 +45,40 @@ abstract class Subscription with _$Subscription {
 enum SubscriptionPlan {
   /// Free plan - Basic features with limitations
   free('free', 'Free Plan', 0.0, [
-    'View up to 5 latest job postings',
-    'Post up to 3 jobs for free',
-    'Basic profile features',
-    'Community support',
+    'Basic profile',
+    'Up to 5 job listings per month',
+    'Access to hustle posts (with ads)',
   ]),
 
-  /// Basic plan - Suitable for individual hustlers
-  basic('basic', 'Basic Plan', 49.99, [
-    'View up to 20 job postings',
-    'Post up to 10 jobs per month',
-    'Enhanced profile with skills showcase',
-    'Email support',
-    'Application tracking',
+  /// Starter plan - For individual hustlers starting out
+  starter('starter', 'Starter Plan', 10.0, [
+    'Up to 15 job listings per month',
+    'Basic analytics (views & applications)',
+    'No ads on own listings',
   ]),
 
-  /// Premium plan - For active job seekers and small employers
-  premium('premium', 'Premium Plan', 99.99, [
-    'Unlimited job views',
-    'Unlimited job postings',
-    'Priority listing in search results',
-    'Advanced profile customization',
-    'Priority email support',
-    'Detailed analytics dashboard',
-    'Orange Money payment integration',
+  /// Growth plan - For growing hustlers and small employers
+  growth('growth', 'Growth Plan', 20.0, [
+    'Up to 30 job listings per month',
+    'Priority visibility in search results',
+    'Ability to feature 1 listing per month',
   ]),
 
-  /// Professional plan - For businesses and recruitment agencies
-  professional('professional', 'Professional Plan', 199.99, [
-    'All Premium features',
-    'Company branding on job posts',
-    'Bulk job posting tools',
-    'Advanced candidate filtering',
-    'Priority phone support',
-    'Custom contract templates',
-    'API access for integrations',
-    'Dedicated account manager',
+  /// Pro plan - For established professionals and businesses
+  pro('pro', 'Pro Plan', 35.0, [
+    'Unlimited job listings',
+    'Boosted visibility across the platform',
+    'No ads',
+    'Access to premium job/hustle postings',
+  ]),
+
+  /// Business Premium plan - For verified businesses and enterprises
+  businessPremium('business_premium', 'Business Premium', 50.0, [
+    'Unlimited listings + verified business profile',
+    'Ability to post business opportunities & tenders',
+    'Team account (multiple logins)',
+    'Advanced analytics/insights on engagement',
+    'Business badge for credibility',
   ]);
 
   /// Creates a [SubscriptionPlan] with the specified parameters.
@@ -118,4 +116,12 @@ enum SubscriptionPlan {
       orElse: () => SubscriptionPlan.free,
     );
   }
+
+  /// Gets annual discount price (20% off)
+  double get annualPriceInPula => monthlyPriceInPula * 12 * 0.8;
+
+  /// Formats the annual price for display
+  String get formattedAnnualPrice => monthlyPriceInPula == 0.0
+      ? 'Free'
+      : 'P${annualPriceInPula.toStringAsFixed(0)}/year (~20% off)';
 }

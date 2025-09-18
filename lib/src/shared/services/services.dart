@@ -3,3 +3,4 @@ export 'firestore/firestore.dart';
 export 'locale_service.dart';
 export 'orange_money_service.dart';
 export 'storage/storage.dart';
+export 'subscription/subscription.dart';

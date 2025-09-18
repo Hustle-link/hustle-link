@@ -827,4 +827,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get upgrade => 'Upgrade';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get proceedWithPayment => 'Proceed with Payment';
+
+  @override
+  String get upgradeToPostMoreJobs => 'Upgrade to Post More Jobs';
+
+  @override
+  String get downgradeToFreePlan => 'Downgrade to Free Plan';
+
+  @override
+  String get downgradeConfirmation =>
+      'Are you sure you want to downgrade to the free plan? You will lose access to premium features at the end of your current billing period.';
+
+  @override
+  String get downgrade => 'Downgrade';
+
+  @override
+  String get subscriptionCancelled =>
+      'Subscription cancelled. You still have access until the end of your billing period.';
+
+  @override
+  String get agreeToTermsAndConditions => 'I agree to the Terms and Conditions';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get viewTermsAndConditions => 'View Terms and Conditions';
+
+  @override
+  String get termsAndConditionsContent =>
+      'By subscribing, you agree to our terms of service and privacy policy. Your subscription will automatically renew monthly unless cancelled.';
+
+  @override
+  String get continueText => 'Continue';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get subscriptionUpgrade => 'Upgrade';
+
+  @override
+  String get subscriptionDowngrade => 'Downgrade';
+
+  @override
+  String get subscriptionCancel => 'Cancel';
+
+  @override
+  String get subscriptionOk => 'OK';
+
+  @override
+  String get subscriptionTryAgain => 'Try Again';
+
+  @override
+  String get subscriptionTermsAndConditions =>
+      'By continuing, you agree to our terms of service and privacy policy.';
+
+  @override
+  String get subscriptionPaymentProcessing => 'Processing payment...';
+
+  @override
+  String get subscriptionPaymentConfirmation => 'Confirm your next payment of';
+
+  @override
+  String get subscriptionMonthlySubscription => 'monthly';
+
+  @override
+  String get subscriptionAnnualSubscription => 'annually';
+
+  @override
+  String get billedMonthlyCancelAnytime => 'Billed monthly • Cancel anytime';
 }

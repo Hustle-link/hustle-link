@@ -17,9 +17,10 @@ class JobManagementPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // Watches the provider that fetches the jobs for the current employer.
     final employerJobs = ref.watch(employerJobsProvider);
+    final usageSummary = ref.watch(usageSummaryProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,98 +37,114 @@ class JobManagementPage extends HookConsumerWidget {
           ),
         ],
       ),
-      body: employerJobs.when(
-        // When data is successfully loaded, display the list of jobs.
-        data: (jobs) {
-          // If there are no jobs, show a message prompting the user to post one.
-          if (jobs.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.work_off_outlined,
-                    size: 80.sp,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    l10n.noJobsPostedYet,
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+      body: Column(
+        children: [
+          // Subscription status banner for employers
+          SubscriptionStatusBanner(
+            usageSummary: usageSummary,
+            showDetails: true,
+          ),
+
+          // Main content
+          Expanded(
+            child: employerJobs.when(
+              // When data is successfully loaded, display the list of jobs.
+              data: (jobs) {
+                // If there are no jobs, show a message prompting the user to post one.
+                if (jobs.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.work_off_outlined,
+                          size: 80.sp,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          l10n.noJobsPostedYet,
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        SizedBox(height: 1.h),
+                        Text(
+                          l10n.postYourFirstJob,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 4.h),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            context.push(AppRoutes.employerPostJob);
+                          },
+                          icon: const Icon(Icons.add),
+                          label: Text(l10n.postAJob),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 2.h,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 1.h),
-                  Text(
-                    l10n.postYourFirstJob,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                  );
+                }
+
+                // If there are jobs, display them in a list.
+                return ListView.builder(
+                  padding: EdgeInsets.all(4.w),
+                  itemCount: jobs.length,
+                  itemBuilder: (context, index) {
+                    final job = jobs[index];
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 3.h),
+                      child: _JobManagementCard(job: job),
+                    );
+                  },
+                );
+              },
+              // Show a loading indicator while fetching jobs.
+              loading: () => const Center(child: CircularProgressIndicator()),
+              // Show an error message if fetching jobs fails.
+              error: (error, stack) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64.sp,
+                      color: Theme.of(context).colorScheme.error,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 4.h),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      context.push(AppRoutes.employerPostJob);
-                    },
-                    icon: const Icon(Icons.add),
-                    label: Text(l10n.postAJob),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 2.h,
+                    SizedBox(height: 2.h),
+                    Text(
+                      l10n.errorLoadingJobs(error.toString()),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 1.h),
+                    Text(
+                      error.toString(),
+                      style: TextStyle(fontSize: 14.sp),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-            );
-          }
-
-          // If there are jobs, display them in a list.
-          return ListView.builder(
-            padding: EdgeInsets.all(4.w),
-            itemCount: jobs.length,
-            itemBuilder: (context, index) {
-              final job = jobs[index];
-              return Padding(
-                padding: EdgeInsets.only(bottom: 3.h),
-                child: _JobManagementCard(job: job),
-              );
-            },
-          );
-        },
-        // Show a loading indicator while fetching jobs.
-        loading: () => const Center(child: CircularProgressIndicator()),
-        // Show an error message if fetching jobs fails.
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64.sp,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                l10n.errorLoadingJobs(error.toString()),
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 1.h),
-              Text(
-                error.toString(),
-                style: TextStyle(fontSize: 14.sp),
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -146,7 +163,7 @@ class _JobManagementCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -269,7 +286,9 @@ class _JobManagementCard extends ConsumerWidget {
                         ),
                         SizedBox(width: 1.w),
                         Text(
-                          l10n.applicants(job.applicationsCount?.toString() ?? '0'),
+                          l10n.applicants(
+                            job.applicationsCount?.toString() ?? '0',
+                          ),
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Theme.of(
@@ -397,19 +416,14 @@ class _JobManagementCard extends ConsumerWidget {
     WidgetRef ref,
     JobPosting job,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.deleteJob),
-        content: Text(
-          l10n.areYouSureYouWantToDelete(job.title),
-        ),
+        content: Text(l10n.areYouSureYouWantToDelete(job.title)),
         actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: Text(l10n.cancel),
-          ),
+          TextButton(onPressed: () => context.pop(), child: Text(l10n.cancel)),
           TextButton(
             onPressed: () async {
               context.pop();
@@ -425,7 +439,9 @@ class _JobManagementCard extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.errorDeletingJob(e.toString()))),
+                    SnackBar(
+                      content: Text(l10n.errorDeletingJob(e.toString())),
+                    ),
                   );
                 }
               }
@@ -482,7 +498,8 @@ class _JobStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+
     /// Returns a color based on the job status.
     Color getStatusColor() {
       switch (status) {
@@ -581,7 +598,7 @@ class _JobApplicationsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // TODO(feature): Implement a real application list.
     // This would use a provider to get applications for the job.
     // For now, we'll show a placeholder.

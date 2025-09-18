@@ -16,6 +16,8 @@ class PostJobPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     // Form key to manage form state.
     final formKey = useMemoized(() => GlobalKey<FormState>());
     // Text editing controllers for form fields.
@@ -68,9 +70,9 @@ class PostJobPage extends HookConsumerWidget {
       prefill();
       return null;
     }, [editJobId]);
-    // Fetch the current employer's profile and base user (for subscription status).
+    // Fetch the current employer's profile and subscription access service.
     final employerProfile = ref.watch(currentEmployerProfileProvider);
-    final userProfile = ref.watch(currentUserProfileProvider);
+    final subscriptionService = ref.watch(subscriptionAccessServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -88,26 +90,17 @@ class PostJobPage extends HookConsumerWidget {
             return const Center(child: Text(PostJobStrings.profileNotFound));
           }
 
-          final isSubscribed =
-              userProfile.asData?.value?.subscription?.isActive ?? false;
-          final canPostJob = isSubscribed || (profile.postedJobs ?? 0) < 3;
+          // Use subscription service to check posting permissions
+          final accessResult = subscriptionService.canPostJobs();
 
-          if (editJobId == null && !canPostJob) {
+          if (editJobId == null && !accessResult.isAllowed) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.lock, size: 48),
-                  SizedBox(height: 2.h),
-                  const Text('You have reached your free job posting limit.'),
-                  SizedBox(height: 1.h),
-                  const Text('Subscribe to post unlimited jobs.'),
-                  SizedBox(height: 2.h),
-                  ElevatedButton(
-                    onPressed: () => context.push(AppRoutes.subscription),
-                    child: const Text('View Subscriptions'),
-                  ),
-                ],
+              child: SubscriptionUpgradePrompt(
+                accessResult: accessResult,
+                featureName: 'job posting',
+                title: 'Upgrade to Post More Jobs',
+                description:
+                    'Unlock unlimited job posting with our premium plans designed for the Botswana market.',
               ),
             );
           }
@@ -340,7 +333,7 @@ class PostJobPage extends HookConsumerWidget {
                                                 AppRoutes.employerDashboard,
                                               );
                                             },
-                                            child: const Text('OK'),
+                                            child: Text(l10n.subscriptionOk),
                                           ),
                                         ],
                                       ),
@@ -377,7 +370,9 @@ class PostJobPage extends HookConsumerWidget {
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.of(context).pop(),
-                                            child: const Text('Try Again'),
+                                            child: Text(
+                                              l10n.subscriptionTryAgain,
+                                            ),
                                           ),
                                         ],
                                       ),
