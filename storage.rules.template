@@ -4,30 +4,29 @@ service firebase.storage {
   match /b/{bucket}/o {
 
     // Profile images: users can upload their own, limited to 5MB images.
-    match /users/{userId}/profile.jpg {
+    // Matches the actual app path: profile_images/{uid}/{timestamp}
+    match /profile_images/{userId}/{allPaths=**} {
       allow read: if true; // Profile images are public
       allow write: if request.auth != null && request.auth.uid == userId
                    && request.resource.size < 5 * 1024 * 1024
                    && request.resource.contentType.matches('image/.*');
     }
 
-    // Business logos: only the business owner can upload.
-    match /businesses/{businessId}/logo.jpg {
-        allow read: if true; // Logos are public
-        allow write: if request.auth != null 
-                    && get(/databases/(default)/documents/businesses/$(businessId)).data.ownerId == request.auth.uid
-                    && request.resource.size < 5 * 1024 * 1024
-                    && request.resource.contentType.matches('image/.*');
-    }
-
     // Certifications: Only the user can upload/view their own certifications.
+    // Matches the actual app path: certifications/{uid}/{timestamp}_{fileName}
     // 10MB limit, PDF or Word documents.
-    match /users/{userId}/certifications/{fileName} {
+    match /certifications/{userId}/{allPaths=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId
                          && request.resource.size < 10 * 1024 * 1024
                          && (request.resource.contentType.matches('application/pdf') || 
                              request.resource.contentType.matches('application/msword') ||
                              request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
+    }
+
+    // Employers can read certifications for verification purposes
+    // This allows employers to view hustler certifications when needed
+    match /certifications/{userId}/{allPaths=**} {
+      allow read: if request.auth != null;
     }
 
     // Deny all other access by default.

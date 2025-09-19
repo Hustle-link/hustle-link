@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/pages/language_selection/language_model.dart';
 import 'package:hustle_link/src/pages/language_selection/widgets/language_card.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:hustle_link/src/shared/routing/app_router.dart';
 import 'package:hustle_link/src/shared/services/locale_service.dart';
 import 'package:sizer/sizer.dart';
@@ -100,7 +101,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Continue'),
+                child: Text(AppLocalizations.of(context).continueText),
               ),
               SizedBox(height: 5.h),
             ],

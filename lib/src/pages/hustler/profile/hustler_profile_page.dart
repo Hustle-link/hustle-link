@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HustlerProfilePage extends HookConsumerWidget {
   const HustlerProfilePage({super.key});
@@ -310,26 +309,7 @@ class HustlerProfilePage extends HookConsumerWidget {
           leading: const Icon(Icons.support_agent),
           title: Text(l10n.contactSupport),
           subtitle: Text(l10n.getHelpAndSendFeedback),
-          onTap: () async {
-            final Uri emailLaunchUri = Uri(
-              scheme: 'mailto',
-              path: 'hustlelink05@gmail.com',
-              queryParameters: {'subject': 'Support Request - HustleLink App'},
-            );
-
-            if (await canLaunchUrl(emailLaunchUri)) {
-              await launchUrl(emailLaunchUri);
-            } else {
-              // Fallback for web or if no email client is available
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Could not open email client. Please email hustlelink05@gmail.com',
-                  ),
-                ),
-              );
-            }
-          },
+          onTap: () => context.push(AppRoutes.contactSupport),
         ),
         const Divider(),
         ListTile(

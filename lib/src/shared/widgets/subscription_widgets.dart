@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// A widget that displays upgrade prompts when users hit subscription limits.
@@ -77,7 +78,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
 
             // Title
             Text(
-              title ?? _getDefaultTitle(),
+              title ?? _getDefaultTitle(context),
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
@@ -89,7 +90,9 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
 
             // Description
             Text(
-              description ?? accessResult.reason ?? _getDefaultDescription(),
+              description ??
+                  accessResult.reason ??
+                  _getDefaultDescription(context),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -100,12 +103,12 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
 
             // Current usage info
             if (accessResult.limit != null) ...[
-              _buildUsageIndicator(theme),
+              _buildUsageIndicator(context, theme),
               SizedBox(height: 3.h),
             ],
 
             // Benefits preview
-            _buildBenefits(theme),
+            _buildBenefits(context, theme),
 
             SizedBox(height: 4.h),
 
@@ -138,7 +141,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Upgrade to ${accessResult.upgradeRequired?.displayName ?? 'Premium'}',
+              AppLocalizations.of(context).upgrade,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
@@ -150,7 +153,9 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(
-            isDialog ? 'Maybe Later' : 'Continue with Free',
+            isDialog
+                ? AppLocalizations.of(context).maybeLater
+                : AppLocalizations.of(context).continueWithFree,
             style: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.6),
             ),
@@ -160,7 +165,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
     );
   }
 
-  Widget _buildUsageIndicator(ThemeData theme) {
+  Widget _buildUsageIndicator(BuildContext context, ThemeData theme) {
     final progress = accessResult.usagePercentage;
     if (progress == null) return const SizedBox.shrink();
 
@@ -176,7 +181,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Current Usage',
+                AppLocalizations.of(context).currentUsage,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -203,15 +208,15 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
     );
   }
 
-  Widget _buildBenefits(ThemeData theme) {
-    final benefits = _getBenefitsForUpgrade();
+  Widget _buildBenefits(BuildContext context, ThemeData theme) {
+    final benefits = _getBenefitsForUpgrade(context);
     if (benefits.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'What you\'ll get:',
+          AppLocalizations.of(context).whatYoullGet,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -240,58 +245,60 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
     context.push(AppRoutes.subscription);
   }
 
-  String _getDefaultTitle() {
+  String _getDefaultTitle(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (accessResult.upgradeRequired) {
       case SubscriptionPlan.starter:
-        return 'Upgrade to Starter Plan';
+        return l10n.upgradeToStarterPlan;
       case SubscriptionPlan.growth:
-        return 'Upgrade to Growth Plan';
+        return l10n.upgradeToGrowthPlan;
       case SubscriptionPlan.pro:
-        return 'Upgrade to Pro Plan';
+        return l10n.upgradeToProPlan;
       case SubscriptionPlan.businessPremium:
-        return 'Upgrade to Business Premium';
+        return l10n.upgradeToBusinessPremium;
       default:
-        return 'Upgrade Your Plan';
+        return l10n.upgradeYourPlan;
     }
   }
 
-  String _getDefaultDescription() {
-    return 'You\'ve reached the limit for $featureName on your current plan. '
-        'Upgrade to continue enjoying all features of Hustle Link.';
+  String _getDefaultDescription(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return l10n.reachedLimitMessage(featureName);
   }
 
-  List<String> _getBenefitsForUpgrade() {
+  List<String> _getBenefitsForUpgrade(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (accessResult.upgradeRequired) {
       case SubscriptionPlan.starter:
         return [
-          'Up to 15 job listings per month',
-          'Basic analytics (views & applications)',
-          'No ads on own listings',
-          'Email support',
+          l10n.benefitJobListings15,
+          l10n.benefitBasicAnalytics,
+          l10n.benefitNoAdsOwnListings,
+          l10n.benefitEmailSupport,
         ];
       case SubscriptionPlan.growth:
         return [
-          'Up to 30 job listings per month',
-          'Priority visibility in search results',
-          'Ability to feature 1 listing per month',
-          'Enhanced analytics',
+          l10n.benefitJobListings30,
+          l10n.benefitPriorityVisibility,
+          l10n.benefitFeatureOneListingPerMonth,
+          l10n.benefitEnhancedAnalytics,
         ];
       case SubscriptionPlan.pro:
         return [
-          'Unlimited job listings',
-          'Boosted visibility across platform',
-          'No ads anywhere',
-          'Access to premium job postings',
-          'Priority support',
+          l10n.benefitUnlimitedJobListings,
+          l10n.benefitBoostedVisibility,
+          l10n.benefitNoAdsAnywhere,
+          l10n.benefitPremiumJobPostings,
+          l10n.benefitPrioritySupport,
         ];
       case SubscriptionPlan.businessPremium:
         return [
-          'All Pro features',
-          'Verified business profile',
-          'Business opportunities & tenders',
-          'Team account (multiple logins)',
-          'Advanced analytics & insights',
-          'Business badge for credibility',
+          l10n.benefitAllProFeatures,
+          l10n.benefitVerifiedBusinessProfile,
+          l10n.benefitBusinessOpportunities,
+          l10n.benefitTeamAccount,
+          l10n.benefitAdvancedAnalytics,
+          l10n.benefitBusinessBadge,
         ];
       default:
         return [];
@@ -365,7 +372,7 @@ class SubscriptionStatusBanner extends StatelessWidget {
           // Usage details
           if (showDetails) ...[
             SizedBox(height: 1.h),
-            _buildUsageDetails(theme, color),
+            _buildUsageDetails(theme, color, l10n),
           ],
 
           // Expiration warning
@@ -373,7 +380,7 @@ class SubscriptionStatusBanner extends StatelessWidget {
               usageSummary.daysUntilExpiration! <= 7) ...[
             SizedBox(height: 1.h),
             Text(
-              'Expires in ${usageSummary.daysUntilExpiration} days',
+              l10n.expiresInDays(usageSummary.daysUntilExpiration!),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: Colors.orange,
                 fontWeight: FontWeight.w500,
@@ -385,7 +392,11 @@ class SubscriptionStatusBanner extends StatelessWidget {
     );
   }
 
-  Widget _buildUsageDetails(ThemeData theme, Color color) {
+  Widget _buildUsageDetails(
+    ThemeData theme,
+    Color color,
+    AppLocalizations l10n,
+  ) {
     return Column(
       children: [
         // Job views usage
@@ -393,7 +404,7 @@ class SubscriptionStatusBanner extends StatelessWidget {
           _buildUsageRow(
             theme,
             color,
-            'Job Views',
+            l10n.jobViews,
             usageSummary.jobViewsUsed,
             usageSummary.jobViewsLimit!,
           ),
@@ -404,7 +415,7 @@ class SubscriptionStatusBanner extends StatelessWidget {
           _buildUsageRow(
             theme,
             color,
-            'Job Posts',
+            l10n.jobPosts,
             usageSummary.jobPostsUsed,
             usageSummary.jobPostsLimit!,
           ),

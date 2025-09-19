@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// A reusable error container widget to display error messages
@@ -42,7 +43,7 @@ class ErrorContainer extends StatelessWidget {
               SizedBox(width: 2.w),
               Expanded(
                 child: Text(
-                  'Error',
+                  AppLocalizations.of(context).error,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class ErrorContainer extends StatelessWidget {
               child: TextButton(
                 onPressed: onRetry,
                 child: Text(
-                  'Try Again',
+                  AppLocalizations.of(context).tryAgain,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Theme.of(context).colorScheme.error,

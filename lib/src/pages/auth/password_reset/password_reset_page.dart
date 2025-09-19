@@ -120,7 +120,7 @@ class PasswordResetPage extends HookConsumerWidget {
                 friendlyMessage = localizeAuthError(context, code);
               } else {
                 code = 'unknown_error';
-                friendlyMessage = 'An unexpected error occurred';
+                friendlyMessage = l10n.unexpectedError;
               }
 
               errorText.value = friendlyMessage;
@@ -194,12 +194,14 @@ class PasswordResetPage extends HookConsumerWidget {
                                                         color: Colors.white,
                                                       ),
                                                       const SizedBox(width: 12),
-                                                      const Expanded(
+                                                      Expanded(
                                                         child: Text(
-                                                          'Password reset link sent again!',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                          ),
+                                                          l10n.passwordResetLinkSentAgain,
+                                                          style:
+                                                              const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
                                                         ),
                                                       ),
                                                     ],
@@ -221,7 +223,7 @@ class PasswordResetPage extends HookConsumerWidget {
                                                     context,
                                                     error.code ?? error.message,
                                                   )
-                                                : 'Failed to resend. Please try again.';
+                                                : l10n.failedToResend;
 
                                             if (context.mounted) {
                                               ScaffoldMessenger.of(

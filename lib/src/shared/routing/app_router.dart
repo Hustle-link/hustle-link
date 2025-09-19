@@ -282,6 +282,11 @@ final appRouteProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.subscriptionRoute,
         builder: (context, state) => const SubscriptionPage(),
       ),
+      GoRoute(
+        path: AppRoutes.contactSupport,
+        name: AppRoutes.contactSupportRoute,
+        builder: (context, state) => const ContactSupportPage(),
+      ),
     ],
   );
 });
@@ -324,6 +329,7 @@ class AppRoutes {
   static const String employerPostJob = '/employer/post-job';
   static const String employerJobDetails = '/employer/job';
   static const String subscription = '/subscribe';
+  static const String contactSupport = '/contact-support';
 
   // route names
   static const String loginRoute = 'login';
@@ -353,6 +359,7 @@ class AppRoutes {
   static const String employerPostJobRoute = 'employer_post_job';
   static const String employerJobDetailsRoute = 'employer_job_details';
   static const String subscriptionRoute = 'subscription';
+  static const String contactSupportRoute = 'contact_support';
 
   // add more routes as needed
 }

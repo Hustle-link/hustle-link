@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// Widget for collecting Orange Money payment details.
@@ -42,7 +43,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
     /// Validates Botswana phone number format
     String? validatePhoneNumber(String? value) {
       if (value == null || value.isEmpty) {
-        return 'Please enter your Orange Money phone number';
+        return l10n.pleaseEnterOrangeMoneyNumber;
       }
 
       // Remove spaces and format
@@ -50,13 +51,13 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
 
       // Check if it's a valid Botswana Orange Money number
       if (!cleanNumber.startsWith('+267') || cleanNumber.length != 12) {
-        return 'Please enter a valid Botswana phone number (+267 XXXX XXXX)';
+        return l10n.pleaseEnterValidBotswanaPhone;
       }
 
       // Check if it's a valid mobile number (starts with 7 or 6 after +267)
       final mobilePrefix = cleanNumber.substring(4, 5);
       if (mobilePrefix != '7' && mobilePrefix != '6') {
-        return 'Please enter a valid mobile number starting with 6 or 7';
+        return l10n.pleaseEnterValidMobileNumber;
       }
 
       return null;
@@ -83,9 +84,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                'Failed to initiate payment. Please try again.',
-              ),
+              content: Text(l10n.failedToInitiatePayment),
               backgroundColor: theme.colorScheme.error,
             ),
           );
@@ -239,7 +238,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
                           TextButton(
                             onPressed:
                                 null, // Will be fixed in real implementation
-                            child: Text('Close'),
+                            child: Text(AppLocalizations.of(context).close),
                           ),
                         ],
                       ),
@@ -291,12 +290,16 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
                                 ),
                               ),
                             )
-                          : const Row(
+                          : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.payment),
-                                SizedBox(width: 8),
-                                Text('Proceed with Payment'),
+                                const Icon(Icons.payment),
+                                const SizedBox(width: 8),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  ).proceedWithPayment,
+                                ),
                               ],
                             ),
                     ),
