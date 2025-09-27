@@ -200,6 +200,18 @@ abstract class AppLocalizations {
   /// **'Add your work experience and achievements'**
   String get addYourWorkExperience;
 
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @addressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Address copied to clipboard'**
+  String get addressCopied;
+
   /// No description provided for @ago.
   ///
   /// In en, this message translates to:
@@ -338,6 +350,120 @@ abstract class AppLocalizations {
   /// **'Basic Information'**
   String get basicInformation;
 
+  /// No description provided for @benefitAdvancedAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced analytics & insights'**
+  String get benefitAdvancedAnalytics;
+
+  /// No description provided for @benefitAllProFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'All Pro features'**
+  String get benefitAllProFeatures;
+
+  /// No description provided for @benefitBasicAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic analytics (views & applications)'**
+  String get benefitBasicAnalytics;
+
+  /// No description provided for @benefitBoostedVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Boosted visibility across platform'**
+  String get benefitBoostedVisibility;
+
+  /// No description provided for @benefitBusinessBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Business badge for credibility'**
+  String get benefitBusinessBadge;
+
+  /// No description provided for @benefitBusinessOpportunities.
+  ///
+  /// In en, this message translates to:
+  /// **'Business opportunities & tenders'**
+  String get benefitBusinessOpportunities;
+
+  /// No description provided for @benefitEmailSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Email support'**
+  String get benefitEmailSupport;
+
+  /// No description provided for @benefitEnhancedAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Enhanced analytics'**
+  String get benefitEnhancedAnalytics;
+
+  /// No description provided for @benefitFeatureOneListingPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Ability to feature 1 listing per month'**
+  String get benefitFeatureOneListingPerMonth;
+
+  /// No description provided for @benefitJobListings15.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 15 job listings per month'**
+  String get benefitJobListings15;
+
+  /// No description provided for @benefitJobListings30.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 30 job listings per month'**
+  String get benefitJobListings30;
+
+  /// No description provided for @benefitNoAdsAnywhere.
+  ///
+  /// In en, this message translates to:
+  /// **'No ads anywhere'**
+  String get benefitNoAdsAnywhere;
+
+  /// No description provided for @benefitNoAdsOwnListings.
+  ///
+  /// In en, this message translates to:
+  /// **'No ads on own listings'**
+  String get benefitNoAdsOwnListings;
+
+  /// No description provided for @benefitPremiumJobPostings.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to premium job postings'**
+  String get benefitPremiumJobPostings;
+
+  /// No description provided for @benefitPrioritySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support'**
+  String get benefitPrioritySupport;
+
+  /// No description provided for @benefitPriorityVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority visibility in search results'**
+  String get benefitPriorityVisibility;
+
+  /// No description provided for @benefitTeamAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Team account (multiple logins)'**
+  String get benefitTeamAccount;
+
+  /// No description provided for @benefitUnlimitedJobListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited job listings'**
+  String get benefitUnlimitedJobListings;
+
+  /// No description provided for @benefitVerifiedBusinessProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified business profile'**
+  String get benefitVerifiedBusinessProfile;
+
   /// No description provided for @billedMonthlyCancelAnytime.
   ///
   /// In en, this message translates to:
@@ -392,6 +518,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @cardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card {index}'**
+  String cardTitle(Object index);
+
   /// No description provided for @certifications.
   ///
   /// In en, this message translates to:
@@ -403,6 +535,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change Photo'**
   String get changePhoto;
+
+  /// No description provided for @chatWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat on WhatsApp'**
+  String get chatWhatsApp;
 
   /// No description provided for @checkBackLater.
   ///
@@ -530,11 +668,83 @@ abstract class AppLocalizations {
   /// **'Contact Information'**
   String get contactInformation;
 
+  /// No description provided for @contactMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Methods'**
+  String get contactMethods;
+
   /// No description provided for @contactSupport.
   ///
   /// In en, this message translates to:
   /// **'Contact Support'**
   String get contactSupport;
+
+  /// No description provided for @contactSupportAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Gaborone, Botswana'**
+  String get contactSupportAddress;
+
+  /// No description provided for @contactSupportBusinessName.
+  ///
+  /// In en, this message translates to:
+  /// **'HustleLink'**
+  String get contactSupportBusinessName;
+
+  /// No description provided for @contactSupportEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'hustelink@gmail.com'**
+  String get contactSupportEmail;
+
+  /// No description provided for @contactSupportEmailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Request - HustleLink App'**
+  String get contactSupportEmailSubject;
+
+  /// No description provided for @contactSupportFacebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Bolton Mooketsi'**
+  String get contactSupportFacebook;
+
+  /// No description provided for @contactSupportHelpText.
+  ///
+  /// In en, this message translates to:
+  /// **'Have questions about our services, need technical support, or want to provide feedback? We\'re here to assist you every step of the way.'**
+  String get contactSupportHelpText;
+
+  /// No description provided for @contactSupportInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'instagram.com/hustlelink'**
+  String get contactSupportInstagram;
+
+  /// No description provided for @contactSupportPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone/WhatsApp'**
+  String get contactSupportPhone;
+
+  /// No description provided for @contactSupportPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'+267 78442166'**
+  String get contactSupportPhoneNumber;
+
+  /// No description provided for @contactSupportTikTok.
+  ///
+  /// In en, this message translates to:
+  /// **'tiktok.com/@hustlelink'**
+  String get contactSupportTikTok;
+
+  /// No description provided for @contactSupportWelcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here to help! Get in touch with us through any of the methods below.'**
+  String get contactSupportWelcomeMessage;
 
   /// No description provided for @continueText.
   ///
@@ -668,6 +878,12 @@ abstract class AppLocalizations {
   /// **'Draft'**
   String get draft;
 
+  /// No description provided for @dummyCardText.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a dummy card for home page'**
+  String get dummyCardText;
+
   /// No description provided for @editJob.
   ///
   /// In en, this message translates to:
@@ -679,6 +895,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Profile'**
   String get editProfile;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @emailClientNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open email client. Please email hustelink@gmail.com directly.'**
+  String get emailClientNotAvailable;
+
+  /// No description provided for @emailCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address copied to clipboard'**
+  String get emailCopied;
 
   /// No description provided for @emailHint.
   ///
@@ -709,6 +943,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get english;
+
+  /// No description provided for @enterOrangeMoneyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your Orange Money registered phone number'**
+  String get enterOrangeMoneyNumber;
 
   /// No description provided for @enterYourFullName.
   ///
@@ -764,6 +1004,24 @@ abstract class AppLocalizations {
   /// **'Expires in {days} days'**
   String expiresIn(Object days);
 
+  /// No description provided for @expiresInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {days} days'**
+  String expiresInDays(Object days);
+
+  /// No description provided for @facebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get facebook;
+
+  /// No description provided for @failedToInitiatePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to initiate payment. Please try again.'**
+  String get failedToInitiatePayment;
+
   /// No description provided for @failedToPickFiles.
   ///
   /// In en, this message translates to:
@@ -788,6 +1046,12 @@ abstract class AppLocalizations {
   /// **'Failed to update profile: {error}'**
   String failedToUpdateProfile(Object error);
 
+  /// No description provided for @findBestHustleLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the best hustle links for you!'**
+  String get findBestHustleLinks;
+
   /// No description provided for @findJobs.
   ///
   /// In en, this message translates to:
@@ -811,6 +1075,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Free Plan'**
   String get freePlan;
+
+  /// No description provided for @freePlanActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Plan Active'**
+  String get freePlanActive;
 
   /// No description provided for @fullName.
   ///
@@ -866,6 +1136,12 @@ abstract class AppLocalizations {
   /// **'Enhanced analytics'**
   String get growthPlanFeature4;
 
+  /// No description provided for @hustleLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Hustle Link'**
+  String get hustleLink;
+
   /// No description provided for @hustler.
   ///
   /// In en, this message translates to:
@@ -883,6 +1159,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I\'m an Employer'**
   String get imAnEmployer;
+
+  /// No description provided for @instagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get instagram;
 
   /// No description provided for @invalidAmount.
   ///
@@ -944,6 +1226,12 @@ abstract class AppLocalizations {
   /// **'Job not found'**
   String get jobNotFound;
 
+  /// No description provided for @jobPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Job Posts'**
+  String get jobPosts;
+
   /// No description provided for @jobTitle.
   ///
   /// In en, this message translates to:
@@ -961,6 +1249,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a job title'**
   String get jobTitleRequired;
+
+  /// No description provided for @jobViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Job Views'**
+  String get jobViews;
 
   /// No description provided for @jobsCompleted.
   ///
@@ -1004,6 +1298,12 @@ abstract class AppLocalizations {
   /// **'Remote, New York, etc.'**
   String get locationHint;
 
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logOut;
+
   /// No description provided for @loginError.
   ///
   /// In en, this message translates to:
@@ -1046,6 +1346,12 @@ abstract class AppLocalizations {
   /// **'Manage Subscription'**
   String get manageSubscription;
 
+  /// No description provided for @mapsNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open maps. Please search for \'Gaborone, Botswana\' in your preferred maps app.'**
+  String get mapsNotAvailable;
+
   /// No description provided for @maybeLater.
   ///
   /// In en, this message translates to:
@@ -1082,11 +1388,59 @@ abstract class AppLocalizations {
   /// **'Name is required'**
   String get nameIsRequired;
 
+  /// No description provided for @navApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get navApplications;
+
+  /// No description provided for @navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get navDashboard;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get navJobs;
+
+  /// No description provided for @navPostJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Job'**
+  String get navPostJob;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @needHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Need Help?'**
+  String get needHelp;
+
   /// No description provided for @next.
   ///
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @nextBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Next billing: {date}'**
+  String nextBilling(String date);
 
   /// No description provided for @noAccount.
   ///
@@ -1100,6 +1454,12 @@ abstract class AppLocalizations {
   /// **'No Applications Yet'**
   String get noApplicationsYet;
 
+  /// No description provided for @noCardsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No cards available'**
+  String get noCardsAvailable;
+
   /// No description provided for @noJobsAvailable.
   ///
   /// In en, this message translates to:
@@ -1112,11 +1472,29 @@ abstract class AppLocalizations {
   /// **'No jobs posted yet'**
   String get noJobsPostedYet;
 
+  /// No description provided for @officeLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Office Location'**
+  String get officeLocation;
+
   /// No description provided for @ok.
   ///
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @orangeMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange Money'**
+  String get orangeMoney;
+
+  /// No description provided for @orangeMoneyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange Money Number'**
+  String get orangeMoneyNumber;
 
   /// No description provided for @passwordLabel.
   ///
@@ -1160,6 +1538,12 @@ abstract class AppLocalizations {
   /// **'Passwords do not match.'**
   String get passwordsDoNotMatch;
 
+  /// No description provided for @paymentProcessedSecurely.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment is processed securely through Orange Money Botswana.'**
+  String get paymentProcessedSecurely;
+
   /// No description provided for @pending.
   ///
   /// In en, this message translates to:
@@ -1178,6 +1562,18 @@ abstract class AppLocalizations {
   /// **'Phone'**
   String get phone;
 
+  /// No description provided for @phoneCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number copied to clipboard'**
+  String get phoneCopied;
+
+  /// No description provided for @phoneDialerNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open phone dialer. Please call +267 78442166 directly.'**
+  String get phoneDialerNotAvailable;
+
   /// No description provided for @phoneNumber.
   ///
   /// In en, this message translates to:
@@ -1189,6 +1585,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please add at least one skill'**
   String get pleaseAddAtLeastOneSkill;
+
+  /// No description provided for @pleaseEnterOrangeMoneyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your Orange Money phone number'**
+  String get pleaseEnterOrangeMoneyNumber;
+
+  /// No description provided for @pleaseEnterValidBotswanaPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid Botswana phone number (+267 XXXX XXXX)'**
+  String get pleaseEnterValidBotswanaPhone;
+
+  /// No description provided for @pleaseEnterValidMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid mobile number starting with 6 or 7'**
+  String get pleaseEnterValidMobileNumber;
 
   /// No description provided for @postAJob.
   ///
@@ -1304,6 +1718,12 @@ abstract class AppLocalizations {
   /// **'Profile not found'**
   String get profileNotFound;
 
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Updated'**
+  String get profileUpdated;
+
   /// No description provided for @profileUpdatedSuccessfully.
   ///
   /// In en, this message translates to:
@@ -1316,11 +1736,23 @@ abstract class AppLocalizations {
   /// **'Rating'**
   String get rating;
 
+  /// No description provided for @reachedLimitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the limit for {featureName} on your current plan. Upgrade to continue enjoying all features of Hustle Link.'**
+  String reachedLimitMessage(Object featureName);
+
   /// No description provided for @readyToUpload.
   ///
   /// In en, this message translates to:
   /// **'Ready to upload'**
   String get readyToUpload;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOMMENDED'**
+  String get recommended;
 
   /// No description provided for @registerButton.
   ///
@@ -1436,11 +1868,23 @@ abstract class AppLocalizations {
   /// **'Saved!'**
   String get savedMessage;
 
+  /// No description provided for @securePaymentSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure payment system for Botswana'**
+  String get securePaymentSystem;
+
   /// No description provided for @sendButtonText.
   ///
   /// In en, this message translates to:
   /// **'Send Reset Link'**
   String get sendButtonText;
+
+  /// No description provided for @sendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get sendEmail;
 
   /// No description provided for @separateSkillsWithCommas.
   ///
@@ -1508,6 +1952,18 @@ abstract class AppLocalizations {
   /// **'Skip'**
   String get skip;
 
+  /// No description provided for @socialMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Media'**
+  String get socialMedia;
+
+  /// No description provided for @socialMediaNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open social media platform. Please visit the platform directly.'**
+  String get socialMediaNotAvailable;
+
   /// No description provided for @startApplyingForJobs.
   ///
   /// In en, this message translates to:
@@ -1550,6 +2006,12 @@ abstract class AppLocalizations {
   /// **'Subscribe'**
   String get subscribe;
 
+  /// No description provided for @subscriptionActivationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to activate subscription. Please contact support.'**
+  String get subscriptionActivationFailed;
+
   /// No description provided for @subscriptionActive.
   ///
   /// In en, this message translates to:
@@ -1573,6 +2035,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subscription cancelled. You still have access until the end of your billing period.'**
   String get subscriptionCancelled;
+
+  /// No description provided for @subscriptionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.'**
+  String get subscriptionDescription;
 
   /// No description provided for @subscriptionDowngrade.
   ///
@@ -1616,6 +2084,12 @@ abstract class AppLocalizations {
   /// **'Processing payment...'**
   String get subscriptionPaymentProcessing;
 
+  /// No description provided for @subscriptionPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Plan'**
+  String get subscriptionPlan;
+
   /// No description provided for @subscriptionRenews.
   ///
   /// In en, this message translates to:
@@ -1646,11 +2120,23 @@ abstract class AppLocalizations {
   /// **'Try Again'**
   String get subscriptionTryAgain;
 
+  /// No description provided for @subscriptionUnlockPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your full potential with our premium features designed for the Botswana market.'**
+  String get subscriptionUnlockPotential;
+
   /// No description provided for @subscriptionUpgrade.
   ///
   /// In en, this message translates to:
   /// **'Upgrade'**
   String get subscriptionUpgrade;
+
+  /// No description provided for @subscriptionWelcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to {planName}! Your subscription is now active.'**
+  String subscriptionWelcomeMessage(String planName);
 
   /// No description provided for @subscriptions.
   ///
@@ -1682,11 +2168,23 @@ abstract class AppLocalizations {
   /// **'By subscribing, you agree to our terms of service and privacy policy. Your subscription will automatically renew monthly unless cancelled.'**
   String get termsAndConditionsContent;
 
+  /// No description provided for @tikTok.
+  ///
+  /// In en, this message translates to:
+  /// **'TikTok'**
+  String get tikTok;
+
   /// No description provided for @total.
   ///
   /// In en, this message translates to:
   /// **'{count} total'**
   String total(Object count);
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get totalAmount;
 
   /// No description provided for @tryAgain.
   ///
@@ -1717,6 +2215,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock your full potential with our premium features.'**
   String get unlockFullPotential;
+
+  /// No description provided for @updateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Failed'**
+  String get updateFailed;
 
   /// No description provided for @updatePostingSubtitle.
   ///
@@ -1754,11 +2258,29 @@ abstract class AppLocalizations {
   /// **'Upgrade to Business Premium'**
   String get upgradeToBusiness;
 
+  /// No description provided for @upgradeToBusinessPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Business Premium'**
+  String get upgradeToBusinessPremium;
+
   /// No description provided for @upgradeToGrowth.
   ///
   /// In en, this message translates to:
   /// **'Upgrade to Growth Plan'**
   String get upgradeToGrowth;
+
+  /// No description provided for @upgradeToGrowthPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Growth Plan'**
+  String get upgradeToGrowthPlan;
+
+  /// No description provided for @upgradeToPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to {planName}'**
+  String upgradeToPlan(String planName);
 
   /// No description provided for @upgradeToPostMoreJobs.
   ///
@@ -1772,11 +2294,29 @@ abstract class AppLocalizations {
   /// **'Upgrade to Pro Plan'**
   String get upgradeToPro;
 
+  /// No description provided for @upgradeToProPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro Plan'**
+  String get upgradeToProPlan;
+
   /// No description provided for @upgradeToStarter.
   ///
   /// In en, this message translates to:
   /// **'Upgrade to Starter Plan'**
   String get upgradeToStarter;
+
+  /// No description provided for @upgradeToStarterPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Starter Plan'**
+  String get upgradeToStarterPlan;
+
+  /// No description provided for @upgradeYourPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Your Plan'**
+  String get upgradeYourPlan;
 
   /// No description provided for @uploadCertificates.
   ///
@@ -1934,11 +2474,35 @@ abstract class AppLocalizations {
   /// **'What you\'ll get:'**
   String get whatYoullGet;
 
+  /// No description provided for @whatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsApp;
+
+  /// No description provided for @whatsAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello! I need help with the HustleLink app.'**
+  String get whatsAppMessage;
+
+  /// No description provided for @whatsAppNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open WhatsApp. Please install WhatsApp or use the phone number directly.'**
+  String get whatsAppNotAvailable;
+
   /// No description provided for @whatsYourName.
   ///
   /// In en, this message translates to:
   /// **'What\'s your name?'**
   String get whatsYourName;
+
+  /// No description provided for @whyUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Upgrade?'**
+  String get whyUpgrade;
 
   /// No description provided for @writeACoverLetter.
   ///
@@ -1957,570 +2521,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your profile is complete! 🎉'**
   String get yourProfileIsComplete;
-
-  /// No description provided for @orangeMoney.
-  ///
-  /// In en, this message translates to:
-  /// **'Orange Money'**
-  String get orangeMoney;
-
-  /// No description provided for @securePaymentSystem.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure payment system for Botswana'**
-  String get securePaymentSystem;
-
-  /// No description provided for @subscriptionPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Subscription Plan'**
-  String get subscriptionPlan;
-
-  /// No description provided for @totalAmount.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Amount'**
-  String get totalAmount;
-
-  /// No description provided for @orangeMoneyNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Orange Money Number'**
-  String get orangeMoneyNumber;
-
-  /// No description provided for @enterOrangeMoneyNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your Orange Money registered phone number'**
-  String get enterOrangeMoneyNumber;
-
-  /// No description provided for @paymentProcessedSecurely.
-  ///
-  /// In en, this message translates to:
-  /// **'Your payment is processed securely through Orange Money Botswana.'**
-  String get paymentProcessedSecurely;
-
-  /// No description provided for @hustleLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Hustle Link'**
-  String get hustleLink;
-
-  /// No description provided for @profileUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile Updated'**
-  String get profileUpdated;
-
-  /// No description provided for @updateFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Update Failed'**
-  String get updateFailed;
-
-  /// No description provided for @findBestHustleLinks.
-  ///
-  /// In en, this message translates to:
-  /// **'Find the best hustle links for you!'**
-  String get findBestHustleLinks;
-
-  /// No description provided for @noCardsAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'No cards available'**
-  String get noCardsAvailable;
-
-  /// No description provided for @logOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Log Out'**
-  String get logOut;
-
-  /// No description provided for @cardTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Card {index}'**
-  String cardTitle(Object index);
-
-  /// No description provided for @dummyCardText.
-  ///
-  /// In en, this message translates to:
-  /// **'This is a dummy card for home page'**
-  String get dummyCardText;
-
-  /// No description provided for @pleaseEnterOrangeMoneyNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter your Orange Money phone number'**
-  String get pleaseEnterOrangeMoneyNumber;
-
-  /// No description provided for @benefitJobListings15.
-  ///
-  /// In en, this message translates to:
-  /// **'Up to 15 job listings per month'**
-  String get benefitJobListings15;
-
-  /// No description provided for @benefitBasicAnalytics.
-  ///
-  /// In en, this message translates to:
-  /// **'Basic analytics (views & applications)'**
-  String get benefitBasicAnalytics;
-
-  /// No description provided for @benefitNoAdsOwnListings.
-  ///
-  /// In en, this message translates to:
-  /// **'No ads on own listings'**
-  String get benefitNoAdsOwnListings;
-
-  /// No description provided for @benefitEmailSupport.
-  ///
-  /// In en, this message translates to:
-  /// **'Email support'**
-  String get benefitEmailSupport;
-
-  /// No description provided for @benefitJobListings30.
-  ///
-  /// In en, this message translates to:
-  /// **'Up to 30 job listings per month'**
-  String get benefitJobListings30;
-
-  /// No description provided for @benefitPriorityVisibility.
-  ///
-  /// In en, this message translates to:
-  /// **'Priority visibility in search results'**
-  String get benefitPriorityVisibility;
-
-  /// No description provided for @benefitFeatureOneListingPerMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'Ability to feature 1 listing per month'**
-  String get benefitFeatureOneListingPerMonth;
-
-  /// No description provided for @benefitEnhancedAnalytics.
-  ///
-  /// In en, this message translates to:
-  /// **'Enhanced analytics'**
-  String get benefitEnhancedAnalytics;
-
-  /// No description provided for @benefitUnlimitedJobListings.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlimited job listings'**
-  String get benefitUnlimitedJobListings;
-
-  /// No description provided for @benefitBoostedVisibility.
-  ///
-  /// In en, this message translates to:
-  /// **'Boosted visibility across platform'**
-  String get benefitBoostedVisibility;
-
-  /// No description provided for @benefitNoAdsAnywhere.
-  ///
-  /// In en, this message translates to:
-  /// **'No ads anywhere'**
-  String get benefitNoAdsAnywhere;
-
-  /// No description provided for @benefitPremiumJobPostings.
-  ///
-  /// In en, this message translates to:
-  /// **'Access to premium job postings'**
-  String get benefitPremiumJobPostings;
-
-  /// No description provided for @benefitPrioritySupport.
-  ///
-  /// In en, this message translates to:
-  /// **'Priority support'**
-  String get benefitPrioritySupport;
-
-  /// No description provided for @benefitAllProFeatures.
-  ///
-  /// In en, this message translates to:
-  /// **'All Pro features'**
-  String get benefitAllProFeatures;
-
-  /// No description provided for @benefitVerifiedBusinessProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Verified business profile'**
-  String get benefitVerifiedBusinessProfile;
-
-  /// No description provided for @benefitBusinessOpportunities.
-  ///
-  /// In en, this message translates to:
-  /// **'Business opportunities & tenders'**
-  String get benefitBusinessOpportunities;
-
-  /// No description provided for @benefitTeamAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Team account (multiple logins)'**
-  String get benefitTeamAccount;
-
-  /// No description provided for @benefitAdvancedAnalytics.
-  ///
-  /// In en, this message translates to:
-  /// **'Advanced analytics & insights'**
-  String get benefitAdvancedAnalytics;
-
-  /// No description provided for @benefitBusinessBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'Business badge for credibility'**
-  String get benefitBusinessBadge;
-
-  /// No description provided for @upgradeToStarterPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade to Starter Plan'**
-  String get upgradeToStarterPlan;
-
-  /// No description provided for @upgradeToGrowthPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade to Growth Plan'**
-  String get upgradeToGrowthPlan;
-
-  /// No description provided for @upgradeToProPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade to Pro Plan'**
-  String get upgradeToProPlan;
-
-  /// No description provided for @upgradeToBusinessPremium.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade to Business Premium'**
-  String get upgradeToBusinessPremium;
-
-  /// No description provided for @upgradeYourPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade Your Plan'**
-  String get upgradeYourPlan;
-
-  /// No description provided for @reachedLimitMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'You\'ve reached the limit for {featureName} on your current plan. Upgrade to continue enjoying all features of Hustle Link.'**
-  String reachedLimitMessage(Object featureName);
-
-  /// No description provided for @expiresInDays.
-  ///
-  /// In en, this message translates to:
-  /// **'Expires in {days} days'**
-  String expiresInDays(Object days);
-
-  /// No description provided for @jobViews.
-  ///
-  /// In en, this message translates to:
-  /// **'Job Views'**
-  String get jobViews;
-
-  /// No description provided for @jobPosts.
-  ///
-  /// In en, this message translates to:
-  /// **'Job Posts'**
-  String get jobPosts;
-
-  /// No description provided for @pleaseEnterValidBotswanaPhone.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a valid Botswana phone number (+267 XXXX XXXX)'**
-  String get pleaseEnterValidBotswanaPhone;
-
-  /// No description provided for @pleaseEnterValidMobileNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a valid mobile number starting with 6 or 7'**
-  String get pleaseEnterValidMobileNumber;
-
-  /// No description provided for @failedToInitiatePayment.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to initiate payment. Please try again.'**
-  String get failedToInitiatePayment;
-
-  /// No description provided for @contactSupportBusinessName.
-  ///
-  /// In en, this message translates to:
-  /// **'HustleLink'**
-  String get contactSupportBusinessName;
-
-  /// No description provided for @contactSupportWelcomeMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'We\'re here to help! Get in touch with us through any of the methods below.'**
-  String get contactSupportWelcomeMessage;
-
-  /// No description provided for @contactMethods.
-  ///
-  /// In en, this message translates to:
-  /// **'Contact Methods'**
-  String get contactMethods;
-
-  /// No description provided for @email.
-  ///
-  /// In en, this message translates to:
-  /// **'Email'**
-  String get email;
-
-  /// No description provided for @contactSupportEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'hustelink@gmail.com'**
-  String get contactSupportEmail;
-
-  /// No description provided for @emailCopied.
-  ///
-  /// In en, this message translates to:
-  /// **'Email address copied to clipboard'**
-  String get emailCopied;
-
-  /// No description provided for @contactSupportPhone.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone/WhatsApp'**
-  String get contactSupportPhone;
-
-  /// No description provided for @contactSupportPhoneNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'+267 78442166'**
-  String get contactSupportPhoneNumber;
-
-  /// No description provided for @phoneCopied.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone number copied to clipboard'**
-  String get phoneCopied;
-
-  /// No description provided for @whatsApp.
-  ///
-  /// In en, this message translates to:
-  /// **'WhatsApp'**
-  String get whatsApp;
-
-  /// No description provided for @socialMedia.
-  ///
-  /// In en, this message translates to:
-  /// **'Social Media'**
-  String get socialMedia;
-
-  /// No description provided for @facebook.
-  ///
-  /// In en, this message translates to:
-  /// **'Facebook'**
-  String get facebook;
-
-  /// No description provided for @contactSupportFacebook.
-  ///
-  /// In en, this message translates to:
-  /// **'Bolton Mooketsi'**
-  String get contactSupportFacebook;
-
-  /// No description provided for @instagram.
-  ///
-  /// In en, this message translates to:
-  /// **'Instagram'**
-  String get instagram;
-
-  /// No description provided for @contactSupportInstagram.
-  ///
-  /// In en, this message translates to:
-  /// **'instagram.com/hustlelink'**
-  String get contactSupportInstagram;
-
-  /// No description provided for @tikTok.
-  ///
-  /// In en, this message translates to:
-  /// **'TikTok'**
-  String get tikTok;
-
-  /// No description provided for @contactSupportTikTok.
-  ///
-  /// In en, this message translates to:
-  /// **'tiktok.com/@hustlelink'**
-  String get contactSupportTikTok;
-
-  /// No description provided for @officeLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Office Location'**
-  String get officeLocation;
-
-  /// No description provided for @address.
-  ///
-  /// In en, this message translates to:
-  /// **'Address'**
-  String get address;
-
-  /// No description provided for @contactSupportAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Gaborone, Botswana'**
-  String get contactSupportAddress;
-
-  /// No description provided for @addressCopied.
-  ///
-  /// In en, this message translates to:
-  /// **'Address copied to clipboard'**
-  String get addressCopied;
-
-  /// No description provided for @needHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Need Help?'**
-  String get needHelp;
-
-  /// No description provided for @contactSupportHelpText.
-  ///
-  /// In en, this message translates to:
-  /// **'Have questions about our services, need technical support, or want to provide feedback? We\'re here to assist you every step of the way.'**
-  String get contactSupportHelpText;
-
-  /// No description provided for @sendEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Email'**
-  String get sendEmail;
-
-  /// No description provided for @chatWhatsApp.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat on WhatsApp'**
-  String get chatWhatsApp;
-
-  /// No description provided for @contactSupportEmailSubject.
-  ///
-  /// In en, this message translates to:
-  /// **'Support Request - HustleLink App'**
-  String get contactSupportEmailSubject;
-
-  /// No description provided for @emailClientNotAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open email client. Please email hustelink@gmail.com directly.'**
-  String get emailClientNotAvailable;
-
-  /// No description provided for @phoneDialerNotAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open phone dialer. Please call +267 78442166 directly.'**
-  String get phoneDialerNotAvailable;
-
-  /// No description provided for @whatsAppMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello! I need help with the HustleLink app.'**
-  String get whatsAppMessage;
-
-  /// No description provided for @whatsAppNotAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open WhatsApp. Please install WhatsApp or use the phone number directly.'**
-  String get whatsAppNotAvailable;
-
-  /// No description provided for @socialMediaNotAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open social media platform. Please visit the platform directly.'**
-  String get socialMediaNotAvailable;
-
-  /// No description provided for @mapsNotAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open maps. Please search for \'Gaborone, Botswana\' in your preferred maps app.'**
-  String get mapsNotAvailable;
-
-  /// No description provided for @navHome.
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get navHome;
-
-  /// No description provided for @navApplications.
-  ///
-  /// In en, this message translates to:
-  /// **'Applications'**
-  String get navApplications;
-
-  /// No description provided for @navProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile'**
-  String get navProfile;
-
-  /// No description provided for @navDashboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get navDashboard;
-
-  /// No description provided for @navJobs.
-  ///
-  /// In en, this message translates to:
-  /// **'Jobs'**
-  String get navJobs;
-
-  /// No description provided for @navPostJob.
-  ///
-  /// In en, this message translates to:
-  /// **'Post Job'**
-  String get navPostJob;
-
-  /// No description provided for @subscriptionWelcomeMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome to {planName}! Your subscription is now active.'**
-  String subscriptionWelcomeMessage(String planName);
-
-  /// No description provided for @subscriptionActivationFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to activate subscription. Please contact support.'**
-  String get subscriptionActivationFailed;
-
-  /// No description provided for @subscriptionUnlockPotential.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock your full potential with our premium features designed for the Botswana market.'**
-  String get subscriptionUnlockPotential;
-
-  /// No description provided for @freePlanActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Free Plan Active'**
-  String get freePlanActive;
-
-  /// No description provided for @nextBilling.
-  ///
-  /// In en, this message translates to:
-  /// **'Next billing: {date}'**
-  String nextBilling(String date);
-
-  /// No description provided for @whyUpgrade.
-  ///
-  /// In en, this message translates to:
-  /// **'Why Upgrade?'**
-  String get whyUpgrade;
-
-  /// No description provided for @subscriptionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.'**
-  String get subscriptionDescription;
-
-  /// No description provided for @recommended.
-  ///
-  /// In en, this message translates to:
-  /// **'RECOMMENDED'**
-  String get recommended;
-
-  /// No description provided for @upgradeToPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade to {planName}'**
-  String upgradeToPlan(String planName);
 }
 
 class _AppLocalizationsDelegate

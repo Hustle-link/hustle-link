@@ -64,6 +64,12 @@ class AppLocalizationsTn extends AppLocalizations {
       'Tsenya maitemogelo a gago a tiro le diphitlhelelo';
 
   @override
+  String get address => 'Aterese';
+
+  @override
+  String get addressCopied => 'Aterese e kopiletswe mo clipboard';
+
+  @override
   String ago(Object time) {
     return '$time fetileng';
   }
@@ -147,6 +153,73 @@ class AppLocalizationsTn extends AppLocalizations {
   String get basicInformation => 'Tshedimosetso ya Motheo';
 
   @override
+  String get benefitAdvancedAnalytics =>
+      'Dipalopalo tse di tshwanetseng le tshedimosetso';
+
+  @override
+  String get benefitAllProFeatures => 'Ditshupiso tsotlhe tsa Pro';
+
+  @override
+  String get benefitBasicAnalytics =>
+      'Dipalopalo tsa motheo (dipono le dikopo)';
+
+  @override
+  String get benefitBoostedVisibility =>
+      'Ponelopele e e oketsegileng mo sethateng';
+
+  @override
+  String get benefitBusinessBadge => 'Lejwe la kgwebo la boikanyego';
+
+  @override
+  String get benefitBusinessOpportunities => 'Ditshono tsa kgwebo le ditirelo';
+
+  @override
+  String get benefitEmailSupport => 'Thuso ya imeile';
+
+  @override
+  String get benefitEnhancedAnalytics => 'Dipalopalo tse di tokafetseng';
+
+  @override
+  String get benefitFeatureOneListingPerMonth =>
+      'Bokgoni jwa go supa tshupiso e le nngwe ka kgwedi';
+
+  @override
+  String get benefitJobListings15 => 'Go ya go 15 ditshono tsa tiro ka kgwedi';
+
+  @override
+  String get benefitJobListings30 => 'Go ya go 30 ditshono tsa tiro ka kgwedi';
+
+  @override
+  String get benefitNoAdsAnywhere => 'Ga go na dipapatso gongwe le gongwe';
+
+  @override
+  String get benefitNoAdsOwnListings =>
+      'Ga go na dipapatso mo ditshupong tsa gago';
+
+  @override
+  String get benefitPremiumJobPostings =>
+      'Phitlhelelo ya ditshono tsa tiro tsa premium';
+
+  @override
+  String get benefitPrioritySupport => 'Thuso ya pele';
+
+  @override
+  String get benefitPriorityVisibility =>
+      'Ponelopele e e tshwanetseng mo dipoelong';
+
+  @override
+  String get benefitTeamAccount =>
+      'Akhaonte ya setlhopha (ditsela tse dintsi tsa go tsena)';
+
+  @override
+  String get benefitUnlimitedJobListings =>
+      'Ditshono tsa tiro tse di sa feleng';
+
+  @override
+  String get benefitVerifiedBusinessProfile =>
+      'Profaele ya kgwebo e e netefaditsweng';
+
+  @override
   String get billedMonthlyCancelAnytime =>
       'Tefo ya kgwedi le kgwedi • Khansela nako nngwe le nngwe';
 
@@ -177,10 +250,18 @@ class AppLocalizationsTn extends AppLocalizations {
   String get cancel => 'Tlogela';
 
   @override
+  String cardTitle(Object index) {
+    return 'Karata $index';
+  }
+
+  @override
   String get certifications => 'Ditifikeiti';
 
   @override
   String get changePhoto => 'Fetola Senepe';
+
+  @override
+  String get chatWhatsApp => 'Buisana mo WhatsApp';
 
   @override
   String get checkBackLater =>
@@ -250,7 +331,45 @@ class AppLocalizationsTn extends AppLocalizations {
   String get contactInformation => 'Tshedimosetso ya Kgolagano';
 
   @override
+  String get contactMethods => 'Ditsela tsa Kgolagano';
+
+  @override
   String get contactSupport => 'Ikgolaganye le Kemonokeng';
+
+  @override
+  String get contactSupportAddress => 'Gaborone, Botswana';
+
+  @override
+  String get contactSupportBusinessName => 'HustleLink';
+
+  @override
+  String get contactSupportEmail => 'hustelink@gmail.com';
+
+  @override
+  String get contactSupportEmailSubject => 'Kopo ya Thuso - HustleLink App';
+
+  @override
+  String get contactSupportFacebook => 'Bolton Mooketsi';
+
+  @override
+  String get contactSupportHelpText =>
+      'O na le dipotso ka ditirelo tsa rona, o tlhoka thuso ya setegeniki, kgotsa o batla go re naya maikutlo? Re mo go go thusa mo tseleng yotlhe.';
+
+  @override
+  String get contactSupportInstagram => 'instagram.com/hustlelink';
+
+  @override
+  String get contactSupportPhone => 'Mogala/WhatsApp';
+
+  @override
+  String get contactSupportPhoneNumber => '+267 78442166';
+
+  @override
+  String get contactSupportTikTok => 'tiktok.com/@hustlelink';
+
+  @override
+  String get contactSupportWelcomeMessage =>
+      'Re mo go thusa! Ikgolaganye le rona ka nngwe ya ditsela tse di mo tlase.';
 
   @override
   String get continueText => 'Tswelela';
@@ -325,10 +444,23 @@ class AppLocalizationsTn extends AppLocalizations {
   String get draft => 'Lokwalo lwa ntlha';
 
   @override
+  String get dummyCardText => 'Eno ke karata ya teko ya tsebe ya legae';
+
+  @override
   String get editJob => 'Fetola Tiro';
 
   @override
   String get editProfile => 'Fetola Porofaele';
+
+  @override
+  String get email => 'Imeile';
+
+  @override
+  String get emailClientNotAvailable =>
+      'Ga ke kgone go bula imeile client. Tsweetswee romela imeile go hustelink@gmail.com ka go le ikanya.';
+
+  @override
+  String get emailCopied => 'Aterese ya imeile e kopiletswe mo clipboard';
 
   @override
   String get emailHint => 'Tsenya email ya gago';
@@ -344,6 +476,10 @@ class AppLocalizationsTn extends AppLocalizations {
 
   @override
   String get english => 'Sekgoa';
+
+  @override
+  String get enterOrangeMoneyNumber =>
+      'Tsenya nomoro ya gago ya Orange Money e e kwalositweng';
 
   @override
   String get enterYourFullName => 'Tsenya leina la gago le le feletseng';
@@ -383,6 +519,18 @@ class AppLocalizationsTn extends AppLocalizations {
   }
 
   @override
+  String expiresInDays(Object days) {
+    return 'E fela mo matsatsing a $days';
+  }
+
+  @override
+  String get facebook => 'Facebook';
+
+  @override
+  String get failedToInitiatePayment =>
+      'Go simolola tefo go paletswe. Tsweetswee leka gape.';
+
+  @override
   String failedToPickFiles(Object error) {
     return 'Go tsaya difaele go paletswe: $error';
   }
@@ -402,6 +550,10 @@ class AppLocalizationsTn extends AppLocalizations {
   }
 
   @override
+  String get findBestHustleLinks =>
+      'Batla dilink tse di molemo tsa hustle tsa gago!';
+
+  @override
   String get findJobs => 'Bata Ditiro';
 
   @override
@@ -412,6 +564,9 @@ class AppLocalizationsTn extends AppLocalizations {
 
   @override
   String get freePlan => 'Leano la Mahala';
+
+  @override
+  String get freePlanActive => 'Leano la Mahala le a Dira';
 
   @override
   String get fullName => 'Leina le le feletseng';
@@ -445,6 +600,9 @@ class AppLocalizationsTn extends AppLocalizations {
   String get growthPlanFeature4 => 'Ditlhakatlhako tse di tokafetseng';
 
   @override
+  String get hustleLink => 'Hustle Link';
+
+  @override
   String get hustler => 'Motho wa Tiro';
 
   @override
@@ -452,6 +610,9 @@ class AppLocalizationsTn extends AppLocalizations {
 
   @override
   String get imAnEmployer => 'Ke Mohiri';
+
+  @override
+  String get instagram => 'Instagram';
 
   @override
   String get invalidAmount => 'Tsenya tuelo e e nepagetseng';
@@ -486,6 +647,9 @@ class AppLocalizationsTn extends AppLocalizations {
   String get jobNotFound => 'Tiro ga e a fitlhelwa';
 
   @override
+  String get jobPosts => 'Ditshono tsa Tiro';
+
+  @override
   String get jobTitle => 'Sehlogo sa Tiro';
 
   @override
@@ -493,6 +657,9 @@ class AppLocalizationsTn extends AppLocalizations {
 
   @override
   String get jobTitleRequired => 'Tsweetswee tsenya sehlogo sa tiro';
+
+  @override
+  String get jobViews => 'Dipono tsa Tiro';
 
   @override
   String get jobsCompleted => 'Ditiro tse di Feditsweng';
@@ -518,6 +685,9 @@ class AppLocalizationsTn extends AppLocalizations {
   String get locationHint => 'Remote, New York, etc.';
 
   @override
+  String get logOut => 'Tswa';
+
+  @override
   String get loginError =>
       'Go tsena go paletswe. Lekola tshedimosetso ya gago mme o leke gape.';
 
@@ -541,6 +711,10 @@ class AppLocalizationsTn extends AppLocalizations {
   String get manageSubscription => 'Laola Peeletso';
 
   @override
+  String get mapsNotAvailable =>
+      'Ga ke kgone go bula maps. Tsweetswee batla \'Gaborone, Botswana\' mo maps app e o e ratang.';
+
+  @override
   String get maybeLater => 'Kgotsa Moragon';
 
   @override
@@ -561,7 +735,33 @@ class AppLocalizationsTn extends AppLocalizations {
   String get nameIsRequired => 'Leina le a tlhokega';
 
   @override
+  String get navApplications => 'Dikopo';
+
+  @override
+  String get navDashboard => 'Potlako';
+
+  @override
+  String get navHome => 'Legae';
+
+  @override
+  String get navJobs => 'Ditiro';
+
+  @override
+  String get navPostJob => 'Posa Tiro';
+
+  @override
+  String get navProfile => 'Porofaele';
+
+  @override
+  String get needHelp => 'O Tlhoka Thuso?';
+
+  @override
   String get next => 'E e latelang';
+
+  @override
+  String nextBilling(String date) {
+    return 'Tefo e e latelang: $date';
+  }
 
   @override
   String get noAccount => 'Ga o na akhaonto?';
@@ -570,13 +770,25 @@ class AppLocalizationsTn extends AppLocalizations {
   String get noApplicationsYet => 'Ga go na Dikopo Tšhono';
 
   @override
+  String get noCardsAvailable => 'Ga go na dikarata tse di leng teng';
+
+  @override
   String get noJobsAvailable => 'Ga go na ditiro tse di leng teng';
 
   @override
   String get noJobsPostedYet => 'Ga go na ditiro tse di poseditsweng';
 
   @override
+  String get officeLocation => 'Lefelo la Ofisi';
+
+  @override
   String get ok => 'Siame';
+
+  @override
+  String get orangeMoney => 'Orange Money';
+
+  @override
+  String get orangeMoneyNumber => 'Nomoro ya Orange Money';
 
   @override
   String get passwordLabel => 'Lephoko la sephiri';
@@ -604,6 +816,10 @@ class AppLocalizationsTn extends AppLocalizations {
   String get passwordsDoNotMatch => 'Maphoko a sephiri ga a tshwane.';
 
   @override
+  String get paymentProcessedSecurely =>
+      'Dituelo tsa gago di dirwa ka polokesego ka Orange Money Botswana.';
+
+  @override
   String get pending => 'E santse e sekasekwa';
 
   @override
@@ -613,11 +829,30 @@ class AppLocalizationsTn extends AppLocalizations {
   String get phone => 'Mogala';
 
   @override
+  String get phoneCopied => 'Nomoro ya mogala e kopiletswe mo clipboard';
+
+  @override
+  String get phoneDialerNotAvailable =>
+      'Ga ke kgone go bula phone dialer. Tsweetswee bitsa +267 78442166 ka go le ikanya.';
+
+  @override
   String get phoneNumber => 'Nomoro ya Mogala';
 
   @override
   String get pleaseAddAtLeastOneSkill =>
       'Tsweetswee tsenya bokgoni bo le bongwe';
+
+  @override
+  String get pleaseEnterOrangeMoneyNumber =>
+      'Tsweetswee tsenya nomoro ya gago ya Orange Money';
+
+  @override
+  String get pleaseEnterValidBotswanaPhone =>
+      'Tsweetswee tsenya nomoro ya mogala ya Botswana e e nepagetse (+267 XXXX XXXX)';
+
+  @override
+  String get pleaseEnterValidMobileNumber =>
+      'Tsweetswee tsenya nomoro ya mogala e e nepagetse e e simololang ka 6 kgotsa 7';
 
   @override
   String get postAJob => 'Bula Tiro';
@@ -678,13 +913,24 @@ class AppLocalizationsTn extends AppLocalizations {
   String get profileNotFound => 'Porofaele ga e a fitlhelwa';
 
   @override
+  String get profileUpdated => 'Profaele e Ntshitswe';
+
+  @override
   String get profileUpdatedSuccessfully => 'Porofaele e fetotswe ka katlego!';
 
   @override
   String get rating => 'Tekanyetso';
 
   @override
+  String reachedLimitMessage(Object featureName) {
+    return 'O fitlhile tekanyo ya $featureName mo leanong la gago la jaana. Godisa go tswelela go itumelela ditshupiso tsotlhe tsa Hustle Link.';
+  }
+
+  @override
   String get readyToUpload => 'E siametse go tsenngwa';
+
+  @override
+  String get recommended => 'E A KGOTLHELWA';
 
   @override
   String get registerButton => 'Ikwadise';
@@ -748,7 +994,14 @@ class AppLocalizationsTn extends AppLocalizations {
   String get savedMessage => 'E bolokilwe!';
 
   @override
+  String get securePaymentSystem =>
+      'Mokgwa o o babalesegileng wa dituelo tsa Botswana';
+
+  @override
   String get sendButtonText => 'Romela Kgolagano ya go Seta Sesha';
+
+  @override
+  String get sendEmail => 'Romela Imeile';
 
   @override
   String get separateSkillsWithCommas => 'Kgaoganya bokgoni ka khoma';
@@ -785,6 +1038,13 @@ class AppLocalizationsTn extends AppLocalizations {
   String get skip => 'Tlola';
 
   @override
+  String get socialMedia => 'Social Media';
+
+  @override
+  String get socialMediaNotAvailable =>
+      'Ga ke kgone go bula social media platform. Tsweetswee etela platform ka go le ikanya.';
+
+  @override
   String get startApplyingForJobs =>
       'Simolola go dira dikopo tsa ditiro go di bona fano';
 
@@ -809,6 +1069,10 @@ class AppLocalizationsTn extends AppLocalizations {
   String get subscribe => 'Peeletsa';
 
   @override
+  String get subscriptionActivationFailed =>
+      'Go simolola peeletso go paletswe. Tsweetswee ikgolagane le tshegetselo.';
+
+  @override
   String get subscriptionActive => 'E a Dira';
 
   @override
@@ -820,6 +1084,10 @@ class AppLocalizationsTn extends AppLocalizations {
   @override
   String get subscriptionCancelled =>
       'Peeletso e khansetswe. O santse o na le phitlhelelo go fitlha kwa bokhutlong jwa paka ya gago ya tefo.';
+
+  @override
+  String get subscriptionDescription =>
+      'Mananeo a Premium a Hustle Link a dirilwe thata bakeng sa babereki le dikgwebo tsa Botswana. Fumana phitlhelelo e e sa lekanyetswang ya ditiro, tshegetselo ya pele, le dikarolo tse di go thusang go atlegiša mo mmarakeng wa selegae.';
 
   @override
   String get subscriptionDowngrade => 'Theola';
@@ -844,6 +1112,9 @@ class AppLocalizationsTn extends AppLocalizations {
   String get subscriptionPaymentProcessing => 'Go baakanyetsa tefo...';
 
   @override
+  String get subscriptionPlan => 'Leano la Subscription';
+
+  @override
   String get subscriptionRenews => 'Tefo e e latelang';
 
   @override
@@ -860,7 +1131,16 @@ class AppLocalizationsTn extends AppLocalizations {
   String get subscriptionTryAgain => 'Leka Gape';
 
   @override
+  String get subscriptionUnlockPotential =>
+      'Bula bokgoni jwa gago jotlhe ka dikarolo tsa rona tse di kwa godimo tse di dirilweng kwa Botswana.';
+
+  @override
   String get subscriptionUpgrade => 'Tlhatlhoba';
+
+  @override
+  String subscriptionWelcomeMessage(String planName) {
+    return 'Amogelesega go $planName! Peeletso ya gago e simolotse go dira.';
+  }
 
   @override
   String get subscriptions => 'Dipeeletso';
@@ -879,9 +1159,15 @@ class AppLocalizationsTn extends AppLocalizations {
       'Ka go peeletsa, o dumalana le melao ya rona ya tiriso le leano la sephiri. Peeletso ya gago e tla ipaakanela kgwedi le kgwedi fa e sa khansetswe.';
 
   @override
+  String get tikTok => 'TikTok';
+
+  @override
   String total(Object count) {
     return '$count palogotlhe';
   }
+
+  @override
+  String get totalAmount => 'Palotlotso ya Madi';
 
   @override
   String get tryAgain => 'Leka gape';
@@ -899,6 +1185,9 @@ class AppLocalizationsTn extends AppLocalizations {
   @override
   String get unlockFullPotential =>
       'Notlolla bokgoni jwa gago ka botlalo ka ditiriso tsa rona tsa premium.';
+
+  @override
+  String get updateFailed => 'Ntshitso e Paletswe';
 
   @override
   String get updatePostingSubtitle =>
@@ -923,7 +1212,18 @@ class AppLocalizationsTn extends AppLocalizations {
       'Godisa go ya kwa Thulaganyong ya Kgwebo e Kgolwane';
 
   @override
+  String get upgradeToBusinessPremium => 'Godisa go Business Premium';
+
+  @override
   String get upgradeToGrowth => 'Godisa go ya kwa Thulaganyong ya Kgolo';
+
+  @override
+  String get upgradeToGrowthPlan => 'Godisa go Leano la Growth';
+
+  @override
+  String upgradeToPlan(String planName) {
+    return 'Godisa go $planName';
+  }
 
   @override
   String get upgradeToPostMoreJobs =>
@@ -933,7 +1233,16 @@ class AppLocalizationsTn extends AppLocalizations {
   String get upgradeToPro => 'Godisa go ya kwa Thulaganyong ya Pro';
 
   @override
+  String get upgradeToProPlan => 'Godisa go Leano la Pro';
+
+  @override
   String get upgradeToStarter => 'Godisa go ya kwa Thulaganyong ya Starter';
+
+  @override
+  String get upgradeToStarterPlan => 'Godisa go Leano la Starter';
+
+  @override
+  String get upgradeYourPlan => 'Godisa Leano la Gago';
 
   @override
   String get uploadCertificates =>
@@ -1025,7 +1334,20 @@ class AppLocalizationsTn extends AppLocalizations {
   String get whatYoullGet => 'Se o tla se amogela:';
 
   @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get whatsAppMessage => 'Dumela! Ke tlhoka thuso ka HustleLink app.';
+
+  @override
+  String get whatsAppNotAvailable =>
+      'Ga ke kgone go bula WhatsApp. Tsweetswee tsenya WhatsApp kgotsa o dirisa nomoro ya mogala ka go le ikanya.';
+
+  @override
   String get whatsYourName => 'Leina la gago ke mang?';
+
+  @override
+  String get whyUpgrade => 'Goreng o Godise?';
 
   @override
   String get writeACoverLetter => 'Kwala lokwalo lwa kopo (go saatege)';
@@ -1036,326 +1358,4 @@ class AppLocalizationsTn extends AppLocalizations {
 
   @override
   String get yourProfileIsComplete => 'Porofaele ya gago e feletse! 🎉';
-
-  @override
-  String get orangeMoney => 'Orange Money';
-
-  @override
-  String get securePaymentSystem =>
-      'Mokgwa o o babalesegileng wa dituelo tsa Botswana';
-
-  @override
-  String get subscriptionPlan => 'Leano la Subscription';
-
-  @override
-  String get totalAmount => 'Palotlotso ya Madi';
-
-  @override
-  String get orangeMoneyNumber => 'Nomoro ya Orange Money';
-
-  @override
-  String get enterOrangeMoneyNumber =>
-      'Tsenya nomoro ya gago ya Orange Money e e kwalositweng';
-
-  @override
-  String get paymentProcessedSecurely =>
-      'Dituelo tsa gago di dirwa ka polokesego ka Orange Money Botswana.';
-
-  @override
-  String get hustleLink => 'Hustle Link';
-
-  @override
-  String get profileUpdated => 'Profaele e Ntshitswe';
-
-  @override
-  String get updateFailed => 'Ntshitso e Paletswe';
-
-  @override
-  String get findBestHustleLinks =>
-      'Batla dilink tse di molemo tsa hustle tsa gago!';
-
-  @override
-  String get noCardsAvailable => 'Ga go na dikarata tse di leng teng';
-
-  @override
-  String get logOut => 'Tswa';
-
-  @override
-  String cardTitle(Object index) {
-    return 'Karata $index';
-  }
-
-  @override
-  String get dummyCardText => 'Eno ke karata ya teko ya tsebe ya legae';
-
-  @override
-  String get pleaseEnterOrangeMoneyNumber =>
-      'Tsweetswee tsenya nomoro ya gago ya Orange Money';
-
-  @override
-  String get benefitJobListings15 => 'Go ya go 15 ditshono tsa tiro ka kgwedi';
-
-  @override
-  String get benefitBasicAnalytics =>
-      'Dipalopalo tsa motheo (dipono le dikopo)';
-
-  @override
-  String get benefitNoAdsOwnListings =>
-      'Ga go na dipapatso mo ditshupong tsa gago';
-
-  @override
-  String get benefitEmailSupport => 'Thuso ya imeile';
-
-  @override
-  String get benefitJobListings30 => 'Go ya go 30 ditshono tsa tiro ka kgwedi';
-
-  @override
-  String get benefitPriorityVisibility =>
-      'Ponelopele e e tshwanetseng mo dipoelong';
-
-  @override
-  String get benefitFeatureOneListingPerMonth =>
-      'Bokgoni jwa go supa tshupiso e le nngwe ka kgwedi';
-
-  @override
-  String get benefitEnhancedAnalytics => 'Dipalopalo tse di tokafetseng';
-
-  @override
-  String get benefitUnlimitedJobListings =>
-      'Ditshono tsa tiro tse di sa feleng';
-
-  @override
-  String get benefitBoostedVisibility =>
-      'Ponelopele e e oketsegileng mo sethateng';
-
-  @override
-  String get benefitNoAdsAnywhere => 'Ga go na dipapatso gongwe le gongwe';
-
-  @override
-  String get benefitPremiumJobPostings =>
-      'Phitlhelelo ya ditshono tsa tiro tsa premium';
-
-  @override
-  String get benefitPrioritySupport => 'Thuso ya pele';
-
-  @override
-  String get benefitAllProFeatures => 'Ditshupiso tsotlhe tsa Pro';
-
-  @override
-  String get benefitVerifiedBusinessProfile =>
-      'Profaele ya kgwebo e e netefaditsweng';
-
-  @override
-  String get benefitBusinessOpportunities => 'Ditshono tsa kgwebo le ditirelo';
-
-  @override
-  String get benefitTeamAccount =>
-      'Akhaonte ya setlhopha (ditsela tse dintsi tsa go tsena)';
-
-  @override
-  String get benefitAdvancedAnalytics =>
-      'Dipalopalo tse di tshwanetseng le tshedimosetso';
-
-  @override
-  String get benefitBusinessBadge => 'Lejwe la kgwebo la boikanyego';
-
-  @override
-  String get upgradeToStarterPlan => 'Godisa go Leano la Starter';
-
-  @override
-  String get upgradeToGrowthPlan => 'Godisa go Leano la Growth';
-
-  @override
-  String get upgradeToProPlan => 'Godisa go Leano la Pro';
-
-  @override
-  String get upgradeToBusinessPremium => 'Godisa go Business Premium';
-
-  @override
-  String get upgradeYourPlan => 'Godisa Leano la Gago';
-
-  @override
-  String reachedLimitMessage(Object featureName) {
-    return 'O fitlhile tekanyo ya $featureName mo leanong la gago la jaana. Godisa go tswelela go itumelela ditshupiso tsotlhe tsa Hustle Link.';
-  }
-
-  @override
-  String expiresInDays(Object days) {
-    return 'E fela mo matsatsing a $days';
-  }
-
-  @override
-  String get jobViews => 'Dipono tsa Tiro';
-
-  @override
-  String get jobPosts => 'Ditshono tsa Tiro';
-
-  @override
-  String get pleaseEnterValidBotswanaPhone =>
-      'Tsweetswee tsenya nomoro ya mogala ya Botswana e e nepagetse (+267 XXXX XXXX)';
-
-  @override
-  String get pleaseEnterValidMobileNumber =>
-      'Tsweetswee tsenya nomoro ya mogala e e nepagetse e e simololang ka 6 kgotsa 7';
-
-  @override
-  String get failedToInitiatePayment =>
-      'Go simolola tefo go paletswe. Tsweetswee leka gape.';
-
-  @override
-  String get contactSupportBusinessName => 'HustleLink';
-
-  @override
-  String get contactSupportWelcomeMessage =>
-      'Re mo go thusa! Ikgolaganye le rona ka nngwe ya ditsela tse di mo tlase.';
-
-  @override
-  String get contactMethods => 'Ditsela tsa Kgolagano';
-
-  @override
-  String get email => 'Imeile';
-
-  @override
-  String get contactSupportEmail => 'hustelink@gmail.com';
-
-  @override
-  String get emailCopied => 'Aterese ya imeile e kopiletswe mo clipboard';
-
-  @override
-  String get contactSupportPhone => 'Mogala/WhatsApp';
-
-  @override
-  String get contactSupportPhoneNumber => '+267 78442166';
-
-  @override
-  String get phoneCopied => 'Nomoro ya mogala e kopiletswe mo clipboard';
-
-  @override
-  String get whatsApp => 'WhatsApp';
-
-  @override
-  String get socialMedia => 'Social Media';
-
-  @override
-  String get facebook => 'Facebook';
-
-  @override
-  String get contactSupportFacebook => 'Bolton Mooketsi';
-
-  @override
-  String get instagram => 'Instagram';
-
-  @override
-  String get contactSupportInstagram => 'instagram.com/hustlelink';
-
-  @override
-  String get tikTok => 'TikTok';
-
-  @override
-  String get contactSupportTikTok => 'tiktok.com/@hustlelink';
-
-  @override
-  String get officeLocation => 'Lefelo la Ofisi';
-
-  @override
-  String get address => 'Aterese';
-
-  @override
-  String get contactSupportAddress => 'Gaborone, Botswana';
-
-  @override
-  String get addressCopied => 'Aterese e kopiletswe mo clipboard';
-
-  @override
-  String get needHelp => 'O Tlhoka Thuso?';
-
-  @override
-  String get contactSupportHelpText =>
-      'O na le dipotso ka ditirelo tsa rona, o tlhoka thuso ya setegeniki, kgotsa o batla go re naya maikutlo? Re mo go go thusa mo tseleng yotlhe.';
-
-  @override
-  String get sendEmail => 'Romela Imeile';
-
-  @override
-  String get chatWhatsApp => 'Buisana mo WhatsApp';
-
-  @override
-  String get contactSupportEmailSubject => 'Kopo ya Thuso - HustleLink App';
-
-  @override
-  String get emailClientNotAvailable =>
-      'Ga ke kgone go bula imeile client. Tsweetswee romela imeile go hustelink@gmail.com ka go le ikanya.';
-
-  @override
-  String get phoneDialerNotAvailable =>
-      'Ga ke kgone go bula phone dialer. Tsweetswee bitsa +267 78442166 ka go le ikanya.';
-
-  @override
-  String get whatsAppMessage => 'Dumela! Ke tlhoka thuso ka HustleLink app.';
-
-  @override
-  String get whatsAppNotAvailable =>
-      'Ga ke kgone go bula WhatsApp. Tsweetswee tsenya WhatsApp kgotsa o dirisa nomoro ya mogala ka go le ikanya.';
-
-  @override
-  String get socialMediaNotAvailable =>
-      'Ga ke kgone go bula social media platform. Tsweetswee etela platform ka go le ikanya.';
-
-  @override
-  String get mapsNotAvailable =>
-      'Ga ke kgone go bula maps. Tsweetswee batla \'Gaborone, Botswana\' mo maps app e o e ratang.';
-
-  @override
-  String get navHome => 'Legae';
-
-  @override
-  String get navApplications => 'Dikopo';
-
-  @override
-  String get navProfile => 'Porofaele';
-
-  @override
-  String get navDashboard => 'Potlako';
-
-  @override
-  String get navJobs => 'Ditiro';
-
-  @override
-  String get navPostJob => 'Posa Tiro';
-
-  @override
-  String subscriptionWelcomeMessage(String planName) {
-    return 'Amogelesega go $planName! Peeletso ya gago e simolotse go dira.';
-  }
-
-  @override
-  String get subscriptionActivationFailed =>
-      'Go simolola peeletso go paletswe. Tsweetswee ikgolagane le tshegetselo.';
-
-  @override
-  String get subscriptionUnlockPotential =>
-      'Bula bokgoni jwa gago jotlhe ka dikarolo tsa rona tse di kwa godimo tse di dirilweng kwa Botswana.';
-
-  @override
-  String get freePlanActive => 'Leano la Mahala le a Dira';
-
-  @override
-  String nextBilling(String date) {
-    return 'Tefo e e latelang: $date';
-  }
-
-  @override
-  String get whyUpgrade => 'Goreng o Godise?';
-
-  @override
-  String get subscriptionDescription =>
-      'Mananeo a Premium a Hustle Link a dirilwe thata bakeng sa babereki le dikgwebo tsa Botswana. Fumana phitlhelelo e e sa lekanyetswang ya ditiro, tshegetselo ya pele, le dikarolo tse di go thusang go atlegiša mo mmarakeng wa selegae.';
-
-  @override
-  String get recommended => 'E A KGOTLHELWA';
-
-  @override
-  String upgradeToPlan(String planName) {
-    return 'Godisa go $planName';
-  }
 }

@@ -63,6 +63,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add your work experience and achievements';
 
   @override
+  String get address => 'Address';
+
+  @override
+  String get addressCopied => 'Address copied to clipboard';
+
+  @override
   String ago(Object time) {
     return '$time ago';
   }
@@ -145,6 +151,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String get basicInformation => 'Basic Information';
 
   @override
+  String get benefitAdvancedAnalytics => 'Advanced analytics & insights';
+
+  @override
+  String get benefitAllProFeatures => 'All Pro features';
+
+  @override
+  String get benefitBasicAnalytics => 'Basic analytics (views & applications)';
+
+  @override
+  String get benefitBoostedVisibility => 'Boosted visibility across platform';
+
+  @override
+  String get benefitBusinessBadge => 'Business badge for credibility';
+
+  @override
+  String get benefitBusinessOpportunities => 'Business opportunities & tenders';
+
+  @override
+  String get benefitEmailSupport => 'Email support';
+
+  @override
+  String get benefitEnhancedAnalytics => 'Enhanced analytics';
+
+  @override
+  String get benefitFeatureOneListingPerMonth =>
+      'Ability to feature 1 listing per month';
+
+  @override
+  String get benefitJobListings15 => 'Up to 15 job listings per month';
+
+  @override
+  String get benefitJobListings30 => 'Up to 30 job listings per month';
+
+  @override
+  String get benefitNoAdsAnywhere => 'No ads anywhere';
+
+  @override
+  String get benefitNoAdsOwnListings => 'No ads on own listings';
+
+  @override
+  String get benefitPremiumJobPostings => 'Access to premium job postings';
+
+  @override
+  String get benefitPrioritySupport => 'Priority support';
+
+  @override
+  String get benefitPriorityVisibility =>
+      'Priority visibility in search results';
+
+  @override
+  String get benefitTeamAccount => 'Team account (multiple logins)';
+
+  @override
+  String get benefitUnlimitedJobListings => 'Unlimited job listings';
+
+  @override
+  String get benefitVerifiedBusinessProfile => 'Verified business profile';
+
+  @override
   String get billedMonthlyCancelAnytime => 'Billed monthly • Cancel anytime';
 
   @override
@@ -172,10 +237,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String cardTitle(Object index) {
+    return 'Card $index';
+  }
+
+  @override
   String get certifications => 'Certifications';
 
   @override
   String get changePhoto => 'Change Photo';
+
+  @override
+  String get chatWhatsApp => 'Chat on WhatsApp';
 
   @override
   String get checkBackLater => 'Check back later for new opportunities';
@@ -243,7 +316,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactInformation => 'Contact Information';
 
   @override
+  String get contactMethods => 'Contact Methods';
+
+  @override
   String get contactSupport => 'Contact Support';
+
+  @override
+  String get contactSupportAddress => 'Gaborone, Botswana';
+
+  @override
+  String get contactSupportBusinessName => 'HustleLink';
+
+  @override
+  String get contactSupportEmail => 'hustelink@gmail.com';
+
+  @override
+  String get contactSupportEmailSubject => 'Support Request - HustleLink App';
+
+  @override
+  String get contactSupportFacebook => 'Bolton Mooketsi';
+
+  @override
+  String get contactSupportHelpText =>
+      'Have questions about our services, need technical support, or want to provide feedback? We\'re here to assist you every step of the way.';
+
+  @override
+  String get contactSupportInstagram => 'instagram.com/hustlelink';
+
+  @override
+  String get contactSupportPhone => 'Phone/WhatsApp';
+
+  @override
+  String get contactSupportPhoneNumber => '+267 78442166';
+
+  @override
+  String get contactSupportTikTok => 'tiktok.com/@hustlelink';
+
+  @override
+  String get contactSupportWelcomeMessage =>
+      'We\'re here to help! Get in touch with us through any of the methods below.';
 
   @override
   String get continueText => 'Continue';
@@ -318,10 +429,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get draft => 'Draft';
 
   @override
+  String get dummyCardText => 'This is a dummy card for home page';
+
+  @override
   String get editJob => 'Edit Job';
 
   @override
   String get editProfile => 'Edit Profile';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get emailClientNotAvailable =>
+      'Could not open email client. Please email hustelink@gmail.com directly.';
+
+  @override
+  String get emailCopied => 'Email address copied to clipboard';
 
   @override
   String get emailHint => 'Enter your email';
@@ -337,6 +461,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get enterOrangeMoneyNumber =>
+      'Enter your Orange Money registered phone number';
 
   @override
   String get enterYourFullName => 'Enter your full name';
@@ -375,6 +503,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String expiresInDays(Object days) {
+    return 'Expires in $days days';
+  }
+
+  @override
+  String get facebook => 'Facebook';
+
+  @override
+  String get failedToInitiatePayment =>
+      'Failed to initiate payment. Please try again.';
+
+  @override
   String failedToPickFiles(Object error) {
     return 'Failed to pick files: $error';
   }
@@ -393,6 +533,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get findBestHustleLinks => 'Find the best hustle links for you!';
+
+  @override
   String get findJobs => 'Find Jobs';
 
   @override
@@ -403,6 +546,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get freePlan => 'Free Plan';
+
+  @override
+  String get freePlanActive => 'Free Plan Active';
 
   @override
   String get fullName => 'Full Name';
@@ -432,6 +578,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get growthPlanFeature4 => 'Enhanced analytics';
 
   @override
+  String get hustleLink => 'Hustle Link';
+
+  @override
   String get hustler => 'Hustler';
 
   @override
@@ -439,6 +588,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imAnEmployer => 'I\'m an Employer';
+
+  @override
+  String get instagram => 'Instagram';
 
   @override
   String get invalidAmount => 'Enter a valid amount';
@@ -472,6 +624,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobNotFound => 'Job not found';
 
   @override
+  String get jobPosts => 'Job Posts';
+
+  @override
   String get jobTitle => 'Job Title';
 
   @override
@@ -479,6 +634,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jobTitleRequired => 'Please enter a job title';
+
+  @override
+  String get jobViews => 'Job Views';
 
   @override
   String get jobsCompleted => 'Jobs Completed';
@@ -504,6 +662,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locationHint => 'Remote, New York, etc.';
 
   @override
+  String get logOut => 'Log Out';
+
+  @override
   String get loginError =>
       'Login failed. Please check your credentials and try again.';
 
@@ -526,6 +687,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manageSubscription => 'Manage Subscription';
 
   @override
+  String get mapsNotAvailable =>
+      'Could not open maps. Please search for \'Gaborone, Botswana\' in your preferred maps app.';
+
+  @override
   String get maybeLater => 'Maybe Later';
 
   @override
@@ -546,7 +711,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameIsRequired => 'Name is required';
 
   @override
+  String get navApplications => 'Applications';
+
+  @override
+  String get navDashboard => 'Dashboard';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navJobs => 'Jobs';
+
+  @override
+  String get navPostJob => 'Post Job';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get needHelp => 'Need Help?';
+
+  @override
   String get next => 'Next';
+
+  @override
+  String nextBilling(String date) {
+    return 'Next billing: $date';
+  }
 
   @override
   String get noAccount => 'Don\'t have an account?';
@@ -555,13 +746,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noApplicationsYet => 'No Applications Yet';
 
   @override
+  String get noCardsAvailable => 'No cards available';
+
+  @override
   String get noJobsAvailable => 'No jobs available';
 
   @override
   String get noJobsPostedYet => 'No jobs posted yet';
 
   @override
+  String get officeLocation => 'Office Location';
+
+  @override
   String get ok => 'OK';
+
+  @override
+  String get orangeMoney => 'Orange Money';
+
+  @override
+  String get orangeMoneyNumber => 'Orange Money Number';
 
   @override
   String get passwordLabel => 'Password';
@@ -588,6 +791,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordsDoNotMatch => 'Passwords do not match.';
 
   @override
+  String get paymentProcessedSecurely =>
+      'Your payment is processed securely through Orange Money Botswana.';
+
+  @override
   String get pending => 'Pending';
 
   @override
@@ -597,10 +804,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phone => 'Phone';
 
   @override
+  String get phoneCopied => 'Phone number copied to clipboard';
+
+  @override
+  String get phoneDialerNotAvailable =>
+      'Could not open phone dialer. Please call +267 78442166 directly.';
+
+  @override
   String get phoneNumber => 'Phone Number';
 
   @override
   String get pleaseAddAtLeastOneSkill => 'Please add at least one skill';
+
+  @override
+  String get pleaseEnterOrangeMoneyNumber =>
+      'Please enter your Orange Money phone number';
+
+  @override
+  String get pleaseEnterValidBotswanaPhone =>
+      'Please enter a valid Botswana phone number (+267 XXXX XXXX)';
+
+  @override
+  String get pleaseEnterValidMobileNumber =>
+      'Please enter a valid mobile number starting with 6 or 7';
 
   @override
   String get postAJob => 'Post a Job';
@@ -661,13 +887,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileNotFound => 'Profile not found';
 
   @override
+  String get profileUpdated => 'Profile Updated';
+
+  @override
   String get profileUpdatedSuccessfully => 'Profile updated successfully!';
 
   @override
   String get rating => 'Rating';
 
   @override
+  String reachedLimitMessage(Object featureName) {
+    return 'You\'ve reached the limit for $featureName on your current plan. Upgrade to continue enjoying all features of Hustle Link.';
+  }
+
+  @override
   String get readyToUpload => 'Ready to upload';
+
+  @override
+  String get recommended => 'RECOMMENDED';
 
   @override
   String get registerButton => 'Register';
@@ -732,7 +969,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedMessage => 'Saved!';
 
   @override
+  String get securePaymentSystem => 'Secure payment system for Botswana';
+
+  @override
   String get sendButtonText => 'Send Reset Link';
+
+  @override
+  String get sendEmail => 'Send Email';
 
   @override
   String get separateSkillsWithCommas => 'Separate skills with commas';
@@ -768,6 +1011,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skip => 'Skip';
 
   @override
+  String get socialMedia => 'Social Media';
+
+  @override
+  String get socialMediaNotAvailable =>
+      'Could not open social media platform. Please visit the platform directly.';
+
+  @override
   String get startApplyingForJobs => 'Start applying for jobs to see them here';
 
   @override
@@ -789,6 +1039,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscribe => 'Subscribe';
 
   @override
+  String get subscriptionActivationFailed =>
+      'Failed to activate subscription. Please contact support.';
+
+  @override
   String get subscriptionActive => 'Active';
 
   @override
@@ -800,6 +1054,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get subscriptionCancelled =>
       'Subscription cancelled. You still have access until the end of your billing period.';
+
+  @override
+  String get subscriptionDescription =>
+      'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.';
 
   @override
   String get subscriptionDowngrade => 'Downgrade';
@@ -823,6 +1081,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionPaymentProcessing => 'Processing payment...';
 
   @override
+  String get subscriptionPlan => 'Subscription Plan';
+
+  @override
   String get subscriptionRenews => 'Next billing';
 
   @override
@@ -839,7 +1100,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionTryAgain => 'Try Again';
 
   @override
+  String get subscriptionUnlockPotential =>
+      'Unlock your full potential with our premium features designed for the Botswana market.';
+
+  @override
   String get subscriptionUpgrade => 'Upgrade';
+
+  @override
+  String subscriptionWelcomeMessage(String planName) {
+    return 'Welcome to $planName! Your subscription is now active.';
+  }
 
   @override
   String get subscriptions => 'Subscriptions';
@@ -858,9 +1128,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'By subscribing, you agree to our terms of service and privacy policy. Your subscription will automatically renew monthly unless cancelled.';
 
   @override
+  String get tikTok => 'TikTok';
+
+  @override
   String total(Object count) {
     return '$count total';
   }
+
+  @override
+  String get totalAmount => 'Total Amount';
 
   @override
   String get tryAgain => 'Try Again';
@@ -877,6 +1153,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get unlockFullPotential =>
       'Unlock your full potential with our premium features.';
+
+  @override
+  String get updateFailed => 'Update Failed';
 
   @override
   String get updatePostingSubtitle => 'Modify the fields you want to update';
@@ -899,7 +1178,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upgradeToBusiness => 'Upgrade to Business Premium';
 
   @override
+  String get upgradeToBusinessPremium => 'Upgrade to Business Premium';
+
+  @override
   String get upgradeToGrowth => 'Upgrade to Growth Plan';
+
+  @override
+  String get upgradeToGrowthPlan => 'Upgrade to Growth Plan';
+
+  @override
+  String upgradeToPlan(String planName) {
+    return 'Upgrade to $planName';
+  }
 
   @override
   String get upgradeToPostMoreJobs => 'Upgrade to Post More Jobs';
@@ -908,7 +1198,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upgradeToPro => 'Upgrade to Pro Plan';
 
   @override
+  String get upgradeToProPlan => 'Upgrade to Pro Plan';
+
+  @override
   String get upgradeToStarter => 'Upgrade to Starter Plan';
+
+  @override
+  String get upgradeToStarterPlan => 'Upgrade to Starter Plan';
+
+  @override
+  String get upgradeYourPlan => 'Upgrade Your Plan';
 
   @override
   String get uploadCertificates =>
@@ -998,7 +1297,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatYoullGet => 'What you\'ll get:';
 
   @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get whatsAppMessage => 'Hello! I need help with the HustleLink app.';
+
+  @override
+  String get whatsAppNotAvailable =>
+      'Could not open WhatsApp. Please install WhatsApp or use the phone number directly.';
+
+  @override
   String get whatsYourName => 'What\'s your name?';
+
+  @override
+  String get whyUpgrade => 'Why Upgrade?';
 
   @override
   String get writeACoverLetter => 'Write a cover letter (optional)';
@@ -1009,316 +1321,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yourProfileIsComplete => 'Your profile is complete! 🎉';
-
-  @override
-  String get orangeMoney => 'Orange Money';
-
-  @override
-  String get securePaymentSystem => 'Secure payment system for Botswana';
-
-  @override
-  String get subscriptionPlan => 'Subscription Plan';
-
-  @override
-  String get totalAmount => 'Total Amount';
-
-  @override
-  String get orangeMoneyNumber => 'Orange Money Number';
-
-  @override
-  String get enterOrangeMoneyNumber =>
-      'Enter your Orange Money registered phone number';
-
-  @override
-  String get paymentProcessedSecurely =>
-      'Your payment is processed securely through Orange Money Botswana.';
-
-  @override
-  String get hustleLink => 'Hustle Link';
-
-  @override
-  String get profileUpdated => 'Profile Updated';
-
-  @override
-  String get updateFailed => 'Update Failed';
-
-  @override
-  String get findBestHustleLinks => 'Find the best hustle links for you!';
-
-  @override
-  String get noCardsAvailable => 'No cards available';
-
-  @override
-  String get logOut => 'Log Out';
-
-  @override
-  String cardTitle(Object index) {
-    return 'Card $index';
-  }
-
-  @override
-  String get dummyCardText => 'This is a dummy card for home page';
-
-  @override
-  String get pleaseEnterOrangeMoneyNumber =>
-      'Please enter your Orange Money phone number';
-
-  @override
-  String get benefitJobListings15 => 'Up to 15 job listings per month';
-
-  @override
-  String get benefitBasicAnalytics => 'Basic analytics (views & applications)';
-
-  @override
-  String get benefitNoAdsOwnListings => 'No ads on own listings';
-
-  @override
-  String get benefitEmailSupport => 'Email support';
-
-  @override
-  String get benefitJobListings30 => 'Up to 30 job listings per month';
-
-  @override
-  String get benefitPriorityVisibility =>
-      'Priority visibility in search results';
-
-  @override
-  String get benefitFeatureOneListingPerMonth =>
-      'Ability to feature 1 listing per month';
-
-  @override
-  String get benefitEnhancedAnalytics => 'Enhanced analytics';
-
-  @override
-  String get benefitUnlimitedJobListings => 'Unlimited job listings';
-
-  @override
-  String get benefitBoostedVisibility => 'Boosted visibility across platform';
-
-  @override
-  String get benefitNoAdsAnywhere => 'No ads anywhere';
-
-  @override
-  String get benefitPremiumJobPostings => 'Access to premium job postings';
-
-  @override
-  String get benefitPrioritySupport => 'Priority support';
-
-  @override
-  String get benefitAllProFeatures => 'All Pro features';
-
-  @override
-  String get benefitVerifiedBusinessProfile => 'Verified business profile';
-
-  @override
-  String get benefitBusinessOpportunities => 'Business opportunities & tenders';
-
-  @override
-  String get benefitTeamAccount => 'Team account (multiple logins)';
-
-  @override
-  String get benefitAdvancedAnalytics => 'Advanced analytics & insights';
-
-  @override
-  String get benefitBusinessBadge => 'Business badge for credibility';
-
-  @override
-  String get upgradeToStarterPlan => 'Upgrade to Starter Plan';
-
-  @override
-  String get upgradeToGrowthPlan => 'Upgrade to Growth Plan';
-
-  @override
-  String get upgradeToProPlan => 'Upgrade to Pro Plan';
-
-  @override
-  String get upgradeToBusinessPremium => 'Upgrade to Business Premium';
-
-  @override
-  String get upgradeYourPlan => 'Upgrade Your Plan';
-
-  @override
-  String reachedLimitMessage(Object featureName) {
-    return 'You\'ve reached the limit for $featureName on your current plan. Upgrade to continue enjoying all features of Hustle Link.';
-  }
-
-  @override
-  String expiresInDays(Object days) {
-    return 'Expires in $days days';
-  }
-
-  @override
-  String get jobViews => 'Job Views';
-
-  @override
-  String get jobPosts => 'Job Posts';
-
-  @override
-  String get pleaseEnterValidBotswanaPhone =>
-      'Please enter a valid Botswana phone number (+267 XXXX XXXX)';
-
-  @override
-  String get pleaseEnterValidMobileNumber =>
-      'Please enter a valid mobile number starting with 6 or 7';
-
-  @override
-  String get failedToInitiatePayment =>
-      'Failed to initiate payment. Please try again.';
-
-  @override
-  String get contactSupportBusinessName => 'HustleLink';
-
-  @override
-  String get contactSupportWelcomeMessage =>
-      'We\'re here to help! Get in touch with us through any of the methods below.';
-
-  @override
-  String get contactMethods => 'Contact Methods';
-
-  @override
-  String get email => 'Email';
-
-  @override
-  String get contactSupportEmail => 'hustelink@gmail.com';
-
-  @override
-  String get emailCopied => 'Email address copied to clipboard';
-
-  @override
-  String get contactSupportPhone => 'Phone/WhatsApp';
-
-  @override
-  String get contactSupportPhoneNumber => '+267 78442166';
-
-  @override
-  String get phoneCopied => 'Phone number copied to clipboard';
-
-  @override
-  String get whatsApp => 'WhatsApp';
-
-  @override
-  String get socialMedia => 'Social Media';
-
-  @override
-  String get facebook => 'Facebook';
-
-  @override
-  String get contactSupportFacebook => 'Bolton Mooketsi';
-
-  @override
-  String get instagram => 'Instagram';
-
-  @override
-  String get contactSupportInstagram => 'instagram.com/hustlelink';
-
-  @override
-  String get tikTok => 'TikTok';
-
-  @override
-  String get contactSupportTikTok => 'tiktok.com/@hustlelink';
-
-  @override
-  String get officeLocation => 'Office Location';
-
-  @override
-  String get address => 'Address';
-
-  @override
-  String get contactSupportAddress => 'Gaborone, Botswana';
-
-  @override
-  String get addressCopied => 'Address copied to clipboard';
-
-  @override
-  String get needHelp => 'Need Help?';
-
-  @override
-  String get contactSupportHelpText =>
-      'Have questions about our services, need technical support, or want to provide feedback? We\'re here to assist you every step of the way.';
-
-  @override
-  String get sendEmail => 'Send Email';
-
-  @override
-  String get chatWhatsApp => 'Chat on WhatsApp';
-
-  @override
-  String get contactSupportEmailSubject => 'Support Request - HustleLink App';
-
-  @override
-  String get emailClientNotAvailable =>
-      'Could not open email client. Please email hustelink@gmail.com directly.';
-
-  @override
-  String get phoneDialerNotAvailable =>
-      'Could not open phone dialer. Please call +267 78442166 directly.';
-
-  @override
-  String get whatsAppMessage => 'Hello! I need help with the HustleLink app.';
-
-  @override
-  String get whatsAppNotAvailable =>
-      'Could not open WhatsApp. Please install WhatsApp or use the phone number directly.';
-
-  @override
-  String get socialMediaNotAvailable =>
-      'Could not open social media platform. Please visit the platform directly.';
-
-  @override
-  String get mapsNotAvailable =>
-      'Could not open maps. Please search for \'Gaborone, Botswana\' in your preferred maps app.';
-
-  @override
-  String get navHome => 'Home';
-
-  @override
-  String get navApplications => 'Applications';
-
-  @override
-  String get navProfile => 'Profile';
-
-  @override
-  String get navDashboard => 'Dashboard';
-
-  @override
-  String get navJobs => 'Jobs';
-
-  @override
-  String get navPostJob => 'Post Job';
-
-  @override
-  String subscriptionWelcomeMessage(String planName) {
-    return 'Welcome to $planName! Your subscription is now active.';
-  }
-
-  @override
-  String get subscriptionActivationFailed =>
-      'Failed to activate subscription. Please contact support.';
-
-  @override
-  String get subscriptionUnlockPotential =>
-      'Unlock your full potential with our premium features designed for the Botswana market.';
-
-  @override
-  String get freePlanActive => 'Free Plan Active';
-
-  @override
-  String nextBilling(String date) {
-    return 'Next billing: $date';
-  }
-
-  @override
-  String get whyUpgrade => 'Why Upgrade?';
-
-  @override
-  String get subscriptionDescription =>
-      'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.';
-
-  @override
-  String get recommended => 'RECOMMENDED';
-
-  @override
-  String upgradeToPlan(String planName) {
-    return 'Upgrade to $planName';
-  }
 }
