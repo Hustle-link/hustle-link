@@ -27,7 +27,7 @@ class EmployerJobDetailsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final jobAsync = ref.watch(jobByIdProvider(jobId));
 
     return Scaffold(
@@ -301,7 +301,7 @@ class _StatusChip extends StatelessWidget {
   const _StatusChip({required this.status});
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     Color color;
     String text;
     switch (status) {
@@ -337,7 +337,7 @@ class _StatusChip extends StatelessWidget {
 class _EmptyApps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Column(
@@ -368,7 +368,7 @@ class _ApplicationTile extends StatelessWidget {
   const _ApplicationTile({required this.app});
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     Color statusColor;
     String statusText;
     switch (app.status) {

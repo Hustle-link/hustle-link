@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
 import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
 import 'package:hustle_link/src/shared/analytics/auth_error_logger.dart';
@@ -42,7 +41,7 @@ class RegisterPage extends HookConsumerWidget {
               Text(
                 l10n.registerSubtitle,
                 style: textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               SizedBox(height: 4.h),
@@ -181,6 +180,7 @@ class _RegisterForm extends HookConsumerWidget {
 
                     ref
                         .read(authControllerProvider.notifier)
+                        // ignore: deprecated_member_use_from_same_package
                         .registerLegacy(
                           emailController.text,
                           passwordController.text,

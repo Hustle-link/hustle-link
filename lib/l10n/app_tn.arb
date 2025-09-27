@@ -388,5 +388,20 @@
     "whatsAppMessage": "Dumela! Ke tlhoka thuso ka HustleLink app.",
     "whatsAppNotAvailable": "Ga ke kgone go bula WhatsApp. Tsweetswee tsenya WhatsApp kgotsa o dirisa nomoro ya mogala ka go le ikanya.",
     "socialMediaNotAvailable": "Ga ke kgone go bula social media platform. Tsweetswee etela platform ka go le ikanya.",
-    "mapsNotAvailable": "Ga ke kgone go bula maps. Tsweetswee batla 'Gaborone, Botswana' mo maps app e o e ratang."
+    "mapsNotAvailable": "Ga ke kgone go bula maps. Tsweetswee batla 'Gaborone, Botswana' mo maps app e o e ratang.",
+    "navHome": "Legae",
+    "navApplications": "Dikopo",
+    "navProfile": "Porofaele",
+    "navDashboard": "Potlako",
+    "navJobs": "Ditiro",
+    "navPostJob": "Posa Tiro",
+    "subscriptionWelcomeMessage": "Amogelesega go {planName}! Peeletso ya gago e simolotse go dira.",
+    "subscriptionActivationFailed": "Go simolola peeletso go paletswe. Tsweetswee ikgolagane le tshegetselo.",
+    "subscriptionUnlockPotential": "Bula bokgoni jwa gago jotlhe ka dikarolo tsa rona tse di kwa godimo tse di dirilweng kwa Botswana.",
+    "freePlanActive": "Leano la Mahala le a Dira",
+    "nextBilling": "Tefo e e latelang: {date}",
+    "whyUpgrade": "Goreng o Godise?",
+    "subscriptionDescription": "Mananeo a Premium a Hustle Link a dirilwe thata bakeng sa babereki le dikgwebo tsa Botswana. Fumana phitlhelelo e e sa lekanyetswang ya ditiro, tshegetselo ya pele, le dikarolo tse di go thusang go atlegiša mo mmarakeng wa selegae.",
+    "recommended": "E A KGOTLHELWA",
+    "upgradeToPlan": "Godisa go {planName}"
 }

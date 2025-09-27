@@ -90,7 +90,9 @@ class SubscriptionPage extends HookConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Welcome to ${selectedPlan.value?.displayName}! Your subscription is now active.',
+                  l10n.subscriptionWelcomeMessage(
+                    selectedPlan.value?.displayName ?? '',
+                  ),
                 ),
                 backgroundColor: Colors.green,
                 duration: const Duration(seconds: 4),
@@ -102,9 +104,7 @@ class SubscriptionPage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                'Failed to activate subscription. Please contact support.',
-              ),
+              content: Text(l10n.subscriptionActivationFailed),
               backgroundColor: theme.colorScheme.error,
             ),
           );
@@ -132,7 +132,7 @@ class SubscriptionPage extends HookConsumerWidget {
 
                 // Current subscription status
                 if (user.hasValue) ...[
-                  _buildCurrentSubscriptionCard(theme, getCurrentPlan()),
+                  _buildCurrentSubscriptionCard(theme, getCurrentPlan(), l10n),
                   SizedBox(height: 4.h),
                 ],
 
@@ -162,7 +162,7 @@ class SubscriptionPage extends HookConsumerWidget {
                 SizedBox(height: 6.h),
 
                 // Features comparison note
-                _buildFeaturesNote(theme),
+                _buildFeaturesNote(theme, l10n),
               ],
             ),
           ),
@@ -200,9 +200,10 @@ class SubscriptionPage extends HookConsumerWidget {
         ),
         SizedBox(height: 1.h),
         Text(
-          'Unlock your full potential with our premium features designed for the Botswana market.',
+          l10n?.subscriptionUnlockPotential ??
+              'Unlock your full potential with our premium features designed for the Botswana market.',
           style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
           textAlign: TextAlign.center,
         ),
@@ -214,6 +215,7 @@ class SubscriptionPage extends HookConsumerWidget {
   Widget _buildCurrentSubscriptionCard(
     ThemeData theme,
     SubscriptionPlan currentPlan,
+    AppLocalizations? l10n,
   ) {
     final isActive = currentPlan != SubscriptionPlan.free;
 
@@ -232,7 +234,9 @@ class SubscriptionPage extends HookConsumerWidget {
                 ),
                 SizedBox(width: 2.w),
                 Text(
-                  isActive ? 'Current Subscription' : 'Free Plan Active',
+                  isActive
+                      ? (l10n?.currentSubscription ?? 'Current Subscription')
+                      : (l10n?.freePlanActive ?? 'Free Plan Active'),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -250,9 +254,10 @@ class SubscriptionPage extends HookConsumerWidget {
             if (isActive) ...[
               SizedBox(height: 1.h),
               Text(
-                'Next billing: ${_formatNextBillingDate()}',
+                l10n?.nextBilling(_formatNextBillingDate()) ??
+                    'Next billing: ${_formatNextBillingDate()}',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -271,7 +276,7 @@ class SubscriptionPage extends HookConsumerWidget {
     VoidCallback onCancel,
   ) {
     return Container(
-      color: Colors.black.withOpacity(0.5),
+      color: Colors.black.withValues(alpha: 0.5),
       child: Center(
         child: Container(
           margin: EdgeInsets.all(4.w),
@@ -294,13 +299,13 @@ class SubscriptionPage extends HookConsumerWidget {
   }
 
   /// Builds the features comparison note
-  Widget _buildFeaturesNote(ThemeData theme) {
+  Widget _buildFeaturesNote(ThemeData theme, AppLocalizations? l10n) {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -309,7 +314,7 @@ class SubscriptionPage extends HookConsumerWidget {
               Icon(Icons.info_outline, color: theme.colorScheme.primary),
               SizedBox(width: 2.w),
               Text(
-                'Why Upgrade?',
+                l10n?.whyUpgrade ?? 'Why Upgrade?',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -318,7 +323,8 @@ class SubscriptionPage extends HookConsumerWidget {
           ),
           SizedBox(height: 2.h),
           Text(
-            'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.',
+            l10n?.subscriptionDescription ??
+                'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.',
             style: theme.textTheme.bodyMedium,
           ),
         ],
@@ -427,9 +433,9 @@ class _SubscriptionPlanCard extends StatelessWidget {
                     bottomLeft: Radius.circular(8),
                   ),
                 ),
-                child: const Text(
-                  'RECOMMENDED',
-                  style: TextStyle(
+                child: Text(
+                  l10n.recommended,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -499,7 +505,7 @@ class _SubscriptionPlanCard extends StatelessWidget {
                   Text(
                     l10n.billedMonthlyCancelAnytime,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -513,9 +519,9 @@ class _SubscriptionPlanCard extends StatelessWidget {
   }
 
   String _getButtonText(bool isCurrentPlan, SubscriptionPlan plan) {
-    if (isCurrentPlan) return 'Current Plan'; // TODO: Add to localization
+    if (isCurrentPlan) return l10n.currentPlan;
     if (plan == SubscriptionPlan.free) return l10n.subscriptionDowngrade;
-    return 'Upgrade to ${plan.displayName}'; // TODO: Add to localization
+    return l10n.upgradeToPlan(plan.displayName);
   }
 }
 

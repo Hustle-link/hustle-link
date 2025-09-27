@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 // TODO(refactor): Break down this page into smaller, more manageable widgets.
@@ -373,7 +372,7 @@ class _ProfileHeader extends StatelessWidget {
               fontSize: 16.sp,
               color: Theme.of(
                 context,
-              ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+              ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -455,7 +454,7 @@ class _InfoRow extends StatelessWidget {
                         fontSize: 12.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     if (isEditable) ...[
@@ -465,7 +464,7 @@ class _InfoRow extends StatelessWidget {
                         size: 12.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.6),
+                        ).colorScheme.primary.withValues(alpha: 0.6),
                       ),
                     ],
                   ],
@@ -513,9 +512,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -533,7 +532,7 @@ class _StatCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12.sp,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -566,10 +565,10 @@ class _AddInfoPrompt extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.primaryContainer.withOpacity(0.3),
+            ).colorScheme.primaryContainer.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
               style: BorderStyle.solid,
             ),
           ),
@@ -594,7 +593,7 @@ class _AddInfoPrompt extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
               ),
             ],
           ),
@@ -646,9 +645,9 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
+          color: Colors.green.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green.withOpacity(0.3)),
+          border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -674,10 +673,10 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -716,7 +715,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
             value: p,
             backgroundColor: Theme.of(
               context,
-            ).colorScheme.outline.withOpacity(0.2),
+            ).colorScheme.outline.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(
               Theme.of(context).colorScheme.primary,
             ),
@@ -726,7 +725,7 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
             _message(p, l10n),
             style: TextStyle(
               fontSize: 14.sp,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
           SizedBox(height: 2.h),

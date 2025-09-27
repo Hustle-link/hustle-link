@@ -139,7 +139,7 @@ class PostJobPage extends HookConsumerWidget {
                         fontSize: 14.sp,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.7),
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
 
@@ -483,7 +483,7 @@ class _FormSection extends StatelessWidget {
             subtitle!,
             style: TextStyle(
               fontSize: 12.sp,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],

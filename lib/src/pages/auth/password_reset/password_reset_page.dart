@@ -362,7 +362,7 @@ class _FormView extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(
                         context,
-                      ).colorScheme.error.withOpacity(0.08),
+                      ).colorScheme.error.withValues(alpha: 0.08),
                       border: Border.all(
                         color: Theme.of(context).colorScheme.error,
                       ),

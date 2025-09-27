@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// Widget for collecting Orange Money payment details.
@@ -132,7 +131,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
                         Text(
                           'Secure payment system for Botswana',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -147,7 +146,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
               Container(
                 padding: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                  color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -313,12 +312,12 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
               Container(
                 padding: EdgeInsets.all(3.w),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 
                     0.5,
                   ),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: theme.colorScheme.outline.withOpacity(0.3),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -333,7 +332,7 @@ class OrangeMoneyPaymentWidget extends HookConsumerWidget {
                       child: Text(
                         'Your payment is processed securely through Orange Money Botswana.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         ),
                       ),
                     ),

@@ -2431,6 +2431,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open maps. Please search for \'Gaborone, Botswana\' in your preferred maps app.'**
   String get mapsNotAvailable;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get navApplications;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get navDashboard;
+
+  /// No description provided for @navJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get navJobs;
+
+  /// No description provided for @navPostJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Job'**
+  String get navPostJob;
+
+  /// No description provided for @subscriptionWelcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to {planName}! Your subscription is now active.'**
+  String subscriptionWelcomeMessage(String planName);
+
+  /// No description provided for @subscriptionActivationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to activate subscription. Please contact support.'**
+  String get subscriptionActivationFailed;
+
+  /// No description provided for @subscriptionUnlockPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your full potential with our premium features designed for the Botswana market.'**
+  String get subscriptionUnlockPotential;
+
+  /// No description provided for @freePlanActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Plan Active'**
+  String get freePlanActive;
+
+  /// No description provided for @nextBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Next billing: {date}'**
+  String nextBilling(String date);
+
+  /// No description provided for @whyUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Upgrade?'**
+  String get whyUpgrade;
+
+  /// No description provided for @subscriptionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.'**
+  String get subscriptionDescription;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOMMENDED'**
+  String get recommended;
+
+  /// No description provided for @upgradeToPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to {planName}'**
+  String upgradeToPlan(String planName);
 }
 
 class _AppLocalizationsDelegate

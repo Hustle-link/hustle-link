@@ -1304,4 +1304,58 @@ class AppLocalizationsTn extends AppLocalizations {
   @override
   String get mapsNotAvailable =>
       'Ga ke kgone go bula maps. Tsweetswee batla \'Gaborone, Botswana\' mo maps app e o e ratang.';
+
+  @override
+  String get navHome => 'Legae';
+
+  @override
+  String get navApplications => 'Dikopo';
+
+  @override
+  String get navProfile => 'Porofaele';
+
+  @override
+  String get navDashboard => 'Potlako';
+
+  @override
+  String get navJobs => 'Ditiro';
+
+  @override
+  String get navPostJob => 'Posa Tiro';
+
+  @override
+  String subscriptionWelcomeMessage(String planName) {
+    return 'Amogelesega go $planName! Peeletso ya gago e simolotse go dira.';
+  }
+
+  @override
+  String get subscriptionActivationFailed =>
+      'Go simolola peeletso go paletswe. Tsweetswee ikgolagane le tshegetselo.';
+
+  @override
+  String get subscriptionUnlockPotential =>
+      'Bula bokgoni jwa gago jotlhe ka dikarolo tsa rona tse di kwa godimo tse di dirilweng kwa Botswana.';
+
+  @override
+  String get freePlanActive => 'Leano la Mahala le a Dira';
+
+  @override
+  String nextBilling(String date) {
+    return 'Tefo e e latelang: $date';
+  }
+
+  @override
+  String get whyUpgrade => 'Goreng o Godise?';
+
+  @override
+  String get subscriptionDescription =>
+      'Mananeo a Premium a Hustle Link a dirilwe thata bakeng sa babereki le dikgwebo tsa Botswana. Fumana phitlhelelo e e sa lekanyetswang ya ditiro, tshegetselo ya pele, le dikarolo tse di go thusang go atlegiša mo mmarakeng wa selegae.';
+
+  @override
+  String get recommended => 'E A KGOTLHELWA';
+
+  @override
+  String upgradeToPlan(String planName) {
+    return 'Godisa go $planName';
+  }
 }

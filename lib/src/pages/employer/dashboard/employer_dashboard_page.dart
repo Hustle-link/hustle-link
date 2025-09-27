@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:go_router/go_router.dart';
 
@@ -96,7 +95,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                           fontSize: 16.sp,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                          ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -153,7 +152,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                                 size: 64.sp,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withOpacity(0.5),
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                               SizedBox(height: 2.h),
                               Text(
@@ -173,7 +172,7 @@ class EmployerDashboardPage extends HookConsumerWidget {
                                   fontSize: 14.sp,
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.7),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.7),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -258,9 +257,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -278,7 +277,7 @@ class _StatCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12.sp,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -338,7 +337,7 @@ class EmployerJobCard extends StatelessWidget {
                       vertical: 0.5.h,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(job.status).withOpacity(0.2),
+                      color: _getStatusColor(job.status).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
@@ -362,7 +361,7 @@ class EmployerJobCard extends StatelessWidget {
                   fontSize: 14.sp,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.8),
+                  ).colorScheme.onSurface.withValues(alpha: 0.8),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -378,7 +377,7 @@ class EmployerJobCard extends StatelessWidget {
                     size: 16.sp,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   SizedBox(width: 1.w),
                   Text(
@@ -387,7 +386,7 @@ class EmployerJobCard extends StatelessWidget {
                       fontSize: 14.sp,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   SizedBox(width: 4.w),
@@ -396,7 +395,7 @@ class EmployerJobCard extends StatelessWidget {
                     size: 16.sp,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   Text(
                     '\$${job.compensation.toStringAsFixed(0)}',
@@ -413,7 +412,7 @@ class EmployerJobCard extends StatelessWidget {
                       fontSize: 12.sp,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],

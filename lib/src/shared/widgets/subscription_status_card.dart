@@ -40,12 +40,12 @@ class SubscriptionStatusCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isActive
-              ? theme.colorScheme.primary.withOpacity(0.3)
-              : theme.colorScheme.outline.withOpacity(0.3),
+              ? theme.colorScheme.primary.withValues(alpha: 0.3)
+              : theme.colorScheme.outline.withValues(alpha: 0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.shadow.withOpacity(0.1),
+            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -61,7 +61,7 @@ class SubscriptionStatusCard extends StatelessWidget {
                 isActive ? Icons.workspace_premium : Icons.account_box_outlined,
                 color: isActive
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.7),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 size: 24.sp,
               ),
               SizedBox(width: 3.w),
@@ -80,7 +80,7 @@ class SubscriptionStatusCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.5.h),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? Colors.green.withOpacity(0.1)
+                      ? Colors.green.withValues(alpha: 0.1)
                       : theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
@@ -115,7 +115,7 @@ class SubscriptionStatusCard extends StatelessWidget {
                       l10n.currentSubscription,
                       style: TextStyle(
                         fontSize: 14.sp,
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     SizedBox(height: 0.5.h),
@@ -133,7 +133,7 @@ class SubscriptionStatusCard extends StatelessWidget {
                         statusText,
                         style: TextStyle(
                           fontSize: 12.sp,
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],

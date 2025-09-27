@@ -156,7 +156,7 @@ class OrangeMoneyService {
 /// This provider gives access to Orange Money payment functionality
 /// throughout the app using Riverpod dependency injection.
 @riverpod
-OrangeMoneyService orangeMoneyService(OrangeMoneyServiceRef ref) {
+OrangeMoneyService orangeMoneyService(Ref ref) {
   return OrangeMoneyService();
 }
 

@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'subscription_access_service.g.dart';
 
@@ -441,20 +440,22 @@ class UsageSummary {
 
   /// Returns true if any limits are being approached (>80% usage)
   bool get hasLimitWarnings {
-    if (jobViewsLimit != null && jobViewsUsed / jobViewsLimit! > 0.8)
+    if (jobViewsLimit != null && jobViewsUsed / jobViewsLimit! > 0.8) {
       return true;
-    if (jobPostsLimit != null && jobPostsUsed / jobPostsLimit! > 0.8)
+    }
+    if (jobPostsLimit != null && jobPostsUsed / jobPostsLimit! > 0.8) {
       return true;
-    if (daysUntilExpiration != null && daysUntilExpiration! <= 7) return true;
+    }
+    if (daysUntilExpiration != null && daysUntilExpiration! <= 7) {
+      return true;
+    }
     return false;
   }
 }
 
 /// Riverpod provider for the subscription access service
 @riverpod
-SubscriptionAccessService subscriptionAccessService(
-  SubscriptionAccessServiceRef ref,
-) {
+SubscriptionAccessService subscriptionAccessService(Ref ref) {
   final user = ref.watch(currentUserProfileProvider).value;
 
   // TODO(optimization): Implement proper job counting from Firestore
@@ -471,7 +472,7 @@ SubscriptionAccessService subscriptionAccessService(
 
 /// Provider for current user's usage summary
 @riverpod
-UsageSummary usageSummary(UsageSummaryRef ref) {
+UsageSummary usageSummary(Ref ref) {
   final service = ref.watch(subscriptionAccessServiceProvider);
   return service.getUsageSummary();
 }

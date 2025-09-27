@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:hustle_link/src/shared/utils/auth_error_mapper.dart';
 import 'package:hustle_link/src/shared/utils/user_friendly_exception.dart';
 import 'package:hustle_link/src/shared/analytics/auth_error_logger.dart';

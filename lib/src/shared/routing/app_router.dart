@@ -495,6 +495,8 @@ class HustlerShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
@@ -511,7 +513,7 @@ class HustlerShell extends ConsumerWidget {
               Icons.home,
               color: Theme.of(context).colorScheme.primary,
             ),
-            label: 'Home',
+            label: l10n.navHome,
           ),
           NavigationDestination(
             icon: Icon(Icons.assignment),
@@ -519,7 +521,7 @@ class HustlerShell extends ConsumerWidget {
               Icons.assignment,
               color: Theme.of(context).colorScheme.primary,
             ),
-            label: 'Applications',
+            label: l10n.navApplications,
           ),
           NavigationDestination(
             icon: Icon(Icons.person),
@@ -527,7 +529,7 @@ class HustlerShell extends ConsumerWidget {
               Icons.person,
               color: Theme.of(context).colorScheme.primary,
             ),
-            label: 'Profile',
+            label: l10n.navProfile,
           ),
         ],
       ),
@@ -571,6 +573,8 @@ class EmployerShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     // Swap primary/secondary so employer uses the secondary palette for primary accents
     final swappedScheme = _swapPrimarySecondary(Theme.of(context).colorScheme);
     final employerTheme = Theme.of(
@@ -596,7 +600,7 @@ class EmployerShell extends ConsumerWidget {
                   Icons.dashboard,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                label: 'Dashboard',
+                label: l10n.navDashboard,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.work),
@@ -604,7 +608,7 @@ class EmployerShell extends ConsumerWidget {
                   Icons.work,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                label: 'Jobs',
+                label: l10n.navJobs,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.add_circle),
@@ -612,7 +616,7 @@ class EmployerShell extends ConsumerWidget {
                   Icons.add_circle,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                label: 'Post Job',
+                label: l10n.navPostJob,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.person),
@@ -620,7 +624,7 @@ class EmployerShell extends ConsumerWidget {
                   Icons.person,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                label: 'Profile',
+                label: l10n.navProfile,
               ),
             ],
           ),

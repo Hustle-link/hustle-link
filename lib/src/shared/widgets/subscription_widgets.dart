@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 /// A widget that displays upgrade prompts when users hit subscription limits.
@@ -64,7 +63,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(4.w),
               decoration: BoxDecoration(
-                color: upgradeColor.withOpacity(0.1),
+                color: upgradeColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -94,7 +93,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
                   accessResult.reason ??
                   _getDefaultDescription(context),
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -157,7 +156,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
                 ? AppLocalizations.of(context).maybeLater
                 : AppLocalizations.of(context).continueWithFree,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -172,7 +171,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -198,7 +197,7 @@ class SubscriptionUpgradePrompt extends StatelessWidget {
           SizedBox(height: 1.h),
           LinearProgressIndicator(
             value: progress / 100,
-            backgroundColor: theme.colorScheme.outline.withOpacity(0.2),
+            backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(
               progress > 90 ? Colors.red : theme.colorScheme.primary,
             ),
@@ -336,9 +335,9 @@ class SubscriptionStatusBanner extends StatelessWidget {
       margin: EdgeInsets.all(2.w),
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -440,7 +439,7 @@ class SubscriptionStatusBanner extends StatelessWidget {
           flex: 3,
           child: LinearProgressIndicator(
             value: percentage / 100,
-            backgroundColor: theme.colorScheme.outline.withOpacity(0.2),
+            backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(
               percentage > 90 ? Colors.red : color,
             ),

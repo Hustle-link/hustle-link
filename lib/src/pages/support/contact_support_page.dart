@@ -69,7 +69,7 @@ class ContactSupportPage extends StatelessWidget {
               width: 20.w,
               height: 20.w,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2.w),
               ),
               child: Icon(
@@ -348,7 +348,7 @@ class ContactSupportPage extends StatelessWidget {
           width: 12.w,
           height: 12.w,
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(2.w),
           ),
           child: Icon(icon, color: theme.colorScheme.primary, size: 6.w),

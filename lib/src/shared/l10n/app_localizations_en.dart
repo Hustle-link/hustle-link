@@ -1267,4 +1267,58 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mapsNotAvailable =>
       'Could not open maps. Please search for \'Gaborone, Botswana\' in your preferred maps app.';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navApplications => 'Applications';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get navDashboard => 'Dashboard';
+
+  @override
+  String get navJobs => 'Jobs';
+
+  @override
+  String get navPostJob => 'Post Job';
+
+  @override
+  String subscriptionWelcomeMessage(String planName) {
+    return 'Welcome to $planName! Your subscription is now active.';
+  }
+
+  @override
+  String get subscriptionActivationFailed =>
+      'Failed to activate subscription. Please contact support.';
+
+  @override
+  String get subscriptionUnlockPotential =>
+      'Unlock your full potential with our premium features designed for the Botswana market.';
+
+  @override
+  String get freePlanActive => 'Free Plan Active';
+
+  @override
+  String nextBilling(String date) {
+    return 'Next billing: $date';
+  }
+
+  @override
+  String get whyUpgrade => 'Why Upgrade?';
+
+  @override
+  String get subscriptionDescription =>
+      'Hustle Link Premium plans are designed specifically for Botswana professionals and businesses. Get unlimited access to jobs, priority support, and features that help you succeed in the local market.';
+
+  @override
+  String get recommended => 'RECOMMENDED';
+
+  @override
+  String upgradeToPlan(String planName) {
+    return 'Upgrade to $planName';
+  }
 }

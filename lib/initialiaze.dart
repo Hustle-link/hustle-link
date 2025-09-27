@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:hustle_link/firebase_options.dart';
 import 'package:riverpod/riverpod.dart';
 
-import 'src/src.dart';
-
 /// A [FutureProvider] that initializes Firebase.
 ///
 /// This provider is responsible for initializing the Firebase app instance.

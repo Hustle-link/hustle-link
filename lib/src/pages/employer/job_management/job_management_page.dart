@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 import 'package:go_router/go_router.dart';
 
@@ -77,7 +76,7 @@ class JobManagementPage extends HookConsumerWidget {
                             fontSize: 14.sp,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.7),
+                            ).colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -207,7 +206,7 @@ class _JobManagementCard extends ConsumerWidget {
                   fontSize: 14.sp,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.8),
+                  ).colorScheme.onSurface.withValues(alpha: 0.8),
                   height: 1.4,
                 ),
                 maxLines: 3,
@@ -293,7 +292,7 @@ class _JobManagementCard extends ConsumerWidget {
                             fontSize: 12.sp,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.7),
+                            ).colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -527,9 +526,9 @@ class _JobStatusChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.5.h),
       decoration: BoxDecoration(
-        color: getStatusColor().withOpacity(0.1),
+        color: getStatusColor().withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: getStatusColor().withOpacity(0.3)),
+        border: Border.all(color: getStatusColor().withValues(alpha: 0.3)),
       ),
       child: Text(
         getStatusText(),
@@ -572,7 +571,7 @@ class _JobDetailChip extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12.sp,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -642,7 +641,7 @@ class _JobApplicationsView extends ConsumerWidget {
                       fontSize: 16.sp,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],

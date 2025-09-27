@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/src.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:sizer/sizer.dart';
 
 class HustlerProfilePage extends HookConsumerWidget {
@@ -26,7 +25,7 @@ class HustlerProfilePage extends HookConsumerWidget {
               final profileData = await ref.read(
                 currentHustlerProfileProvider.future,
               );
-              if (profileData != null) {
+              if (profileData != null && context.mounted) {
                 context.pushNamed(
                   AppRoutes.hustlerEditProfileRoute,
                   extra: profileData.toJson(),
@@ -550,9 +549,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -600,7 +599,7 @@ class _AddInfoPrompt extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.primaryContainer.withOpacity(0.3),
+            ).colorScheme.primaryContainer.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Theme.of(
@@ -651,14 +650,21 @@ class _ProfileCompletionCard extends StatelessWidget {
     int totalFields = 6; // name, bio, phone, location, skills, experience
     int completedFields = 1; // name is always present
 
-    if (profile.bio != null && profile.bio!.isNotEmpty) completedFields++;
-    if (profile.phoneNumber != null && profile.phoneNumber!.isNotEmpty)
+    if (profile.bio != null && profile.bio!.isNotEmpty) {
       completedFields++;
-    if (profile.location != null && profile.location!.isNotEmpty)
+    }
+    if (profile.phoneNumber != null && profile.phoneNumber!.isNotEmpty) {
       completedFields++;
-    if (profile.skills.isNotEmpty) completedFields++;
-    if (profile.experience != null && profile.experience!.isNotEmpty)
+    }
+    if (profile.location != null && profile.location!.isNotEmpty) {
       completedFields++;
+    }
+    if (profile.skills.isNotEmpty) {
+      completedFields++;
+    }
+    if (profile.experience != null && profile.experience!.isNotEmpty) {
+      completedFields++;
+    }
 
     return completedFields / totalFields;
   }
@@ -681,9 +687,9 @@ class _ProfileCompletionCard extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
+          color: Colors.green.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green.withOpacity(0.3)),
+          border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -708,7 +714,9 @@ class _ProfileCompletionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(
@@ -752,7 +760,7 @@ class _ProfileCompletionCard extends StatelessWidget {
             value: percentage,
             backgroundColor: Theme.of(
               context,
-            ).colorScheme.outline.withOpacity(0.2),
+            ).colorScheme.outline.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(
               Theme.of(context).colorScheme.primary,
             ),

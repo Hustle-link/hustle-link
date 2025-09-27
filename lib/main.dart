@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/firebase_options.dart';
 import 'package:hustle_link/src/src.dart';
 import 'package:sizer/sizer.dart';
-import 'package:hustle_link/src/shared/l10n/app_localizations.dart';
 import 'package:hustle_link/src/shared/l10n/fallback_localizations.dart';
 
 /// The entry point of the application.
