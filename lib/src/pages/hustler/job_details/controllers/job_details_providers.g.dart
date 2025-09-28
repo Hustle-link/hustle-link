@@ -6,7 +6,7 @@ part of 'job_details_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$jobByIdHash() => r'aa91cb2a4550f88e788c0d366c371c69e9af03f6';
+String _$jobByIdHash() => r'6be6e114a5d154ee8fa3f0237dc8da85d66bc650';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -144,7 +144,7 @@ class _JobByIdProviderElement
   String get jobId => (origin as JobByIdProvider).jobId;
 }
 
-String _$hasAppliedHash() => r'88146e19aefbdad9a3f62d8fd7fc932c297e406c';
+String _$hasAppliedHash() => r'53126ef95b12f8ca803d3b8ffbbb13280fa8c0ac';
 
 /// See also [hasApplied].
 @ProviderFor(hasApplied)

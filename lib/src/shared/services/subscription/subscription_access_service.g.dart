@@ -7,7 +7,7 @@ part of 'subscription_access_service.dart';
 // **************************************************************************
 
 String _$subscriptionAccessServiceHash() =>
-    r'd38b9c89a36270ead88668c56631635e76acca7f';
+    r'1095c5558a5b66e53adbc1085a03333007e66787';
 
 /// Riverpod provider for the subscription access service
 ///
@@ -28,7 +28,7 @@ final subscriptionAccessServiceProvider =
 // ignore: unused_element
 typedef SubscriptionAccessServiceRef =
     AutoDisposeProviderRef<SubscriptionAccessService>;
-String _$usageSummaryHash() => r'ad178b64a91cd0fda969914285ae26706d6d7712';
+String _$usageSummaryHash() => r'd67162b2cbb6ce19f3059beb9c42db9c554b7191';
 
 /// Provider for current user's usage summary
 ///

@@ -36,7 +36,39 @@ class EmployerProfilePage extends HookConsumerWidget {
               title: Text(l10n.profile),
               backgroundColor: Theme.of(context).colorScheme.surface,
             ),
-            body: Center(child: Text(l10n.profileNotFound)),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.person_off_outlined,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    l10n.profileNotFound,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Please check the debug console for more details.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Refresh the profile provider
+                      ref.invalidate(currentEmployerProfileProvider);
+                    },
+                    child: Text('Try Again'),
+                  ),
+                ],
+              ),
+            ),
           );
         }
 
@@ -532,7 +564,9 @@ class _StatCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12.sp,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -568,7 +602,9 @@ class _AddInfoPrompt extends StatelessWidget {
             ).colorScheme.primaryContainer.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.3),
               style: BorderStyle.solid,
             ),
           ),
@@ -593,7 +629,9 @@ class _AddInfoPrompt extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.6),
               ),
             ],
           ),
@@ -673,7 +711,9 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
@@ -725,7 +765,9 @@ class _EmployerProfileCompletionCard extends StatelessWidget {
             _message(p, l10n),
             style: TextStyle(
               fontSize: 14.sp,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
           SizedBox(height: 2.h),

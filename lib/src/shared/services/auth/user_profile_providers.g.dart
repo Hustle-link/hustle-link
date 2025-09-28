@@ -7,7 +7,7 @@ part of 'user_profile_providers.dart';
 // **************************************************************************
 
 String _$currentUserProfileHash() =>
-    r'a57822257e67efec933a2eedd8546db4f1eaef57';
+    r'cd49d9eb9fd0e82996314db2853b42ac8468d77d';
 
 /// A Riverpod provider that fetches the profile of the currently authenticated user.
 /// It depends on [firebaseAuthServiceProvider] to get the current user
@@ -32,7 +32,7 @@ final currentUserProfileProvider = AutoDisposeFutureProvider<AppUser?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentUserProfileRef = AutoDisposeFutureProviderRef<AppUser?>;
-String _$currentUserRoleHash() => r'd11ac2cd85660edf159cf551e36fa7965ecd0bf2';
+String _$currentUserRoleHash() => r'f61228d18381b008d71ac0b1d2f5791dfd592cfa';
 
 /// A Riverpod provider that determines the [UserRole] of the currently authenticated user.
 ///
@@ -84,7 +84,7 @@ final currentHustlerProfileProvider =
 // ignore: unused_element
 typedef CurrentHustlerProfileRef = AutoDisposeFutureProviderRef<Hustler?>;
 String _$currentEmployerProfileHash() =>
-    r'03765ae4484d55200f3ddb36c9c19dfa0f89c21e';
+    r'9d5cc7de0c375c0e1b63216a124fcb89cdc4904e';
 
 /// A Riverpod provider that fetches the [Employer] profile of the currently authenticated user.
 ///

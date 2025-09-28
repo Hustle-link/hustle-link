@@ -19,9 +19,21 @@ Future<AppUser?> currentUserProfile(Ref ref) async {
   final userService = ref.watch(firestoreUserServiceProvider);
 
   final currentUser = authService.currentUser;
-  if (currentUser == null) return null;
+  debugPrint('CurrentUserProfile - Current user: ${currentUser?.uid}');
 
-  return await userService.getUserProfile(currentUser.uid);
+  if (currentUser == null) {
+    debugPrint('CurrentUserProfile - No authenticated user');
+    return null;
+  }
+
+  debugPrint(
+    'CurrentUserProfile - Fetching user profile for: ${currentUser.uid}',
+  );
+  final result = await userService.getUserProfile(currentUser.uid);
+  debugPrint(
+    'CurrentUserProfile - Result: ${result != null ? 'Found profile with role: ${result.role}' : 'No profile found'}',
+  );
+  return result;
 }
 
 /// A Riverpod provider that determines the [UserRole] of the currently authenticated user.
@@ -33,12 +45,20 @@ Future<AppUser?> currentUserProfile(Ref ref) async {
 @riverpod
 Future<UserRole?> currentUserRole(Ref ref) async {
   final userProfile = await ref.watch(currentUserProfileProvider.future);
-  if (userProfile == null) return null;
+  debugPrint('CurrentUserRole - User profile: $userProfile');
 
-  return UserRole.values.firstWhere(
+  if (userProfile == null) {
+    debugPrint('CurrentUserRole - No user profile found');
+    return null;
+  }
+
+  debugPrint('CurrentUserRole - User role from profile: ${userProfile.role}');
+  final role = UserRole.values.firstWhere(
     (role) => role.value == userProfile.role,
     orElse: () => UserRole.hustler, // Default to hustler
   );
+  debugPrint('CurrentUserRole - Determined role: $role');
+  return role;
 }
 
 /// A Riverpod provider that fetches the [Hustler] profile of the currently authenticated user.
@@ -86,11 +106,30 @@ Future<Employer?> currentEmployerProfile(Ref ref) async {
   final userService = ref.watch(firestoreUserServiceProvider);
 
   final currentUser = authService.currentUser;
-  if (currentUser == null) return null;
+  debugPrint('CurrentEmployerProfile - Current user: ${currentUser?.uid}');
+
+  if (currentUser == null) {
+    debugPrint('CurrentEmployerProfile - No authenticated user found');
+    return null;
+  }
 
   // Check if user is an employer first
   final userRole = await ref.watch(currentUserRoleProvider.future);
-  if (userRole != UserRole.employer) return null;
+  debugPrint('CurrentEmployerProfile - User role: $userRole');
 
-  return await userService.getEmployerProfile(currentUser.uid);
+  if (userRole != UserRole.employer) {
+    debugPrint(
+      'CurrentEmployerProfile - User is not an employer, role: $userRole',
+    );
+    return null;
+  }
+
+  debugPrint(
+    'CurrentEmployerProfile - Fetching employer profile for: ${currentUser.uid}',
+  );
+  final result = await userService.getEmployerProfile(currentUser.uid);
+  debugPrint(
+    'CurrentEmployerProfile - Result: ${result != null ? 'Found profile' : 'No profile found'}',
+  );
+  return result;
 }

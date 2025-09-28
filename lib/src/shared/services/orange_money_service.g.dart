@@ -7,7 +7,7 @@ part of 'orange_money_service.dart';
 // **************************************************************************
 
 String _$orangeMoneyServiceHash() =>
-    r'0c7a74139623dc94b9c26e3ba9183c2dc6c3cdec';
+    r'1be14ef7cf158577dace3475232c99677e5eafc3';
 
 /// Provider for the Orange Money service.
 ///

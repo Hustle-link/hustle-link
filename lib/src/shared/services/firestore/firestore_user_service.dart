@@ -85,9 +85,16 @@ class FirestoreUserService {
   /// Returns an [AppUser] object if the profile exists, otherwise `null`.
   Future<AppUser?> getUserProfile(String uid) async {
     try {
+      debugPrint('Getting user profile for UID: $uid');
       final doc = await _usersCollection.doc(uid).get();
+      debugPrint('User document exists: ${doc.exists}');
+
       if (doc.exists) {
-        return AppUser.fromJson(doc.data() as Map<String, dynamic>);
+        final data = doc.data() as Map<String, dynamic>;
+        debugPrint('User document data: $data');
+        return AppUser.fromJson(data);
+      } else {
+        debugPrint('No user profile found for UID: $uid');
       }
       return null;
     } catch (e) {
@@ -127,14 +134,71 @@ class FirestoreUserService {
   /// Returns an [Employer] object if the profile exists, otherwise `null`.
   Future<Employer?> getEmployerProfile(String uid) async {
     try {
+      debugPrint('Getting employer profile for UID: $uid');
       final doc = await _employersCollection.doc(uid).get();
+      debugPrint('Employer document exists: ${doc.exists}');
+
       if (doc.exists) {
-        return Employer.fromJson(doc.data() as Map<String, dynamic>);
+        final data = doc.data() as Map<String, dynamic>;
+        debugPrint('Employer document data: $data');
+        return Employer.fromJson(data);
+      } else {
+        debugPrint('No employer profile found for UID: $uid');
+        // Try to create missing employer profile if user exists and has employer role
+        await _createMissingEmployerProfile(uid);
+
+        // Try to fetch again after creation
+        final newDoc = await _employersCollection.doc(uid).get();
+        if (newDoc.exists) {
+          final data = newDoc.data() as Map<String, dynamic>;
+          debugPrint('Created and retrieved employer profile: $data');
+          return Employer.fromJson(data);
+        }
       }
       return null;
     } catch (e) {
       debugPrint('Error getting employer profile: $e');
       throw Exception('Failed to get employer profile: $e');
+    }
+  }
+
+  /// Creates a missing employer profile if the user exists and has employer role.
+  /// This is a helper method to fix missing employer profiles for existing users.
+  Future<void> _createMissingEmployerProfile(String uid) async {
+    try {
+      debugPrint('Attempting to create missing employer profile for: $uid');
+
+      // Check if user exists and has employer role
+      final userDoc = await _usersCollection.doc(uid).get();
+      if (userDoc.exists) {
+        final userData = userDoc.data() as Map<String, dynamic>;
+        final userRole = userData['role'] as String?;
+
+        debugPrint('User exists with role: $userRole');
+
+        if (userRole == UserRole.employer.value) {
+          // Create the missing employer profile
+          final employer = Employer(
+            uid: uid,
+            email: userData['email'] as String,
+            name: userData['name'] as String,
+            companyName: userData['name'] as String, // Default to user name
+            createdAt: DateTime.parse(userData['createdAt'] as String),
+          );
+
+          await _employersCollection.doc(uid).set(employer.toJson());
+          debugPrint('Successfully created missing employer profile for: $uid');
+        } else {
+          debugPrint(
+            'User role is not employer, cannot create employer profile',
+          );
+        }
+      } else {
+        debugPrint('User document not found, cannot create employer profile');
+      }
+    } catch (e) {
+      debugPrint('Error creating missing employer profile: $e');
+      // Don't throw, just log the error to avoid breaking the main flow
     }
   }
 
