@@ -483,13 +483,17 @@ class _SuccessView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextButton.icon(
-                onPressed: onResend,
-                icon: const Icon(Icons.refresh),
-                label: Text(
-                  resendIn == 0
-                      ? l10n.resendLink
-                      : l10n.resendAvailableIn(resendIn.toString()),
+              Flexible(
+                child: TextButton.icon(
+                  onPressed: onResend,
+                  icon: const Icon(Icons.refresh),
+                  label: Text(
+                    resendIn == 0
+                        ? l10n.resendLink
+                        : l10n.resendAvailableIn(resendIn.toString()),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
                 ),
               ),
             ],
