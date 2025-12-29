@@ -33,6 +33,30 @@ class AppColors {
   // Neutral/Variant colors
   static const Color outline = Color(0xFFADB5BD);
   static const Color shadow = Color(0x40000000);
+  // Dark Mode Colors
+  static const Color primaryDark = Color(
+    0xFF4FC3F7,
+  ); // Lighter blue for dark mode
+  static const Color onPrimaryDark = Color(0xFF00364F);
+  static const Color primaryContainerDark = Color(0xFF004D70);
+  static const Color onPrimaryContainerDark = Color(0xFFE0F7FA);
+
+  static const Color secondaryDark = Color(
+    0xFF4DB6AC,
+  ); // Lighter teal for dark mode
+  static const Color onSecondaryDark = Color(0xFF003732);
+  static const Color secondaryContainerDark = Color(0xFF004D40);
+  static const Color onSecondaryContainerDark = Color(0xFFB2DFDB);
+
+  static const Color tertiaryDark = Color(0xFFFFCA28); // Lighter amber
+  static const Color onTertiaryDark = Color(0xFF3E2D00);
+
+  static const Color errorDark = Color(0xFFFFB4AB);
+  static const Color onErrorDark = Color(0xFF690005);
+
+  static const Color surfaceDark = Color(0xFF191C1E); // Very dark grey/blue
+  static const Color onSurfaceDark = Color(0xFFE1E2E5);
+  static const Color outlineDark = Color(0xFF8D9199);
 }
 
 class AppMaterialTheme {
@@ -63,17 +87,37 @@ class AppMaterialTheme {
     );
   }
 
+  static ColorScheme darkScheme() {
+    return const ColorScheme(
+      brightness: Brightness.dark,
+      primary: AppColors.primaryDark,
+      onPrimary: AppColors.onPrimaryDark,
+      primaryContainer: AppColors.primaryContainerDark,
+      onPrimaryContainer: AppColors.onPrimaryContainerDark,
+      secondary: AppColors.secondaryDark,
+      onSecondary: AppColors.onSecondaryDark,
+      secondaryContainer: AppColors.secondaryContainerDark,
+      onSecondaryContainer: AppColors.onSecondaryContainerDark,
+      tertiary: AppColors.tertiaryDark,
+      onTertiary: AppColors.onTertiaryDark,
+      error: AppColors.errorDark,
+      onError: AppColors.onErrorDark,
+      surface: AppColors.surfaceDark,
+      onSurface: AppColors.onSurfaceDark,
+      outline: AppColors.outlineDark,
+      shadow: Colors.black,
+      surfaceTint: AppColors.primaryDark,
+    );
+  }
+
   /// The main light theme for the application.
   ThemeData light() {
     return _theme(lightScheme());
   }
 
   /// A dark theme for the application.
-  /// TODO: Implement a full dark theme color palette.
   ThemeData dark() {
-    // For now, let's just return the light theme.
-    // A proper dark theme would require defining dark-mode specific colors.
-    return _theme(lightScheme());
+    return _theme(darkScheme());
   }
 
   ThemeData _theme(ColorScheme colorScheme) {
@@ -101,13 +145,22 @@ class AppMaterialTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colorScheme.outline),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: colorScheme.outline),
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         labelStyle: TextStyle(
-          color: colorScheme.onSurface.withAlpha((0.7 * 255).toInt()),
+          color: colorScheme.onSurface.withValues(alpha: 0.7),
         ),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
       ),
     );
   }

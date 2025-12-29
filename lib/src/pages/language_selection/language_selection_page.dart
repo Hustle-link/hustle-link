@@ -90,7 +90,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
                                     .notifier,
                               )
                               .setLanguageSelected(true);
-                          if (mounted) {
+                          if (context.mounted) {
                             context.go(AppRoutes.welcome);
                           }
                         }

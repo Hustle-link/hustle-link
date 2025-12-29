@@ -7,6 +7,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hustle_link/src/pages/language_selection/language_selection_page.dart'
     as lang_select;
 import 'package:hustle_link/src/pages/subscribe/subscription_page.dart';
+import 'package:hustle_link/src/pages/admin/admin_dashboard_page.dart';
+import 'package:hustle_link/src/pages/admin/certification_review_page.dart';
+import 'package:hustle_link/src/pages/splash/splash_page.dart';
 import 'package:hustle_link/src/src.dart';
 // removed unused shared_preferences import (accessed via provider elsewhere)
 
@@ -134,6 +137,11 @@ final appRouteProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: AppRoutes.splash,
+        name: AppRoutes.splashRoute,
+        builder: (context, state) => const SplashPage(),
+      ),
+      GoRoute(
         path: AppRoutes.login,
         name: AppRoutes.loginRoute,
         builder: (context, state) {
@@ -176,6 +184,8 @@ final appRouteProvider = Provider<GoRouter>((ref) {
               return AppRoutes.hustlerDashboard;
             } else if (userProfile.role == UserRole.employer.value) {
               return AppRoutes.employerDashboard;
+            } else if (userProfile.role == UserRole.admin.value) {
+              return AppRoutes.adminDashboard;
             }
 
             return AppRoutes.roleSelection; // Fallback
@@ -287,6 +297,20 @@ final appRouteProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.contactSupportRoute,
         builder: (context, state) => const ContactSupportPage(),
       ),
+      // Admin routes
+      GoRoute(
+        path: AppRoutes.adminDashboard,
+        name: AppRoutes.adminDashboardRoute,
+        builder: (context, state) => const AdminDashboardPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminCertificationReview,
+        name: AppRoutes.adminCertificationReviewRoute,
+        builder: (context, state) {
+          final cert = state.extra as Certification;
+          return CertificationReviewPage(certification: cert);
+        },
+      ),
     ],
   );
 });
@@ -296,6 +320,7 @@ final appRouteProvider = Provider<GoRouter>((ref) {
 // TODO(refactor): Organize routes into nested classes for better structure if the app grows.
 class AppRoutes {
   // paths
+  static const String splash = '/splash';
   // auth routes
   static const String login = '/login';
   static const String register = '/register';
@@ -331,7 +356,12 @@ class AppRoutes {
   static const String subscription = '/subscribe';
   static const String contactSupport = '/contact-support';
 
+  // admin routes
+  static const String adminDashboard = '/admin/dashboard';
+  static const String adminCertificationReview = '/admin/certification-review';
+
   // route names
+  static const String splashRoute = 'splash';
   static const String loginRoute = 'login';
   static const String registerRoute = 'register';
   static const String resetPasswordRoute = 'reset_password';
@@ -360,6 +390,11 @@ class AppRoutes {
   static const String employerJobDetailsRoute = 'employer_job_details';
   static const String subscriptionRoute = 'subscription';
   static const String contactSupportRoute = 'contact_support';
+
+  // admin route names
+  static const String adminDashboardRoute = 'admin_dashboard';
+  static const String adminCertificationReviewRoute =
+      'admin_certification_review';
 
   // add more routes as needed
 }

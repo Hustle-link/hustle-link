@@ -1,10 +1,10 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hustle_link/firebase_options.dart';
+
 import 'package:hustle_link/src/src.dart';
+import 'package:hustle_link/src/shared/theme/theme_notifier.dart';
 import 'package:sizer/sizer.dart';
 import 'package:hustle_link/src/shared/l10n/fallback_localizations.dart';
 
@@ -12,10 +12,6 @@ import 'package:hustle_link/src/shared/l10n/fallback_localizations.dart';
 Future<void> main() async {
   // Ensure that the Flutter widget binding is initialized before running the app.
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Firebase with the default options for the current platform.
-  // TODO(Kenan): Consider moving this to the `firebaseInitProvider` and using a splash screen.
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Run the app within a `ProviderScope` to enable Riverpod for state management.
   runApp(const ProviderScope(child: MyApp()));
@@ -32,8 +28,9 @@ class MyApp extends HookConsumerWidget {
     final router = ref.watch(appRouteProvider);
 
     // Watch the theme provider to get the app's theme data.
-    // TODO(Kenan): Implement a dark theme and allow the user to switch between themes.
     final theme = ref.watch(themeProvider);
+    // Watch the theme mode provider
+    final themeMode = ref.watch(themeModeProvider);
 
     // Watch the locale provider to get the app's current locale.
     final locale = ref.watch(localeNotifierProvider);
@@ -48,6 +45,10 @@ class MyApp extends HookConsumerWidget {
           routerConfig: router,
           // Set the light theme for the app.
           theme: theme.light(),
+          // Set the dark theme
+          darkTheme: theme.dark(),
+          // Mode
+          themeMode: themeMode,
           // Set the current locale
           locale: locale,
           // Localization setup

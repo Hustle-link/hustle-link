@@ -388,10 +388,14 @@ class ContactSupportPage extends StatelessWidget {
       if (await canLaunchUrl(emailLaunchUri)) {
         await launchUrl(emailLaunchUri);
       } else {
-        _showErrorSnackBar(context, l10n.emailClientNotAvailable);
+        if (context.mounted) {
+          _showErrorSnackBar(context, l10n.emailClientNotAvailable);
+        }
       }
     } catch (e) {
-      _showErrorSnackBar(context, l10n.emailClientNotAvailable);
+      if (context.mounted) {
+        _showErrorSnackBar(context, l10n.emailClientNotAvailable);
+      }
     }
   }
 
@@ -403,16 +407,20 @@ class ContactSupportPage extends StatelessWidget {
       if (await canLaunchUrl(phoneLaunchUri)) {
         await launchUrl(phoneLaunchUri);
       } else {
+        if (context.mounted) {
+          _showErrorSnackBar(
+            context,
+            AppLocalizations.of(context).phoneDialerNotAvailable,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
         _showErrorSnackBar(
           context,
           AppLocalizations.of(context).phoneDialerNotAvailable,
         );
       }
-    } catch (e) {
-      _showErrorSnackBar(
-        context,
-        AppLocalizations.of(context).phoneDialerNotAvailable,
-      );
     }
   }
 
@@ -429,10 +437,14 @@ class ContactSupportPage extends StatelessWidget {
       if (await canLaunchUrl(whatsappUri)) {
         await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
       } else {
-        _showErrorSnackBar(context, l10n.whatsAppNotAvailable);
+        if (context.mounted) {
+          _showErrorSnackBar(context, l10n.whatsAppNotAvailable);
+        }
       }
     } catch (e) {
-      _showErrorSnackBar(context, l10n.whatsAppNotAvailable);
+      if (context.mounted) {
+        _showErrorSnackBar(context, l10n.whatsAppNotAvailable);
+      }
     }
   }
 
@@ -444,16 +456,20 @@ class ContactSupportPage extends StatelessWidget {
       if (await canLaunchUrl(socialUri)) {
         await launchUrl(socialUri, mode: LaunchMode.externalApplication);
       } else {
+        if (context.mounted) {
+          _showErrorSnackBar(
+            context,
+            AppLocalizations.of(context).socialMediaNotAvailable,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
         _showErrorSnackBar(
           context,
           AppLocalizations.of(context).socialMediaNotAvailable,
         );
       }
-    } catch (e) {
-      _showErrorSnackBar(
-        context,
-        AppLocalizations.of(context).socialMediaNotAvailable,
-      );
     }
   }
 
@@ -467,16 +483,20 @@ class ContactSupportPage extends StatelessWidget {
       if (await canLaunchUrl(mapsUri)) {
         await launchUrl(mapsUri, mode: LaunchMode.externalApplication);
       } else {
+        if (context.mounted) {
+          _showErrorSnackBar(
+            context,
+            AppLocalizations.of(context).mapsNotAvailable,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
         _showErrorSnackBar(
           context,
           AppLocalizations.of(context).mapsNotAvailable,
         );
       }
-    } catch (e) {
-      _showErrorSnackBar(
-        context,
-        AppLocalizations.of(context).mapsNotAvailable,
-      );
     }
   }
 

@@ -53,7 +53,10 @@ enum UserRole {
   hustler,
 
   /// A user who is posting jobs.
-  employer;
+  employer,
+
+  /// An administrator who can verify information.
+  admin;
 
   /// Returns the string representation of the enum value.
   String get value => name;
